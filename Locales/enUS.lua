@@ -1,0 +1,200 @@
+local ADDON_NAME, addon = ...
+local L = LibStub("AceLocale-3.0"):NewLocale(ADDON_NAME, "enUS", true)
+
+L["Welecome"] = "|cff8788ee" .. ADDON_NAME .. "|r: Welcome! Your profile has been reset, and you can set up in: ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
+L["WelecomeInfo"] = "Welecome! Thank you for using |cff8788ee" .. ADDON_NAME .. "|r!"
+L["WelecomeSetting"] = "You can change settings with \"|cff8788ee/hblyx|r\" or open configuration panel in ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
+L["WarlockWelecome"] = "Hello, |cff8788eeWarlock|r. Ready to serve you!"
+L["GUITitle"] = "|cff8788ee" .. ADDON_NAME .. "|r Configurations Panel"
+L["CombatLock"] = "|cffff0000In combat|r, cannot open the configuration panel or turn on test mode"
+L["Notifications"] = "Notifications"
+L["NotificationContent"] = "The tabs shows modules contained in this addon, you can configure each module separately." .. "\n\n" ..
+"You can find on |cff8788eeHBLyx|r's page:" .. "\n" ..
+"|cff8788eeHBLyx_Tools|r: a collection of modules including Combat Indicator, Combat Timer, Focus Interrupt and more modules" .. "\n" ..
+"|cff8788eeMidnightFocusInterrupt|r: Focus Interrupt module standalone version" .. "\n" ..
+"|cff8788eeSharedMedia_HBLyx|r: an AI-generated Chinese sound pack(LibSharedMedia)"
+
+-- MARK： Downloads/Update
+L["Downloads/Update"] = "Downloads/Update"
+L["Release_Info"] = "The official release version is |cffff0000only available on the following sites, all others are not from the author|r"
+
+-- MARK: Change Log
+L["ChangeLog"] = "Change Log"
+L["ChangeLogContent"] =
+"v3.10\n" ..
+"-Encounter Sound: Private Auras sub-module has been implemented\n" ..
+"v3.9\n" ..
+"-Encounter Sound: add a new module \"Encounter Sound\" which set and play custom sound alert for encounter time line events\n" ..
+"v3.8\n" ..
+"-Focus Interrupt: Added an option for a target cast bar, which can create a target cast bar similar to the focus cast bar\n" ..
+"v3.7\n" ..
+"-Custom Auras Tracker: auras can be loaded by specializations(a new corresponding custom option)\n" ..
+"v3.6\n" ..
+"-Custom Auras Tracker: add a new module \"Custom Aura Tracker\" which Track aura that are triggered by \"player\" and display and play sound alert with customizable options\n"
+
+--MARK: Issues
+L["Issues"] = "Issues"
+L["AnyIssues"] = "If you encounter any issue, please feedback to the author through the contact information"
+L["IssuesContent"] = "Q: Can you add XXX spell as an interrupt spell in Focus Interrupt module?\nA: No, spells with GCD cannot be added due to Blizzard's API restrictions. If you want to add a spell without GCD, please inform me with the spell details" .. "\n\n" ..
+"Q: The BattleRes cannot display at the start of some Beta M+ dungeons and \"reload\" can fix it, why?\nA: It is caused by Blizzard's failure to trigger the CHALLENGE_MODE_START event in some dungeons with M+ mode, there is currently no good solution, wait for Blizzard to fix it\n\n" ..
+"Q: There are some missing/incorrect events/private auras in Encounter Sound module, will them be corrected?\nA: Yes, as this module is highly dependent on data mining toward the game and Blizzard is constantly changing the Boss fight, it takes some time to fetch new data\n\n" ..
+"Thanks for your understanding and support!"
+
+-- MARK: Contact
+L["Contact"] = "Contact"
+L["GitHub"] = "Submit issue on GitHub"
+L["CurseForge"] = "Comments on CurseForge"
+
+-- MARK: Sound Channel
+L["SoundChannelSettings"] = "Sound Channel"
+L["SoundChannel"] = {
+	Master = "Master",
+	SFX = "Effects",
+	Music = "Music",
+	Ambience = "Ambience",
+	Dialog = "Dialog",
+}
+
+-- MARK: Config
+L["ConfigPanel"] = "Open Configurations Panel"
+L["Test"] = "Test/Unlock(Drag to Move)"
+L["Mute"] = "Mute"
+L["Enable"] = "Enable"
+L["SoundSettings"] = "Sound Settings"
+L["PetSettings"] = "Pet Reminder Settings"
+L["PetStanceEnable"] = "Enable Pet Stance Check"
+L["PetTypeSettings"] = "Enable Pet Type Check"
+L["FadeTime"] = "Fade Time"
+L["IconSize"] = "Icon Size"
+L["BackgroundAlpha"] = "Background Alpha"
+L["Texture"] = "Texture"
+L["Width"] = "Width"
+L["Height"] = "Height"
+L["Sound"] = "Sound"
+L["TimeFontScale"] = "Time Font Scale"
+L["StackFontSize"] = "Stack/Charge Font Size"
+L["Reminders"] = "Reminders"
+L["Ready"] = "Ready"
+L["NotLearned"] = "Not Learned"
+L["Reload"] = "Reload(RL)"
+L["ReloadNeeded"] = "Need to reload to take effect of changes"
+L["IconZoom"] = "Icon Zoom"
+L["ResetMod"] = "Reset Module"
+L["ComfirmResetMod"] = "Are you sure you want to reset all settings for this module?(also reload UI)"
+L["Anchor"] = "Anchor"
+L["Grow"] = "Grow Direction"
+L["General"] = "General"
+L["Profile"] = "Profile"
+L["Export"] = "Export"
+L["Import"] = "Import"
+L["Export/Import"] = "Export/Import"
+L["ProfileSettingsDesc"] = "Export and Import your profile with the string below.\n\nExported string contains all modules"
+L["ImportSuccess"] = "Profile imported successfully. Please reload your UI to apply the changes."
+L["ModuleProfile"] = "Module Profile"
+L["ModuleProfileDesc"] = "You can select a module to export/import profile separately.\n\nTo export, select the module below first. To import, the module will be automatically recognized from the string"
+L["SelectModule"] = "Select Module"
+L["SpellID"] = "Spell ID"
+L["Duration"] = "Duration"
+L["Cooldown"] = "Cooldown"
+L["ActiveSound"] = "Active Sound"
+L["ExpireSound"] = "Expire Sound"
+L["Add"] = "Add"
+L["Remove"] = "Remove"
+L["AddSuccess"] = "|cffffff00added|r successfully"
+L["AddFailed"] = "Failed to |cffffff00add|r"
+L["UpdateSuccess"] = "|cffffff00updated|r successfully"
+L["RemoveSuccess"] = "|cffffff00removed|r successfully"
+L["RemoveFailed"] = "Failed to |cffffff00remove|r"
+L["LoadingSpecs"] = "Loading Specializations"
+L["LoadingSpecsDesc"] = "Select the specializations(none or multiple) for which the aura will be active. |cffff0000If none of specializations is selected, the aura will be active for all specializations|r.\n\nWhen you select an existing aura, the specializations information will also be automatically filled."
+L["LeftButton"] = "Left Click"
+L["RightButton"] = "Right Click"
+L["ShowInInstance"] = "Only Show in Instance"
+L["HideMinimapIcon"] = "Hide Minimap Icon"
+L["Select"] = "Select"
+L["PrivateAura"] = "Private Aura"
+L["HideIfFriendly"] = "Hide if Friendly"
+
+-- MARK: Style
+L["StyleSettings"] = "Style Settings"
+L["Font"] = "Font"
+L["FontSize"] = "Font Size"
+L["FontSettings"] = "Font Settings"
+L["X"] = "Horizontal Position"
+L["Y"] = "Vertical Position"
+L["PositionSettings"] = "Position Settings"
+L["IconSettings"] = "Icon Settings"
+L["TextureSettings"] = "Texture Settings"
+L["SizeSettings"] = "Size Settings"
+L["ColorSettings"] = "Color Settings"
+L["TextSettings"] = "Text Settings"
+L["InterruptibleColor"] = "Interruptible Color"
+L["NotInterruptibleColor"] = "Not Interruptible Color"
+L["FrameStrata"] = "Frame Strata Level"
+
+-- MARK: Input
+L["InvalidInput"] = "Invalid input, please check all required inputs and their format and type."
+L["InvalidSpellID"] = "Invalid spell ID, the spell ID must be a positive integer and must exist in the game."
+L["SpellIDNotFound"] = "Spell ID not found in the game."
+L["InvalidTime"] = "Invalid time, time inputs must be a non-negative number(float/decimal is allowed) in seconds."
+
+--current season
+L["Algeth'ar Academy"] = "Algeth'ar Academy"
+L["Seat of the Triumvirate"] = "Seat of the Triumvirate"
+L["Nexus-Point Xenas"] = "Nexus-Point Xenas"
+L["Maisara Caverns"] = "Maisara Caverns"
+L["Skyreach"] = "Skyreach"
+L["Windrunner Spire"] = "Windrunner Spire"
+L["Magister's Terrace"] = "Magister's Terrace"
+L["Pit of Saron"] = "Pit of Saron"
+-- short for current season
+L["Algeth'ar Academy_short"] = "AA"
+L["Seat of the Triumvirate_short"] = "SoT"
+L["Nexus-Point Xenas_short"] = "NPX"
+L["Maisara Caverns_short"] = "MC"
+L["Skyreach_short"] = "Skyreach"
+L["Windrunner Spire_short"] = "WS"
+L["Magister's Terrace_short"] = "MT"
+L["Pit of Saron_short"] = "PoS"
+-- pre-patch
+L["ARAK"] = "Ara-Kara"
+L["TD"] = "Dawnbreaker"
+L["ED"] = "Eco-Dome"
+L["HOA"] = "HoA"
+L["OF"] = "Floodgate"
+L["PSF"] = "PotSF"
+L["GAMBIT"] = "Gambit"
+L["STREET"] = "Street"
+
+-- MARK: Encounter Sound
+L["EncounterSoundSettings"] = "Encounter Sound"
+L["EncounterSoundSettingsDesc"] = "Set and play custom sound alert for encounter time line events.\n\n" ..
+"Specifically, this module provide a customized sound alert setting for each Boss fight in the instances.(only include current season instances)\n\n\n" ..
+"Firstly, added M+ dungeons in 12.0 season 1, and then will add raids soon. As this module is highly dependent on data mining toward the game data, it is relatively costly to get data.\n\n" ..
+"Many issue will be fixed and module will be improved with the process of data mining, thanks for your feedback and support!\n\n" ..
+"This module is still working in progress, and hope this module can provide more flexible sound alerts for encounters.\n\n" ..
+"|cffff0000NOTE|r: This module is defaultly disabled, as it is still in early stage and changing may be frequent. You can enable it by the checkbox below.\n"
+
+L["EncounterSettings"] = "Encounter Events Settings"
+L["SelectEncounter"] = "Select Encounter"
+L["SelectInstance"] = "Select Instance"
+L["EncounterEventTrigger"] = "Encounter Event Trigger"
+L["EncounterEventSound"] = "Encounter Event Sound"
+L["OnTextWarningShown"] = "Text Warning Shown"
+L["OnTimelineEventFinished"] = "Event Finished"
+L["OnTimelineEventHighlight"] = "Event Highlighted"
+L["EventColor"] = "Event Color"
+L["PrivateAuraSettings"] = "Private Aura Settings"
+L["EncounterEvent"] = "Encounter Event"
+L["EncounterSoundInstruction"] = "After selected |cffffff00an instance|r and |cffffff00an encounter|r, the settings for the encounter will pop up below.\nThere is a 0.5 second delay for the settings to render, as game need to take time to load spell descriptions.\n\n"
+L["EncounterEventsInstruction"] = "To set sound, select |cffffff00an event trigger|r and |cffffff00a valid sound|r, the settings will be applied accordingly. Also, you can use |cffffff00\"Remove\"|r to remove the sound setting for the trigger selected.\n\n"..
+"To set color(Text Color of Event), just use the color picker to select a |cffffff00color|r, and it will be applied to the encounter event. To remove the color setting, you can use the |cffffff00\"Remove\"|r button similarly.\n\n"..
+"|cffff0000NOTE|r: |cffffff00Event Triggers|r are provided by Blizzard's APIs, and descriptions below:\n" ..
+"|cffff5c00Text Warning Shown|r: trigger when |cffff5c00an text warning is shown initially|r\n" ..
+"|cffff5c00Events Finished|r: trigger when the event is |cffff5c00finished|r on the timeline\n" ..
+"|cffff5c00Events Highlighted|r: trigger when the event |cffff5c00will be finished in 5 seconds|r on the timeline\n" ..
+"More information about the triggers on: |cff00ffffhttps://warcraft.wiki.gg/wiki/API_C_EncounterEvents.SetEventSound|r\n\n" ..
+"e.g. If you want a \"AoE Incoming-3-2-1\", you should join the \"AoE Incoming\" and countdown sound into a single media file, and set it to play on the \"Event Highlighted\" trigger(play at 5 seconds before the AoE).\n\n" ..
+"|cffff0000NOTE|r: Must |cffffff00enable Blizzard's Boss Warnings(including Boss Text Warning and Boss Ability Timeline)|r to make the corresponding event triggers active\n"
+L["PrivateAuraInstruction"] = "Apply a sound alert for private auras, and the sound alert is played when the private aura is applied on \"player\".\n\n" ..
+"To prevent unneccessary conflicts or redundancy, private auras' anchor are not provided in this module, since there are many UI addons offer the customized position of private auras.\n"
