@@ -5,7 +5,7 @@ local MOD_KEY = "EncounterSound"
 
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
-	Enabled = false,
+	Enabled = true,
 	SoundChannel = "Master",
 	EnablePrivateAuras = true,
 	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = sound, color = color } } }

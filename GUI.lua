@@ -13,14 +13,7 @@ addon.GUI = {
 -- MARK: TABS
 local TABS = {
     {text = L["General"], value = "General"},
-    {text = L["FocusInterruptSettings"], value = "FocusInterrupt"},
-    {text = L["CombatSettings"], value = "CombatIndicator"},
-    {text = L["TimerSettings"], value = "CombatTimer"},
-    {text = L["BattleResSettings"], value = "BattleRes"},
-    {text = L["ChallengeEnhanceSettings"], value = "ChallengeEnhance"},
-    {text = L["CustomAuraTrackerSettings"], value = "CustomAuraTracker"},
     {text = L["EncounterSoundSettings"], value = "EncounterSound"},
-    {text = L["WarlockReminders"], value = "WarlockReminder"},
     {text = L["Profile"], value = "Profile"},
 }
 
@@ -104,15 +97,6 @@ function addon.GUI:Render()
         self.isOpened = false
         addon.core:TestMode(false) -- turn off test mode when closing GUI
     end)
-
-    -- MARK: Test button
-    self.TestButton = AceGUI:Create("Button")
-    self.TestButton:SetText(L["Test"])
-    self.TestButton:SetWidth(200)
-    self.TestButton:SetCallback("OnClick", function()
-        addon.core:TestMode() -- toggle test mode on/off when click the button
-    end)
-    self.frame:AddChild(self.TestButton)
 
     addon.GUI:CreateToggleCheckBox(self.frame, L["HideMinimapIcon"], addon.db.MinimapIcon.hide, function(value)
         addon.db.MinimapIcon.hide = value

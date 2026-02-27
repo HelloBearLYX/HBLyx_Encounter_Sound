@@ -28,14 +28,14 @@ end
 ---@param configurationList table a list contains options and configuration default values such as: {mod1 = {option1 = defaultVal, option2 = defaultVal, ...}, mod2 = ...}
 local function ProfileHandler(configurationList)
 	-- also reset configs before v3.0 version(no DB.Version before v3.0)
-	if type(HBLyx_Tools_DB) ~= "table" or not HBLyx_Tools_DB["Version"] then
-		HBLyx_Tools_DB = {}
+	if type(HBLyx_Encounter_Sound_DB) ~= "table" or not HBLyx_Encounter_Sound_DB["Version"] then
+		HBLyx_Encounter_Sound_DB = {}
 		addon.Utilities:print("Profile database initialized.")
 
 		addon.Utilities:SetPopupDialog(ADDON_NAME .. "ConfigRest", L["Welecome"], true)
   	end
 
-	addon.db = HBLyx_Tools_DB
+	addon.db = HBLyx_Encounter_Sound_DB
 	addon.db["Version"] = addon.version
 	if type(addon.db["MinimapIcon"]) ~= "table" then
 		addon.db["MinimapIcon"] = {hide = false}
@@ -98,8 +98,8 @@ end
 
 ---Register in-game Slash Command
 local function SetUpSlashCommand()
-	SLASH_HBLYX1 = "/hblyx"
-	SlashCmdList["HBLYX"] = function()
+	SLASH_HBES1 = "/hbes"
+	SlashCmdList["HBES"] = function()
 		addon.GUI:OpenGUI()
 	end
 end
@@ -116,32 +116,7 @@ end
 local function InitializeStates()
 	addon.states = {}
 
-	-- player class
-	addon.states["playerClass"] = select(2, UnitClass("player")) -- "ADDON_LOADED"
-	
-	-- if the player is in combat
-	addon.states["inCombat"] = InCombatLockdown()
-	addon.core:RegisterState("PLAYER_REGEN_DISABLED", nil, "inCombat", function()
-		addon.states["inCombat"] = true
-		addon.GUI:CloseGUI() -- close GUI when enter combat
-		if addon.core:IsTestOn() then
-			addon.core:TestMode(false) -- turn off test mode when enter combat
-			addon.Utilities:print(L["CombatLock"])
-		end
-	end)
-	addon.core:RegisterState("PLAYER_REGEN_ENABLED", nil, "inCombat", function()
-		addon.states["inCombat"] = false
-	end)
-
-	local GetInstanceState = function()
-		-- if difficultyID = 0: not in instance; if instanceID = 0: not in instance or in world
-		local _, _, difficultyID, _, _, _, _, instanceID = GetInstanceInfo()
-
-		addon.states["instanceInfo"] = {difficultyID = difficultyID, instanceID = instanceID}
-	end
-	addon.core:RegisterState("PLAYER_ENTERING_WORLD", nil, "instanceInfo", GetInstanceState)
-	addon.core:RegisterState("ZONE_CHANGED_NEW_AREA", nil, "instanceInfo", GetInstanceState)
-
+	-- encounter info
 	addon.states["encounterInfo"] = {encounterID = 0, encounterName = ""} -- "ADDON_LOADED"
 	addon.core:RegisterState("ENCOUNTER_START", nil, "encounterInfo", function (...)
 		local encounterID, encounterName = ... -- the args passed by ENCOUNTER_START event
@@ -150,13 +125,6 @@ local function InitializeStates()
 	addon.core:RegisterState("ENCOUNTER_END", nil, "encounterInfo", function (...)
 		addon.states["encounterInfo"] = {encounterID = 0, encounterName = ""}
 	end)
-
-	-- player spec state
-	local GetSpec = function ()
-		addon.states["playerSpec"] = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
-	end
-	addon.core:RegisterState("PLAYER_ENTERING_WORLD", nil, "playerSpec", GetSpec) -- the spec cannot be initialized when "ADDON_LOADED", it must be initialized after "PLAYER_ENTERING_WORLD"
-	addon.core:RegisterState("PLAYER_SPECIALIZATION_CHANGED", nil, "playerSpec", GetSpec)
 end
 
 -- MARK: Initialize

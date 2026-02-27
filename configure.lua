@@ -27,7 +27,7 @@ local optionsList = {
 			},
 			OpenMenu = {
 				type = "execute",
-				name = "|cff8788ee/hblyx|r",
+				name = "|cff8788ee/hbes|r",
 				func = function()
 					addon.GUI:OpenGUI()
 				end,

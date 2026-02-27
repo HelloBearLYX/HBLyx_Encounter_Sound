@@ -1,0 +1,35 @@
+## Interface: 120000,120001
+## Title: |cff8788eeHBLyx_Encounter_Sound|r
+## Notes: A collections of features including Combat Indicator and Combat Timer, and more features are coming
+## Author: HBLyx
+## OptionalDeps: LibSharedMedia-3.0, AceConfig-3.0
+## Version: 3.10.4
+## SavedVariables: HBLyx_Encounter_Sound_DB
+## IconTexture: Interface\AddOns\HBLyx_Encounter_Sound\Media\HBLyx.png
+## Category: Boss Mods
+## Category-zhCN: 首领模块
+
+embeds.xml
+
+## Locales
+Locales\enUS.lua
+Locales\zhCN.lua
+
+utilities.lua
+configure.lua
+core.lua
+data.lua
+
+# modules
+Modules\EncounterSound.lua
+
+# handle configuration and options
+GUI.lua
+Configs\EncounterSound.lua
+
+Configs\Profile.lua
+
+# developer use only
+Modules\DeveloperTools.lua
+
+main.lua
