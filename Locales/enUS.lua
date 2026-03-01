@@ -22,6 +22,8 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
 L["ChangeLogContent"] =
+"v3.11\n" ..
+"-Encounter Sound: add a new option to set group role for encounter events sound alert\n" ..
 "v3.10\n" ..
 "-Encounter Sound: Private Auras sub-module has been implemented\n" ..
 "v3.9\n" ..
@@ -54,6 +56,12 @@ L["SoundChannel"] = {
 	Music = "Music",
 	Ambience = "Ambience",
 	Dialog = "Dialog",
+}
+
+L["GroupRole"] = {
+	TANK = "TANK",
+	HEALER = "HEALER",
+	DAMAGER = "DPS",
 }
 
 -- MARK: Config
@@ -187,6 +195,7 @@ L["OnTimelineEventHighlight"] = "Event Highlighted"
 L["EventColor"] = "Event Color"
 L["PrivateAuraSettings"] = "Private Aura Settings"
 L["EncounterEvent"] = "Encounter Event"
+L["SelectGroupRole"] = "Group Role"
 L["EncounterSoundInstruction"] = "After selected |cffffff00an instance|r and |cffffff00an encounter|r, the settings for the encounter will pop up below.\nThere is a 0.5 second delay for the settings to render, as game need to take time to load spell descriptions.\n\n"
 L["EncounterEventsInstruction"] = "To set sound, select |cffffff00an event trigger|r and |cffffff00a valid sound|r, the settings will be applied accordingly. Also, you can use |cffffff00\"Remove\"|r to remove the sound setting for the trigger selected.\n\n"..
 "To set color(Text Color of Event), just use the color picker to select a |cffffff00color|r, and it will be applied to the encounter event. To remove the color setting, you can use the |cffffff00\"Remove\"|r button similarly.\n\n"..

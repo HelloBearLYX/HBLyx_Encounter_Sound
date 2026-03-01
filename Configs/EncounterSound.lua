@@ -8,7 +8,7 @@ addon.configurationList[MOD_KEY] = {
 	Enabled = true,
 	SoundChannel = "Master",
 	EnablePrivateAuras = true,
-	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = sound, color = color } } }
+	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
 	dataPA = {}, -- data structure: { [encounterID] = { [spellID] = sound } }
 }
 
@@ -20,7 +20,8 @@ local EVENT_TRIGGERS = {
 }
 
 -- MARK: Adds
-local function AddSound(encounterID, eventID, trigger, sound)
+local function AddSound(encounterID, eventID, trigger, sound, role)
+	local isNew = false
 	if not addon.db.EncounterSound.data then
 		addon.db.EncounterSound.data = {}
 	end
@@ -33,8 +34,19 @@ local function AddSound(encounterID, eventID, trigger, sound)
 		addon.db.EncounterSound.data[encounterID][eventID] = {}
 	end
 
-	addon.db.EncounterSound.data[encounterID][eventID][trigger] = sound
-	addon.Utilities:print(string.format("%d-%d-%s-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], sound, L["AddSuccess"]))
+	isNew = not addon.db.EncounterSound.data[encounterID][eventID][trigger]
+	addon.db.EncounterSound.data[encounterID][eventID][trigger] = { sound = sound, role = role and {} or nil}
+	if role then -- make a deep copy since other trigger may use the same role table reference
+		for role, _ in pairs(role or {}) do
+			addon.db.EncounterSound.data[encounterID][eventID][trigger].role[role] = true
+		end
+	end
+
+	if isNew then
+		addon.Utilities:print(string.format("%d-%d-%s-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], sound, L["AddSuccess"]))
+	else
+		addon.Utilities:print(string.format("%d-%d-%s-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], sound, L["UpdateSuccess"]))
+	end
 end
 
 local function AddColor(encounterID, eventID, color)
@@ -71,6 +83,12 @@ end
 local function RemoveSound(encounterID, eventID, trigger)
 	if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] and addon.db.EncounterSound.data[encounterID][eventID][trigger] then
 		addon.db.EncounterSound.data[encounterID][eventID][trigger] = nil
+		if not next(addon.db.EncounterSound.data[encounterID][eventID]) then
+			addon.db.EncounterSound.data[encounterID][eventID] = nil
+		end
+		if not next(addon.db.EncounterSound.data[encounterID]) then
+			addon.db.EncounterSound.data[encounterID] = nil
+		end
 		addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], L["RemoveSuccess"]))
 		return true
 	end
@@ -81,6 +99,12 @@ end
 local function RemoveColor(encounterID, eventID)
 	if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
 		addon.db.EncounterSound.data[encounterID][eventID].color = nil
+		if not next(addon.db.EncounterSound.data[encounterID][eventID]) then
+			addon.db.EncounterSound.data[encounterID][eventID] = nil
+		end
+		if not next(addon.db.EncounterSound.data[encounterID]) then
+			addon.db.EncounterSound.data[encounterID] = nil
+		end
 		addon.Utilities:print(string.format("%d-%d-Color: %s", encounterID, eventID, L["RemoveSuccess"]))
 		return true
 	else
@@ -92,6 +116,9 @@ end
 local function RemovePASound(encounterID, spellID)
 	if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][spellID] then
 		addon.db.EncounterSound.dataPA[encounterID][spellID] = nil
+		if not next(addon.db.EncounterSound.dataPA[encounterID]) then
+			addon.db.EncounterSound.dataPA[encounterID] = nil
+		end
 		addon.Utilities:print(string.format("%d-%d: %s", encounterID, spellID, L["RemoveSuccess"]))
 		return true
 	else
@@ -127,27 +154,39 @@ end
 local function CreateTimelineSettings(encounterID, eventID, container)
 	local soundGroup = GUI:CreateInlineGroup(container, L["SoundSettings"])
 	local inputTrigger, inputSound = nil, nil
+	local roleSelect = GUI:CreateMultiDropdown(nil, L["SelectGroupRole"], addon.Utilities.GroupRoles, nil, nil)
 	local soundSelect = GUI:CreateSoundSelect(nil, L["EncounterEventSound"], nil, function(key)
 		inputSound = key
-		if inputTrigger then
-			AddSound(encounterID, eventID, inputTrigger, inputSound)
-		end
 	end)
 	GUI:CreateDropdown(soundGroup, L["EncounterEventTrigger"], EVENT_TRIGGERS, nil, nil, function(value)
 		inputTrigger = value
 		if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] and addon.db.EncounterSound.data[encounterID][eventID][inputTrigger] then
-			inputSound = addon.db.EncounterSound.data[encounterID][eventID][inputTrigger]
+			inputSound = addon.db.EncounterSound.data[encounterID][eventID][inputTrigger].sound
+			if addon.db.EncounterSound.data[encounterID][eventID][inputTrigger].role then
+				roleSelect:SetSelectedKeys(addon.db.EncounterSound.data[encounterID][eventID][inputTrigger].role)
+			end
 			soundSelect:SetValue(inputSound)
 		else
 			inputSound = nil
 			soundSelect:SetValue(nil)
+
+			roleSelect:ClearSelections()
 		end
 	end)
+	soundGroup:AddChild(roleSelect:GetWidget())
 	soundGroup:AddChild(soundSelect)
+	GUI:CreateButton(soundGroup, L["Add"], function()
+		if inputTrigger and inputSound then
+			AddSound(encounterID, eventID, inputTrigger, inputSound, roleSelect:GetSelectedKeys())
+		else
+			addon.Utilities:print(L["AddFailed"])
+		end
+	end)
 	GUI:CreateButton(soundGroup, L["Remove"], function()
 		if RemoveSound(encounterID, eventID, inputTrigger) then
 			inputSound = nil
 			soundSelect:SetValue(nil)
+			roleSelect:ClearSelections()
 		end
 	end)
 
