@@ -1,5 +1,5 @@
----@class HBLyx_tools: AceAddon
-HBLyx_Tools = LibStub("AceAddon-3.0"):NewAddon("HBLyx_Tools")
+---@class HBLyx_Encounter_Sound: AceAddon
+HBLyx_Encounter_Sound = LibStub("AceAddon-3.0"):NewAddon("HBLyx_Encounter_Sound")
 
 local ADDON_NAME, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
@@ -74,7 +74,7 @@ local function InitializeConfig()
 		type = "data source",
 		text = ADDON_NAME,
 		label = "|cff8788ee" .. ADDON_NAME .. "|r",
-		icon = "Interface\\AddOns\\HBLyx_Tools\\Media\\HBLyx.png",
+		icon = "Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\HBLyx.png",
 		OnClick = function(_, button)
 			if button == "LeftButton" then
 				addon.GUI:OpenGUI()
