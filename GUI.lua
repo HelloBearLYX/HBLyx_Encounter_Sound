@@ -13,7 +13,8 @@ addon.GUI = {
 -- MARK: TABS
 local TABS = {
     {text = L["General"], value = "General"},
-    {text = L["EncounterSoundSettings"], value = "EncounterSound"},
+    {text = L["Raid"], value = "Raid"},
+    {text = L["Dungeon"], value = "Dungeon"},
     {text = L["Profile"], value = "Profile"},
 }
 
@@ -123,29 +124,11 @@ function addon.GUI:Render()
         if tab == "General" then
             local panel = CreateGeneralPanel(container)
             panel:DoLayout()
-        elseif tab == "FocusInterrupt" then
-            local panel = addon.GUI.TagPanels.FocusInterrupt:CreateTabPanel(container)
+        elseif tab == "Raid" then
+            local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true)
             panel:DoLayout()
-        elseif tab == "CombatIndicator" then
-            local panel = addon.GUI.TagPanels.CombatIndicator:CreateTabPanel(container)
-            panel:DoLayout()
-        elseif tab == "CombatTimer" then
-            local panel = addon.GUI.TagPanels.CombatTimer:CreateTabPanel(container)
-            panel:DoLayout()
-        elseif tab == "BattleRes" then
-            local panel = addon.GUI.TagPanels.BattleRes:CreateTabPanel(container)
-            panel:DoLayout()
-        elseif tab == "ChallengeEnhance" then
-            local panel = addon.GUI.TagPanels.ChallengeEnhance:CreateTabPanel(container)
-            panel:DoLayout()
-        elseif tab == "CustomAuraTracker" then
-            local panel = addon.GUI.TagPanels.CustomAuraTracker:CreateTabPanel(container)
-            panel:DoLayout()
-        elseif tab == "EncounterSound" then
-            local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container)
-            panel:DoLayout()
-        elseif tab == "WarlockReminder" then
-            local panel = addon.GUI.TagPanels.WarlockReminder:CreateTabPanel(container)
+        elseif tab == "Dungeon" then
+            local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, false)
             panel:DoLayout()
         elseif tab == "Profile" then
             local panel = addon.GUI.TagPanels.Profile:CreateTabPanel(container)

@@ -128,12 +128,11 @@ local function RemovePASound(encounterID, spellID)
 end
 
 -- MARK: Get Maps List
-local function GetMapsList()
+local function GetMapsList(isRaid)
     local output = {}
     for mapID, mapInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS) do
-		local portalInfo = C_Spell.GetSpellInfo(mapInfo.portalID)
-		local icon =  portalInfo and portalInfo.iconID or 134400
-        if mapInfo.name then
+		local icon = select(6, EJ_GetInstanceInfo(mapID)) or 134400 -- fallback to a default icon
+        if mapInfo.name and (isRaid == select(12, EJ_GetInstanceInfo(mapID))) then
             output[mapID] =  "|T" .. icon .. ":0|t " .. mapInfo.name
         end
     end
@@ -271,7 +270,7 @@ end
 
 -- GUI
 GUI.TagPanels.EncounterSound = {}
-function GUI.TagPanels.EncounterSound:CreateTabPanel(parent)
+function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
 
@@ -329,7 +328,7 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent)
 		
 		C_Timer.After(0.5, function() frame:DoLayout() end) -- make a latency for render to let spell info loaded
 	end)
-	GUI:CreateDropdown(selectGroup, L["SelectInstance"], GetMapsList(), nil, nil, function (value)
+	GUI:CreateDropdown(selectGroup, L["SelectInstance"], GetMapsList(isRaid), nil, nil, function (value)
 		inputMap = value
 		local list = GetEncountersList(value)
 		encounterGroup:SetList(list)

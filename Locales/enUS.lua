@@ -4,7 +4,6 @@ local L = LibStub("AceLocale-3.0"):NewLocale(ADDON_NAME, "enUS", true)
 L["Welecome"] = "|cff8788ee" .. ADDON_NAME .. "|r: Welcome! Your profile has been reset, and you can set up in: ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
 L["WelecomeInfo"] = "Welecome! Thank you for using |cff8788ee" .. ADDON_NAME .. "|r!"
 L["WelecomeSetting"] = "You can change settings with \"|cff8788ee/hblyx|r\" or open configuration panel in ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
-L["WarlockWelecome"] = "Hello, |cff8788eeWarlock|r. Ready to serve you!"
 L["GUITitle"] = "|cff8788ee" .. ADDON_NAME .. "|r Configurations Panel"
 L["CombatLock"] = "|cffff0000In combat|r, cannot open the configuration panel or turn on test mode"
 L["Notifications"] = "Notifications"
@@ -22,18 +21,14 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
 L["ChangeLogContent"] =
+"v3.12\n" ..
+"-Encounter Sound: totally despatch the Encounter Sound module from |cff8788eeHBLyx_Tools|r, and put it as a standalone module |cff8788eeHBLyx_Encounter_Sound|r\n" ..
 "v3.11\n" ..
 "-Encounter Sound: add a new option to set group role for encounter events sound alert\n" ..
 "v3.10\n" ..
 "-Encounter Sound: Private Auras sub-module has been implemented\n" ..
 "v3.9\n" ..
-"-Encounter Sound: add a new module \"Encounter Sound\" which set and play custom sound alert for encounter time line events\n" ..
-"v3.8\n" ..
-"-Focus Interrupt: Added an option for a target cast bar, which can create a target cast bar similar to the focus cast bar\n" ..
-"v3.7\n" ..
-"-Custom Auras Tracker: auras can be loaded by specializations(a new corresponding custom option)\n" ..
-"v3.6\n" ..
-"-Custom Auras Tracker: add a new module \"Custom Aura Tracker\" which Track aura that are triggered by \"player\" and display and play sound alert with customizable options\n"
+"-Encounter Sound: add a new module \"Encounter Sound\" which set and play custom sound alert for encounter time line events\n"
 
 --MARK: Issues
 L["Issues"] = "Issues"
@@ -67,46 +62,20 @@ L["GroupRole"] = {
 -- MARK: Config
 L["ConfigPanel"] = "Open Configurations Panel"
 L["Test"] = "Test/Unlock(Drag to Move)"
-L["Mute"] = "Mute"
 L["Enable"] = "Enable"
 L["SoundSettings"] = "Sound Settings"
-L["PetSettings"] = "Pet Reminder Settings"
-L["PetStanceEnable"] = "Enable Pet Stance Check"
-L["PetTypeSettings"] = "Enable Pet Type Check"
-L["FadeTime"] = "Fade Time"
-L["IconSize"] = "Icon Size"
-L["BackgroundAlpha"] = "Background Alpha"
-L["Texture"] = "Texture"
-L["Width"] = "Width"
-L["Height"] = "Height"
-L["Sound"] = "Sound"
-L["TimeFontScale"] = "Time Font Scale"
-L["StackFontSize"] = "Stack/Charge Font Size"
-L["Reminders"] = "Reminders"
-L["Ready"] = "Ready"
-L["NotLearned"] = "Not Learned"
 L["Reload"] = "Reload(RL)"
 L["ReloadNeeded"] = "Need to reload to take effect of changes"
-L["IconZoom"] = "Icon Zoom"
 L["ResetMod"] = "Reset Module"
 L["ComfirmResetMod"] = "Are you sure you want to reset all settings for this module?(also reload UI)"
-L["Anchor"] = "Anchor"
-L["Grow"] = "Grow Direction"
 L["General"] = "General"
+L["Raid"] = "Raid"
+L["Dungeon"] = "Dungeon"
 L["Profile"] = "Profile"
 L["Export"] = "Export"
 L["Import"] = "Import"
-L["Export/Import"] = "Export/Import"
-L["ProfileSettingsDesc"] = "Export and Import your profile with the string below.\n\nExported string is compatible with |cff8788eeHBLyx_Tools|r, and you can import it in the module profile section if you want to apply the same settings to the module in |cff8788eeHBLyx_Tools|r"
+L["ProfileSettingsDesc"] = "Export and import your profile with the string below.\n"
 L["ImportSuccess"] = "Profile imported successfully. Please reload your UI to apply the changes."
-L["ModuleProfile"] = "Module Profile"
-L["ModuleProfileDesc"] = "You can select a module to export/import profile separately.\n\nTo export, select the module below first. To import, the module will be automatically recognized from the string"
-L["SelectModule"] = "Select Module"
-L["SpellID"] = "Spell ID"
-L["Duration"] = "Duration"
-L["Cooldown"] = "Cooldown"
-L["ActiveSound"] = "Active Sound"
-L["ExpireSound"] = "Expire Sound"
 L["Add"] = "Add"
 L["Remove"] = "Remove"
 L["AddSuccess"] = "|cffffff00added|r successfully"
@@ -114,66 +83,15 @@ L["AddFailed"] = "Failed to |cffffff00add|r"
 L["UpdateSuccess"] = "|cffffff00updated|r successfully"
 L["RemoveSuccess"] = "|cffffff00removed|r successfully"
 L["RemoveFailed"] = "Failed to |cffffff00remove|r"
-L["LoadingSpecs"] = "Loading Specializations"
-L["LoadingSpecsDesc"] = "Select the specializations(none or multiple) for which the aura will be active. |cffff0000If none of specializations is selected, the aura will be active for all specializations|r.\n\nWhen you select an existing aura, the specializations information will also be automatically filled."
 L["LeftButton"] = "Left Click"
 L["RightButton"] = "Right Click"
-L["ShowInInstance"] = "Only Show in Instance"
 L["HideMinimapIcon"] = "Hide Minimap Icon"
 L["Select"] = "Select"
 L["PrivateAura"] = "Private Aura"
-L["HideIfFriendly"] = "Hide if Friendly"
 
 -- MARK: Style
-L["StyleSettings"] = "Style Settings"
-L["Font"] = "Font"
-L["FontSize"] = "Font Size"
-L["FontSettings"] = "Font Settings"
-L["X"] = "Horizontal Position"
-L["Y"] = "Vertical Position"
-L["PositionSettings"] = "Position Settings"
-L["IconSettings"] = "Icon Settings"
-L["TextureSettings"] = "Texture Settings"
-L["SizeSettings"] = "Size Settings"
 L["ColorSettings"] = "Color Settings"
-L["TextSettings"] = "Text Settings"
-L["InterruptibleColor"] = "Interruptible Color"
-L["NotInterruptibleColor"] = "Not Interruptible Color"
 L["FrameStrata"] = "Frame Strata Level"
-
--- MARK: Input
-L["InvalidInput"] = "Invalid input, please check all required inputs and their format and type."
-L["InvalidSpellID"] = "Invalid spell ID, the spell ID must be a positive integer and must exist in the game."
-L["SpellIDNotFound"] = "Spell ID not found in the game."
-L["InvalidTime"] = "Invalid time, time inputs must be a non-negative number(float/decimal is allowed) in seconds."
-
---current season
-L["Algeth'ar Academy"] = "Algeth'ar Academy"
-L["Seat of the Triumvirate"] = "Seat of the Triumvirate"
-L["Nexus-Point Xenas"] = "Nexus-Point Xenas"
-L["Maisara Caverns"] = "Maisara Caverns"
-L["Skyreach"] = "Skyreach"
-L["Windrunner Spire"] = "Windrunner Spire"
-L["Magister's Terrace"] = "Magister's Terrace"
-L["Pit of Saron"] = "Pit of Saron"
--- short for current season
-L["Algeth'ar Academy_short"] = "AA"
-L["Seat of the Triumvirate_short"] = "SoT"
-L["Nexus-Point Xenas_short"] = "NPX"
-L["Maisara Caverns_short"] = "MC"
-L["Skyreach_short"] = "Skyreach"
-L["Windrunner Spire_short"] = "WS"
-L["Magister's Terrace_short"] = "MT"
-L["Pit of Saron_short"] = "PoS"
--- pre-patch
-L["ARAK"] = "Ara-Kara"
-L["TD"] = "Dawnbreaker"
-L["ED"] = "Eco-Dome"
-L["HOA"] = "HoA"
-L["OF"] = "Floodgate"
-L["PSF"] = "PotSF"
-L["GAMBIT"] = "Gambit"
-L["STREET"] = "Street"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"

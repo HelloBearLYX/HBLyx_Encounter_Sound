@@ -1,13 +1,11 @@
-local ADDON_NAME, addon = ...
-local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+local _, addon = ...
 addon.data = {}
 
 addon.data.MAP_ENCOUNTER_EVENTS = {
 	-- MARK: current season 12.0
-    [402] = {
-		portalID = 393273,
-		name = L["Algeth'ar Academy"],
-		short = L["Algeth'ar Academy_short"],
+    [1201] = {
+		seasonMapID = 402,
+		name = select(1, EJ_GetInstanceInfo(1201)) or "Algeth'ar Academy",
 		encounters = {
 			[2562] = {events = {274, 275, 276, 277}, journalID = 2509, privateAuras = {386201, 391977}},
 			[2563] = {events = {282, 283, 284, 285}, journalID = 2512, privateAuras = {388544, 389033, 396716}},
@@ -15,10 +13,9 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2565] = {events = {293, 294, 295, 296}, journalID = 2514, privateAuras = {389007, 389011}},
 		},
 	},
-	[239] = {
-		portalID = 1254551,
-		name = L["Seat of the Triumvirate"],
-		short = L["Seat of the Triumvirate_short"],
+	[945] = {
+		seasonMapID = 239,
+		name = select(1, EJ_GetInstanceInfo(945)) or "Seat of the Triumvirate",
 		encounters = {
 			[2065] = {events = {223, 224, 225, 226, 238}, journalID = 1979, privateAuras = {244588, 244599}},
 			[2066] = {events = {234, 235, 236, 237, 243}, journalID = 1980, privateAuras = {245742, 246026, 1263523}},
@@ -26,30 +23,27 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2068] = {events = {248, 249, 250, 251, 252, 253, 254}, journalID = 1982, privateAuras = {1265426, 1265650}},
 		},
 	},
-	[559] = {
-		portalID = 1254563,
-		name = L["Nexus-Point Xenas"],
-		short = L["Nexus-Point Xenas_short"],
+	[1316] = {
+		seasonMapID = 559,
+		name = select(1, EJ_GetInstanceInfo(1316)) or "Nexus-Point Xenas",
 		encounters = {
 			[3328] = {events = {106, 107, 108, 172}, journalID = 2813, privateAuras = {1251626, 1251772, 1264042, 1276485}},
 			[3332] = {events = {33, 34, 35, 36, 313}, journalID = 2814, privateAuras = {1247975, 1249020, 1252828}},
 			[3333] = {events = {109, 110, 111, 112}, journalID = 2815, privateAuras = {1255310, 1255335, 1255503}},
 		},
 	},
-	[560] = {
-		portalID = 1254559,
-		name = L["Maisara Caverns"],
-		short = L["Maisara Caverns_short"],
+	[1315] = {
+		seasonMapID = 560,
+		name = select(1, EJ_GetInstanceInfo(1315)) or "Maisara Caverns",
 		encounters = {
 			[3212] = {events = {150, 151, 152, 153, 154, 155}, journalID = 2810, privateAuras = {1243741, 1243752, 1249478, 1260643, 1266488}},
 			[3213] = {events = {16, 17, 18, 19, 20}, journalID = 2811, privateAuras = {1251568, 1251775, 1251813, 1251833, 1252130, 1266706}},
 			[3214] = {events = {156, 157, 158}, journalID = 2812, privateAuras = {1251023, 1252675, 1252777, 1252816, 1253779, 1253844, 1254043, 1254175, 1255629, 1266188}},
 		},
 	},
-	[161] = {
-		portalID = 1254557,
-		name = L["Skyreach"],
-		short = L["Skyreach_short"],
+	[476] = {
+		seasonMapID = 161,
+		name = select(1, EJ_GetInstanceInfo(476)) or "Skyreach",
 		encounters = {
 			[1698] = {events = {298, 299, 300, 301}, journalID = 965, privateAuras = {153757, 1252733}},
 			[1699] = {events = {302, 303, 304}, journalID = 966, privateAuras = {154150}},
@@ -57,10 +51,9 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[1701] = {events = {309, 310, 311, 312}, journalID = 968, privateAuras = {153954, 1253541}},
 		},
 	},
-	[557] = {
-		portalID = 1254400,
-		name = L["Windrunner Spire"],
-		short = L["Windrunner Spire_short"],
+	[1299] = {
+		seasonMapID = 557,
+		name = select(1, EJ_GetInstanceInfo(1299)) or "Windrunner Spire",
 		encounters = {
 			[3056] = {events = {239, 241, 242}, journalID = 2655, privateAuras = {466091, 466559, 470212, 472118}},
 			[3057] = {events = {25, 26, 27, 28, 29}, journalID = 2656, privateAuras = {472777, 472793, 472888, 474129, 1253834, 1215803, 1219491, 1282272}},
@@ -68,10 +61,9 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3059] = {events = {21, 22, 23, 24, 538}, journalID = 2658, privateAuras = {468442, 472662, 474528, 1282911, 1216042, 1253979, 1282955}},
 		},
 	},
-	[558] = {
-		portalID = 1254572,
-		name = L["Magister's Terrace"],
-		short = L["Magister's Terrace_short"],
+	[1300] = {
+		seasonMapID = 558,
+		name = select(1, EJ_GetInstanceInfo(1300)) or "Magister's Terrace",
 		encounters = {
 			[3071] = {events = {281, 286, 287, 288}, journalID = 2659, privateAuras = {1214038, 1214089, 1243905}},
 			[3072] = {events = {93, 94, 95, 513, 96}, journalID = 2661, privateAuras = {1225015, 1225205, 1225792, 1246446}},
@@ -79,19 +71,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3074] = {events = {290, 292, 420}, journalID = 2662, privateAuras = {1215157, 1215161, 1215897, 1269631}},
 		},
 	},
-	[556] = {
-		portalID = 1254555,
-		name = L["Pit of Saron"],
-		short = L["Pit of Saron_short"],
+	[278] = {
+		seasonMapID = 556,
+		name = select(1, EJ_GetInstanceInfo(278)) or "Pit of Saron",
 		encounters = {
 			[1999] = {events = {144, 145, 146, 147}, journalID = 608, privateAuras = {1261286, 1261799}},
 			[2000] = {events = {164, 165, 166, 167, 168, 375}, journalID = 610, privateAuras = {1262772, 1262596}},
 			[2001] = {events = {203, 204, 205, 206, 561}, journalID = 609, privateAuras = {1264186, 1264453, 1264299}},
 		},
 	},
-	-- MARK: M5 Dungeons 
+	-- MARK: Non-season Dungeons 
 	[1309] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1309)) or "The Blinding Vale",
 		encounters = {
 			[3199] = {
@@ -117,7 +107,6 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		},
 	},
 	[1304] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1304)) or "Murder Row",
 		encounters = {
 			[3101] = {
@@ -143,7 +132,6 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		},
 	},
 	[1311] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1311)) or "Den of Nalorakk",
 		encounters = {
 			[3207] = {
@@ -165,7 +153,6 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		},
 	},
 	[1313] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1313)) or "Voidscar Arena",
 		encounters = {
 			[3285] = {
@@ -186,9 +173,8 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 
 		},
 	},
-    -- MARK: Raid
+    -- -- MARK: Raid
 	[1314] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1314)) or "The Dreamrift",
 		encounters = {
 			[3306] = {
@@ -199,7 +185,6 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		},
 	},
 	[1307] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1307)) or "The Voidspire",
 		encounters = {
 			[3176] = {
@@ -235,7 +220,6 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		},
 	},
 	[1308] = {
-		portalID = 000000,
 		name = select(1, EJ_GetInstanceInfo(1308)) or "March on Quel'Danas",
 		encounters = {
 			[3182] = {
