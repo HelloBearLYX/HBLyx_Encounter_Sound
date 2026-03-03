@@ -22,7 +22,7 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 L["ChangeLog"] = "Change Log"
 L["ChangeLogContent"] =
 "v3.12\n" ..
-"-Encounter Sound: totally despatch the Encounter Sound module from |cff8788eeHBLyx_Tools|r, and put it as a standalone module |cff8788eeHBLyx_Encounter_Sound|r\n" ..
+"-Encounter Sound: totally dispatch the Encounter Sound module from |cff8788eeHBLyx_Tools|r, and put it as a standalone module |cff8788eeHBLyx_Encounter_Sound|r\n" ..
 "v3.11\n" ..
 "-Encounter Sound: add a new option to set group role for encounter events sound alert\n" ..
 "v3.10\n" ..
