@@ -89,13 +89,165 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2001] = {events = {203, 204, 205, 206, 561}, journalID = 609, privateAuras = {1264186, 1264453, 1264299}},
 		},
 	},
-    -- MARK: Pre-patch 11.2.7
-    [503] = {portalID = 445417, short = L["ARAK"]},
-    [505] = {portalID = 445414, short = L["TD"]},
-    [542] = {portalID = 1237215, short = L["ED"]},
-    [378] = {portalID = 354465, short = L["HOA"]},
-    [525] = {portalID = 1216786, short = L["OF"]},
-    [499] = {portalID = 445444, short = L["PSF"]},
-    [392] = {portalID = 367416, short = L["GAMBIT"]},
-    [391] = {portalID = 367416, short = L["STREET"]}
+	-- MARK: M5 Dungeons 
+	[1309] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1309)) or "The Blinding Vale",
+		encounters = {
+			[3199] = {
+				events = {177, 173, 174, 175, 176},
+				journalID = 2769,
+				privateAuras = {1234802, 1235574, 1235828, 1235865}
+			},
+			[3200] = {
+				events = {179, 180, 178},
+				journalID = 2770,
+				privateAuras = {1237091, 1237267, 1272290}
+			},
+			[3201] = {
+				events = {181, 182, 184, 188, 115, 183},
+				journalID = 2771,
+				privateAuras = {1239825, 1239919, 1241058, 1251345, 1257094}
+			},
+			[3202] = {
+				events = {192, 191, 189, 190},
+				journalID = 2772,
+				privateAuras = {1246751, 1246753, 1247746}
+			},
+		},
+	},
+	[1304] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1304)) or "Murder Row",
+		encounters = {
+			[3101] = {
+				events = {610, 202, 122, 120},
+				journalID = 2679,
+				privateAuras = {1228198}
+			},
+			[3102] = {
+				events = {124, 127, 193, 123, 125},
+				journalID = 2680,
+				privateAuras = {474515, 474545, 1214352}
+			},
+			[3103] = {
+				events = {30, 31, 559, 32},
+				journalID = 2681,
+				privateAuras = {473898, 474234, 1214650}
+			},
+			[3105] = {
+				events = {37, 207},
+				journalID = 2682,
+				privateAuras = {}
+			},
+		},
+	},
+	[1311] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1311)) or "Den of Nalorakk",
+		encounters = {
+			[3207] = {
+				events = {86, 87, 88},
+				journalID = 2776,
+				privateAuras = {1234846, 1235125}
+			},
+			[3208] = {
+				events = {67, 70, 68, 69},
+				journalID = 2777,
+				privateAuras = {1235549, 1235829, 1235841, 1235641, 1236289}
+			},
+			[3209] = {
+				events = {92, 90, 89, 91},
+				journalID = 2778,
+				privateAuras = {1242869, 1243590, 1255577, 1262253, 1261781}
+			},
+
+		},
+	},
+	[1313] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1313)) or "Voidscar Arena",
+		encounters = {
+			[3285] = {
+				events = {39, 558, 40, 42, 41},
+				journalID = 2791,
+				privateAuras = {1222103, 1262283}
+			},
+			[3286] = {
+				events = {297, 47, 54, 55, 46, 557},
+				journalID = 2792,
+				privateAuras = {1222484, 1222642, 1226031, 1263971}
+			},
+			[3287] = {
+				events = {56, 57, 58, 171},
+				journalID = 2793,
+				privateAuras = {1227197, 1248130, 1264188}
+			},
+
+		},
+	},
+    -- MARK: Raid
+	[1314] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1314)) or "The Dreamrift",
+		encounters = {
+			[3306] = {
+				events = {118, 117, 307, 119, 51, 53, 458, 50, 149, 431, 555, 49, 217, 48},
+				journalID = 2795,
+				privateAuras = {1245698, 1262020, 1250953, 1253744, 1264756, 1272726, 1246653, 1257087}
+			},
+		},
+	},
+	[1307] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1307)) or "The Voidspire",
+		encounters = {
+			[3176] = {
+				events = {197, 200, 194, 195, 201, 198, 492, 199, 209, 419, 196},
+				journalID = 2733,
+				privateAuras = {1275059, 1280075, 1284786, 1265540, 1283069}
+			},
+			[3177] = {
+				events = {133, 59, 60, 62, 61},
+				journalID = 2734,
+				privateAuras = {1259186, 1272527, 1243270, 1241844}
+			},
+			[3179] = {
+				events = {140, 143, 148, 141, 142, 139},
+				journalID = 2736,
+				privateAuras = {1250828, 1245960, 1250991, 1245592, 1251213, 1248697, 1248709, 1250686}
+			},
+			[3178] = {
+				events = {104, 105, 221, 220, 551, 101, 102, 381, 103},
+				journalID = 2735,
+				privateAuras = {1244672, 1252157, 1264467, 1245554, 1270852, 1245175, 1265152, 1255763}
+			},
+			[3180] = {
+				events = {74, 80, 85, 79, 365, 78, 82, 71, 81, 75, 77, 373, 358, 359, 360, 535, 83, 374, 84, 76, 73},
+				journalID = 2737,
+				privateAuras = {1276982, 1272324, 1246736, 1251857, 1249130, 1258514}
+			},
+			[3181] = {
+				events = {15, 8, 12, 66, 65, 11, 131, 4, 14, 132, 13, 10, 5, 9, 137, 7, 6, 64},
+				journalID = 2738,
+				privateAuras = {1233602, 1242553, 1233865, 1243753, 1238206, 1237038, 1232470, 1238708}
+			},
+		},
+	},
+	[1308] = {
+		portalID = 000000,
+		name = select(1, EJ_GetInstanceInfo(1308)) or "March on Quel'Danas",
+		encounters = {
+			[3182] = {
+				events = {130, 494, 482, 384, 497, 134, 272, 138, 161, 273, 218, 495, 483, 385, 128},
+				journalID = 2739,
+				privateAuras = {1245698, 1262020, 1250953, 1253744, 1264756, 1272726, 1246653, 1257087}
+			},
+			[3183] = {
+				events = {632, 259, 261, 364, 256, 434, 363, 437, 435, 362, 255, 433, 258, 636, 260, 405, 263, 262, 436, 650, 649, 644},
+				journalID = 2740,
+				privateAuras = {1282027, 1249609, 1249584, 1251789, 1284699, 1265842, 1262055, 1281184, 1266113, 1253104}
+			},
+		},
+	},
 }
