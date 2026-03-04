@@ -353,14 +353,14 @@ end
 function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 	local frame = GUI:CreateScrollFrame(parent)
 
-	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " " .. L["VictorySound"], addon.db.EncounterSound.EnableVictorySound, function(value)
+	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["VictorySound"] .. "|r", addon.db.EncounterSound.EnableVictorySound, function(value)
 		addon.db.EncounterSound.EnableVictorySound = value
 	end)
 	GUI:CreateSoundSelect(frame, L["VictorySound"], addon.db.EncounterSound.VictorySound, function(value)
 		addon.db.EncounterSound.VictorySound = value
 	end)
 	GUI:CreateInformationTag(frame, "\n")
-	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " " .. L["StartSound"], addon.db.EncounterSound.EnableStartSound, function(value)
+	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["StartSound"] .. "|r", addon.db.EncounterSound.EnableStartSound, function(value)
 		addon.db.EncounterSound.EnableStartSound = value
 	end)
 	GUI:CreateSoundSelect(frame, L["StartSound"], addon.db.EncounterSound.StartSound, function(value)
