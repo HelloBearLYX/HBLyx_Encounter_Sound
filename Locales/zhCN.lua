@@ -92,6 +92,10 @@ L["PrivateAura"] = "私有光环"
 L["EncounterSoundEffects"] = "BOSS战音效"
 L["VictorySound"] = "胜利音效"
 L["StartSound"] = "BOSS战开始音效"
+L["TestTimeline"] = "测试时间轴"
+L["TestLoadFailed"] = "测试|cffff0000失败|r: 没有找到BOSS战数据: "
+L["TestLoadSuccess"] = "测试加载|cff00ff00成功|r: 测试BOSS战: "
+L["ClearPrivateAurasData"] = "已清除注册的私有光环音效数据: "
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"
@@ -126,7 +130,8 @@ L["EncounterEventsInstruction"] = "要设置音效, 选择|cffffff00一个事件
 "|cffff5c00事件高亮时|r: 当时间轴上的事件|cffff5c00将在5秒内完成|r时触发\n" ..
 "更多关于触发器的信息在: |cff00ffffhttps://warcraft.wiki.gg/wiki/API_C_EncounterEvents.SetEventSound|r\n\n" ..
 "例子: 如果你需要一个\"准备AoE-3-2-1\", 你应该将\"准备AoE\"和倒计时音效合并到一个媒体文件中, 并设置在\"事件高亮\"触发器上播放(在AoE的5秒前播放)\n\n" ..
-"|cffff0000注意|r: 你必须|cffffff00启用暴雪的首领预警(包括文本警告和时间轴)|r, 才能让相应的事件触发器激活\n"
+"|cffff0000注意|r: 你必须|cffffff00启用暴雪的首领预警(包括文本警告和时间轴)|r, 才能让相应的事件触发器激活\n\n" ..
+"|cffffff00测试时间轴|r: 会模拟本Boss所有的时间轴事件(非实际Boss时间轴), 并以6秒为间隔, 以便测试设置的正确性和效果, 但是实际时间轴时间表现可能会不同\n\n"
 L["PrivateAuraInstruction"] = "为私有光环应用一个声音警报, 当私有光环被施加在\"玩家\"身上时播放声音警报\n\n" ..
 "为了防止不必要的冲突或冗余, 私有光环的锚点在这个模块中没有提供, 因为有许多UI插件提供了私有光环的自定义位置\n\n" ..
 "|cffff0000注意|r: 由于暴雪(03/02/2026)删除了大量副本中的私有光环, |cffff0000部分私有光环设置被暂时不会生效|r。即使如此, 如果之前已经设置了私有光环警报, 它们仍然可以正常工作, 如果这个私有光环还存在的话。"

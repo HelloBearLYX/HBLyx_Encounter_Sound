@@ -326,6 +326,9 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 		inputEncounter = value
 
 		GUI:CreateInformationTag(settingsGroup, L["EncounterEventsInstruction"], "LEFT")
+		GUI:CreateButton(settingsGroup, L["TestTimeline"], function()
+			addon.core:GetModule(MOD_KEY):TestSound(inputEncounter)
+		end)
 		RenderEncounterSettings(inputMap, inputEncounter, settingsGroup)
 		GUI:CreateInformationTag(privateAuraGroup, L["PrivateAuraInstruction"], "LEFT")
 		RenderPrivateAuraSettings(inputMap, inputEncounter, privateAuraGroup)

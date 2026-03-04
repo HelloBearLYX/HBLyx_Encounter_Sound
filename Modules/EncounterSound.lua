@@ -145,7 +145,7 @@ local function ClearPrivateAuraSounds(self)
             C_UnitAuras.RemovePrivateAuraAppliedSound(pa)
         end
         self.privateAuras = {}
-        addon.Utilities:print("End of encounter: cleared registed private aura sounds")
+        addon.Utilities:print(L["ClearPrivateAurasData"] .. "|cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
     end
 end
 
@@ -170,6 +170,47 @@ local function PlayStartSound()
         if sound then
             PlaySoundFile(sound, addon.db.EncounterSound.SoundChannel or "Master")
         end
+    end
+end
+
+-- MARK: Test Sound
+
+local function TestHelper(encounterID, eventID, timeOffset)
+    local info = C_EncounterEvents.GetEventInfo(eventID)
+    local color = addon.db.EncounterSound.data[encounterID][eventID].color or "ffffffff"
+    local timelineID = C_EncounterTimeline.AddScriptEvent({
+        spellID = info.spellID,
+        duration = 10 + (timeOffset or 0),
+        severity = info.severity,
+        iconFileID = info.iconFileID,
+        overrideName = "|c" .. color .. C_Spell.GetSpellInfo(info.spellID).name .. "|r(Test)",
+    })
+
+    for trigger, data in pairs(addon.db.EncounterSound.data[encounterID][eventID]) do
+        if trigger ~= "color" and type(trigger) == "number" then
+            if trigger == 1 then
+                C_Timer.After(10 + (timeOffset or 0), function()
+                    PlaySoundFile(addon.LSM:Fetch("sound", data.sound), addon.db.EncounterSound.SoundChannel or "Master")
+                end)
+            elseif trigger == 2 then
+                C_Timer.After(5 + (timeOffset or 0), function()
+                    PlaySoundFile(addon.LSM:Fetch("sound", data.sound), addon.db.EncounterSound.SoundChannel or "Master")
+                end)
+            end
+        end
+    end
+end
+
+function EncounterSound:TestSound(encounterID)
+    if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] then
+        addon.Utilities:print(L["TestLoadSuccess"] .. "|cffffff00" .. encounterID .. "|r")
+        local timeOffset = 0
+        for eventID, _ in pairs(addon.db.EncounterSound.data[encounterID]) do
+            TestHelper(encounterID, eventID, timeOffset)
+            timeOffset = timeOffset + 6
+        end
+    else
+        addon.Utilities:print(L["TestLoadFailed"] .. "|cffffff00" .. encounterID .. "|r")
     end
 end
 
