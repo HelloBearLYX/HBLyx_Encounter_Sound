@@ -89,6 +89,9 @@ L["RightButton"] = "右键"
 L["HideMinimapIcon"] = "隐藏小地图图标"
 L["Select"] = "选择"
 L["PrivateAura"] = "私有光环"
+L["EncounterSoundEffects"] = "BOSS战音效"
+L["VictorySound"] = "胜利音效"
+L["StartSound"] = "BOSS战开始音效"
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"

@@ -88,6 +88,9 @@ L["RightButton"] = "Right Click"
 L["HideMinimapIcon"] = "Hide Minimap Icon"
 L["Select"] = "Select"
 L["PrivateAura"] = "Private Aura"
+L["EncounterSoundEffects"] = "Encounter Sound Effects"
+L["VictorySound"] = "Victory Sound"
+L["StartSound"] = "Encounter Start Sound"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"

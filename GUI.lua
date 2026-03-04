@@ -13,6 +13,7 @@ addon.GUI = {
 -- MARK: TABS
 local TABS = {
     {text = L["General"], value = "General"},
+    {text = L["EncounterSoundEffects"], value = "EncounterGeneral"},
     {text = L["Raid"], value = "Raid"},
     {text = L["Dungeon"], value = "Dungeon"},
     {text = L["Profile"], value = "Profile"},
@@ -123,6 +124,9 @@ function addon.GUI:Render()
         -- General Panel
         if tab == "General" then
             local panel = CreateGeneralPanel(container)
+            panel:DoLayout()
+        elseif tab == "EncounterGeneral" then
+            local panel = addon.GUI.TagPanels.EncounterSound:CreateGeneralPanel(container)
             panel:DoLayout()
         elseif tab == "Raid" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true)

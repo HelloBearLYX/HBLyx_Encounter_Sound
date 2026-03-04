@@ -8,6 +8,10 @@ addon.configurationList[MOD_KEY] = {
 	Enabled = true,
 	SoundChannel = "Master",
 	EnablePrivateAuras = true,
+	EnableVictorySound = false,
+	VictorySound = "",
+	EnableStartSound = false,
+	StartSound = "",
 	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
 	dataPA = {}, -- data structure: { [encounterID] = { [spellID] = sound } }
 }
@@ -341,6 +345,27 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 	selectGroup:AddChild(encounterGroup)
 	selectGroup:AddChild(settingsGroup)
 	selectGroup:AddChild(privateAuraGroup)
+
+	return frame
+end
+
+-- MARK: General Sound Panel
+function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
+	local frame = GUI:CreateScrollFrame(parent)
+
+	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " " .. L["VictorySound"], addon.db.EncounterSound.EnableVictorySound, function(value)
+		addon.db.EncounterSound.EnableVictorySound = value
+	end)
+	GUI:CreateSoundSelect(frame, L["VictorySound"], addon.db.EncounterSound.VictorySound, function(value)
+		addon.db.EncounterSound.VictorySound = value
+	end)
+	GUI:CreateInformationTag(frame, "\n")
+	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " " .. L["StartSound"], addon.db.EncounterSound.EnableStartSound, function(value)
+		addon.db.EncounterSound.EnableStartSound = value
+	end)
+	GUI:CreateSoundSelect(frame, L["StartSound"], addon.db.EncounterSound.StartSound, function(value)
+		addon.db.EncounterSound.StartSound = value
+	end)
 
 	return frame
 end

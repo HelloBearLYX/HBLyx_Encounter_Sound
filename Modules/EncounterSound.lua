@@ -145,7 +145,31 @@ local function ClearPrivateAuraSounds(self)
             C_UnitAuras.RemovePrivateAuraAppliedSound(pa)
         end
         self.privateAuras = {}
-        addon.Utilities:print("End of encounter: cleared registed")
+        addon.Utilities:print("End of encounter: cleared registed private aura sounds")
+    end
+end
+
+-- MARK: Victory Sound
+
+--- Play victory sound if enabled
+local function PlayVictorySound()
+    if addon.db.EncounterSound.EnableVictorySound and addon.db.EncounterSound.VictorySound then
+        local sound = addon.LSM:Fetch("sound", addon.db.EncounterSound.VictorySound)
+        if sound then
+            PlaySoundFile(sound, addon.db.EncounterSound.SoundChannel or "Master")
+        end
+    end
+end
+
+-- MARK: Start Sound
+
+--- Play start sound if enabled
+local function PlayStartSound()
+    if addon.db.EncounterSound.EnableStartSound and addon.db.EncounterSound.StartSound then
+        local sound = addon.LSM:Fetch("sound", addon.db.EncounterSound.StartSound)
+        if sound then
+            PlaySoundFile(sound, addon.db.EncounterSound.SoundChannel or "Master")
+        end
     end
 end
 
@@ -160,11 +184,18 @@ function EncounterSound:RegisterEvents()
         elseif currentEncounter == 0 then -- encounter ended
             -- only clear private aura sounds
             ClearPrivateAuraSounds(self)
+
+            if addon.states["encounterInfo"].success == 1 then
+                PlayVictorySound()
+            end
+
+            return
         end
 
         self.role = UnitGroupRolesAssigned("player") or nil -- update current role
         LoadEventSounds(self, currentEncounter)
         LoadPrivateAuraSounds(self, currentEncounter)
+        PlayStartSound()
     end)
 end
 

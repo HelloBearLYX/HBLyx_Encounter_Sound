@@ -117,13 +117,13 @@ local function InitializeStates()
 	addon.states = {}
 
 	-- encounter info
-	addon.states["encounterInfo"] = {encounterID = 0, encounterName = ""} -- "ADDON_LOADED"
+	addon.states["encounterInfo"] = {encounterID = 0, encounterName = "", success = 0} -- "ADDON_LOADED"
 	addon.core:RegisterState("ENCOUNTER_START", nil, "encounterInfo", function (...)
 		local encounterID, encounterName = ... -- the args passed by ENCOUNTER_START event
-		addon.states["encounterInfo"] = {encounterID = encounterID, encounterName = encounterName}
+		addon.states["encounterInfo"] = {encounterID = encounterID, encounterName = encounterName, success = 0}
 	end)
 	addon.core:RegisterState("ENCOUNTER_END", nil, "encounterInfo", function (...)
-		addon.states["encounterInfo"] = {encounterID = 0, encounterName = ""}
+		addon.states["encounterInfo"] = {encounterID = 0, encounterName = "", success = select(5, ...)}
 	end)
 end
 
