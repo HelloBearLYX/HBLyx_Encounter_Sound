@@ -208,6 +208,7 @@ function addon.DeveloperTools:DisplayAddonInfo()
     -- end
     -- output["Data"] = ScanPrivateAuras()
     -- output["Data"] = self:FecthAllEncounterSections(2793, 23) -- get encounter spellIDs
+    output["Data"] = self:AttemptsFetchAllEEInfo() -- get encounter events info
 
     if self.isOpened and self.displayFrame then
         self.displayFrame:Hide()
