@@ -14,6 +14,9 @@ function GUI.TagPanels.Profile:CreateTabPanel(parent)
     -- MARK: General Profile
     local generalProfileGroup = GUI:CreateInlineGroup(frame, L["Profile"])
     GUI:CreateInformationTag(generalProfileGroup, L["ProfileSettingsDesc"], "LEFT")
+    GUI:CreateEditBox(generalProfileGroup, L["CurrentProfile"], addon.db["EncounterSound"].ProfileName or "None", function(value)
+        addon.db["EncounterSound"].ProfileName = value
+    end)
     GUI:CreateMultiLineEditBox(generalProfileGroup, L["Export"], addon:ExportProfile(), nil)
     GUI:CreateMultiLineEditBox(generalProfileGroup, L["Import"], "", function(value)
         addon:ImportProfile(value)
@@ -58,6 +61,12 @@ function addon:ImportProfile(data)
 
     addon.db["EncounterSound"] = profileData["EncounterSound"]
     addon.Utilities:print(L["ImportSuccess"])
+
+    addon.Utilities:SetPopupDialog(
+        "HB_Import_Success",
+        L["CurrentProfile"] .. "|cffff0d01" .. addon.db["EncounterSound"].ProfileName .. "|r\n" .. L["ImportSuccess"],
+        true
+    )
 
     return true
 end

@@ -3,7 +3,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale(ADDON_NAME, "enUS", true)
 
 L["Welecome"] = "|cff8788ee" .. ADDON_NAME .. "|r: Welcome! Your profile has been reset, and you can set up in: ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
 L["WelecomeInfo"] = "Welecome! Thank you for using |cff8788ee" .. ADDON_NAME .. "|r!"
-L["WelecomeSetting"] = "You can change settings with \"|cff8788ee/hblyx|r\" or open configuration panel in ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
+L["WelecomeSetting"] = "You can change settings with \"|cff8788ee/hbes|r\" or open configuration panel in ESC-Options-AddOns-|cff8788ee" .. ADDON_NAME .. "|r"
 L["GUITitle"] = "|cff8788ee" .. ADDON_NAME .. "|r Configurations Panel"
 L["CombatLock"] = "|cffff0000In combat|r, cannot open the configuration panel or turn on test mode"
 L["Notifications"] = "Notifications"
@@ -95,6 +95,7 @@ L["TestTimeline"] = "Test Timeline"
 L["TestLoadFailed"] = "Test |cffff0000Failed|r: No data found for encounter: "
 L["TestLoadSuccess"] = "Test load |cff00ff00success|r: Test for encounter: "
 L["ClearPrivateAurasData"] = "Cleared registed private aura sounds data: "
+L["CurrentProfile"] = "Current Profile: "
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"

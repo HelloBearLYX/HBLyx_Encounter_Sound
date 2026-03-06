@@ -12,6 +12,7 @@ addon.configurationList[MOD_KEY] = {
 	VictorySound = "",
 	EnableStartSound = false,
 	StartSound = "",
+	ProfileName = "Default",
 	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
 	dataPA = {}, -- data structure: { [encounterID] = { [spellID] = sound } }
 }

@@ -4,7 +4,7 @@ if not L then return end
 
 L["Welecome"] = "|cff8788ee" .. ADDON_NAME .. "|r: 欢迎! 你的配置已经被重置, 你可以在: ESC-选项-插件-|cff8788ee" .. ADDON_NAME .. "|r里更改设置"
 L["WelecomeInfo"] = "欢迎! 感谢你使用|cff8788ee" .. ADDON_NAME .. "|r!"
-L["WelecomeSetting"] = "你可以使用 \"|cff8788ee/hblyx|r\" 命令或在 ESC-选项-插件-|cff8788ee" .. ADDON_NAME .. "|r 中打开配置面板来更改设置"
+L["WelecomeSetting"] = "你可以使用 \"|cff8788ee/hbes|r\" 命令或在 ESC-选项-插件-|cff8788ee" .. ADDON_NAME .. "|r 中打开配置面板来更改设置"
 L["GUITitle"] = "|cff8788ee" .. ADDON_NAME .. "|r配置面板"
 L["CombatLock"] = "|cffff0000战斗中|r, 无法打开配置面板或开启测试模式"
 L["Notifications"] = "通知"
@@ -96,6 +96,7 @@ L["TestTimeline"] = "测试时间轴"
 L["TestLoadFailed"] = "测试|cffff0000失败|r: 没有找到BOSS战数据: "
 L["TestLoadSuccess"] = "测试加载|cff00ff00成功|r: 测试BOSS战: "
 L["ClearPrivateAurasData"] = "已清除注册的私有光环音效数据: "
+L["CurrentProfile"] = "当前配置文件: "
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"
