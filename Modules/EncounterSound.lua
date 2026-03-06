@@ -15,6 +15,7 @@ local EncounterSound = {
 function EncounterSound:Initialize()
     self.privateAuras = {}
     self.role = nil
+    self.lastEncounterID = nil
 
     -- 3.11 data change migration
     if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.13") then
@@ -94,6 +95,28 @@ local function LoadEventSounds(self, encounterID)
     end
 end
 
+-- MARK: Clear Event Sounds
+
+local function ClearEventSounds(self, encounterID)
+    if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] then
+        local encounterData = addon.db.EncounterSound.data[encounterID]
+        for eventID, eventData in pairs(encounterData) do
+            -- do not reset color if not needed(still considering)
+            -- C_EncounterEvents.SetEventColor(eventID, CreateColor(1, 1, 1, 1)) -- reset to white
+            for attribute, value in pairs(eventData) do
+                if attribute ~= "color" then
+                    local trigger = tonumber(attribute)
+                    if trigger then
+                        C_EncounterEvents.SetEventSound(eventID, trigger, nil) -- clear sound
+                    end
+                end
+            end
+        end
+
+        addon.Utilities:print(L["ClearEventSound"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
+    end
+end
+
 -- MARK: Load PA Sounds
 
 ---Load private aura sounds for the given encounter ID
@@ -128,7 +151,7 @@ local function ClearPrivateAuraSounds(self)
             C_UnitAuras.RemovePrivateAuraAppliedSound(pa)
         end
         self.privateAuras = {}
-        addon.Utilities:print(L["ClearPrivateAurasData"] .. "|cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
+        addon.Utilities:print(L["ClearPrivateAurasData"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
     end
 end
 
@@ -208,6 +231,7 @@ function EncounterSound:RegisterEvents()
         elseif currentEncounter == 0 then -- encounter ended
             -- only clear private aura sounds
             ClearPrivateAuraSounds(self)
+            ClearEventSounds(self, self.lastEncounterID)
 
             if addon.states["encounterInfo"].success == 1 then
                 PlayVictorySound()
@@ -216,6 +240,7 @@ function EncounterSound:RegisterEvents()
             return
         end
 
+        self.lastEncounterID = currentEncounter
         self.role = UnitGroupRolesAssigned("player") or nil -- update current role
         LoadEventSounds(self, currentEncounter)
         LoadPrivateAuraSounds(self, currentEncounter)
