@@ -67,7 +67,7 @@ function addon:ImportProfile(data)
 
     addon.Utilities:SetPopupDialog(
         "HB_Import_Success",
-        L["CurrentProfile"] .. "|cffff0d01" .. addon.db["EncounterSound"].ProfileName .. "|r\n" .. L["ImportSuccess"],
+        L["CurrentProfile"] .. "|cffff0d01" .. (addon.db["EncounterSound"].ProfileName or "Default") .. "|r\n" .. L["ImportSuccess"],
         true
     )
 

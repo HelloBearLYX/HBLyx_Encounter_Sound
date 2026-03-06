@@ -25,7 +25,18 @@ local EVENT_TRIGGERS = {
 }
 
 -- MARK: Adds
+
+---Add Sounds to DB
+---@param encounterID integer encounterID
+---@param eventID integer eventID
+---@param trigger integer trigger type, 0 for text warning shown, 1 for timeline event finished, 2 for timeline event highlighted
+---@param sound string sound file path or sound kit ID
+---@param role table<string, boolean>|nil role table for group roles
 local function AddSound(encounterID, eventID, trigger, sound, role)
+	if not encounterID or not eventID or not trigger or not sound then
+		return
+	end
+
 	local isNew = false
 	if not addon.db.EncounterSound.data then
 		addon.db.EncounterSound.data = {}
@@ -48,13 +59,21 @@ local function AddSound(encounterID, eventID, trigger, sound, role)
 	end
 
 	if isNew then
-		addon.Utilities:print(string.format("%d-%d-%s-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], sound, L["AddSuccess"]))
+		addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, eventID, sound, L["AddSuccess"]))
 	else
-		addon.Utilities:print(string.format("%d-%d-%s-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], sound, L["UpdateSuccess"]))
+		addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, eventID, sound, L["UpdateSuccess"]))
 	end
 end
 
+---Set color for an encounter event.
+---@param encounterID integer encounterID
+---@param eventID integer eventID
+---@param color string hex color string
 local function AddColor(encounterID, eventID, color)
+	if not encounterID or not eventID or not color then
+		return
+	end
+
 	if not addon.db.EncounterSound.data then
 		addon.db.EncounterSound.data = {}
 	end
@@ -70,7 +89,15 @@ local function AddColor(encounterID, eventID, color)
 	addon.db.EncounterSound.data[encounterID][eventID].color = color
 end
 
+---Add private aura sound mapping to DB.
+---@param encounterID integer encounterID
+---@param spellID integer private aura spellID
+---@param sound string sound file path or sound kit ID
 local function AddPASound(encounterID, spellID, sound)
+	if not encounterID or not spellID or not sound then
+		return
+	end
+
 	if not addon.db.EncounterSound.dataPA then
 		addon.db.EncounterSound.dataPA = {}
 	end
@@ -85,7 +112,16 @@ local function AddPASound(encounterID, spellID, sound)
 end
 
 -- MARK: Removes
+---Remove one trigger sound from DB.
+---@param encounterID integer encounterID
+---@param eventID integer eventID
+---@param trigger integer trigger type
+---@return boolean removed true if removed
 local function RemoveSound(encounterID, eventID, trigger)
+	if not encounterID or not eventID or not trigger then
+		return false
+	end
+
 	if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] and addon.db.EncounterSound.data[encounterID][eventID][trigger] then
 		addon.db.EncounterSound.data[encounterID][eventID][trigger] = nil
 		if not next(addon.db.EncounterSound.data[encounterID][eventID]) then
@@ -94,14 +130,22 @@ local function RemoveSound(encounterID, eventID, trigger)
 		if not next(addon.db.EncounterSound.data[encounterID]) then
 			addon.db.EncounterSound.data[encounterID] = nil
 		end
-		addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, eventID, EVENT_TRIGGERS[trigger], L["RemoveSuccess"]))
+		addon.Utilities:print(string.format("%d-%d: %s", encounterID, eventID, L["RemoveSuccess"]))
 		return true
 	end
 
 	return false
 end
 
+---Remove event color from DB.
+---@param encounterID integer encounterID
+---@param eventID integer eventID
+---@return boolean removed true if removed
 local function RemoveColor(encounterID, eventID)
+	if not encounterID or not eventID then
+		return false
+	end
+
 	if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
 		addon.db.EncounterSound.data[encounterID][eventID].color = nil
 		if not next(addon.db.EncounterSound.data[encounterID][eventID]) then
@@ -118,7 +162,15 @@ local function RemoveColor(encounterID, eventID)
 	end
 end
 
+---Remove private aura sound mapping from DB.
+---@param encounterID integer encounterID
+---@param spellID integer private aura spellID
+---@return boolean removed true if removed
 local function RemovePASound(encounterID, spellID)
+	if not encounterID or not spellID then
+		return false
+	end
+
 	if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][spellID] then
 		addon.db.EncounterSound.dataPA[encounterID][spellID] = nil
 		if not next(addon.db.EncounterSound.dataPA[encounterID]) then
@@ -133,6 +185,9 @@ local function RemovePASound(encounterID, spellID)
 end
 
 -- MARK: Get Maps List
+---Get instance map list filtered by raid or dungeon.
+---@param isRaid boolean true to return raid maps, false to return dungeon maps
+---@return table<integer, string> output mapID to display name
 local function GetMapsList(isRaid)
     local output = {}
     for mapID, mapInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS) do
@@ -145,6 +200,9 @@ local function GetMapsList(isRaid)
 end
 
 -- MARK: Get Encounters List
+---Get encounter list for one instance map.
+---@param mapID integer instance mapID
+---@return table<integer, string|integer> output encounterID to encounter name
 local function GetEncountersList(mapID)
 	local output = {}
 	if addon.data.MAP_ENCOUNTER_EVENTS[mapID] and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters then
@@ -156,135 +214,222 @@ local function GetEncountersList(mapID)
 	return output
 end
 
--- MARK: Render Settings
-local function CreateTimelineSettings(encounterID, eventID, container)
-	local soundGroup = GUI:CreateInlineGroup(container, L["SoundSettings"])
-	local inputTrigger, inputSound = nil, nil
-	local roleSelect = GUI:CreateMultiDropdown(nil, L["SelectGroupRole"], addon.Utilities.GroupRoles, nil, nil)
-	local soundSelect = GUI:CreateSoundSelect(nil, L["EncounterEventSound"], nil, function(key)
-		inputSound = key
-	end)
-	GUI:CreateDropdown(soundGroup, L["EncounterEventTrigger"], EVENT_TRIGGERS, nil, nil, function(value)
-		inputTrigger = value
-		if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] and addon.db.EncounterSound.data[encounterID][eventID][inputTrigger] then
-			inputSound = addon.db.EncounterSound.data[encounterID][eventID][inputTrigger].sound
-			if addon.db.EncounterSound.data[encounterID][eventID][inputTrigger].role then
-				roleSelect:SetSelectedKeys(addon.db.EncounterSound.data[encounterID][eventID][inputTrigger].role)
-			end
-			soundSelect:SetValue(inputSound)
-		else
-			inputSound = nil
-			soundSelect:SetValue(nil)
+-- MARK: Check data exist
 
-			roleSelect:ClearSelections()
-		end
-	end)
-	soundGroup:AddChild(roleSelect:GetWidget())
-	soundGroup:AddChild(soundSelect)
-	GUI:CreateButton(soundGroup, L["Add"], function()
-		if inputTrigger and inputSound then
-			AddSound(encounterID, eventID, inputTrigger, inputSound, roleSelect:GetSelectedKeys())
-		else
-			addon.Utilities:print(L["AddFailed"])
-		end
-	end)
-	GUI:CreateButton(soundGroup, L["Remove"], function()
-		if RemoveSound(encounterID, eventID, inputTrigger) then
-			inputSound = nil
-			soundSelect:SetValue(nil)
-			roleSelect:ClearSelections()
-		end
-	end)
-
-	local inputColor = nil
-	local colorGroup = GUI:CreateInlineGroup(container, L["ColorSettings"])
-	local color = "ffffff"
-	if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] and addon.db.EncounterSound.data[encounterID][eventID].color then
-		color = addon.db.EncounterSound.data[encounterID][eventID].color
+---Check whether encounter sound data exists at selected path.
+---@param encounterID integer encounterID
+---@param eventID integer|nil eventID
+---@param field string|integer|nil field key under event
+---@return table|boolean result nested table/value if exists, otherwise false
+local function CheckDataExist(encounterID, eventID, field)
+	local result = addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] or false
+	if result and eventID then
+		result = addon.db.EncounterSound.data[encounterID][eventID] or false
 	end
-	local colorPicker = GUI:CreateColorPicker(colorGroup, L["EventColor"], false, color, function(hex)
-		inputColor = hex
-		AddColor(encounterID, eventID, inputColor)
-	end)
-	GUI:CreateButton(colorGroup, L["Remove"], function()
-		if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] and addon.db.EncounterSound.data[encounterID][eventID].color then
-			if RemoveColor(encounterID, eventID) then
-				inputColor = "ffffff"
-				colorPicker:SetColor(addon.Utilities:HexToRGB("ffffff"))
+
+	if result and field then
+		result = addon.db.EncounterSound.data[encounterID][eventID][field] or false
+	end
+
+	return result
+end
+
+-- MARK: Reset Event Settings
+
+---Reset event controls and clear current event selection state.
+---@param self table encounter sound panel instance
+local function ResetEventSettings(self)
+	self.eventSelectGroup:ReleaseChildren()
+	self.eventDescription:SetText("|T134400:0|t" .. L["SelectAnEvent"])
+	self.eventColor:SetColor(addon.Utilities:HexToRGB("ffffffff"))
+	for trigger = 0, 2 do
+		self.triggers[trigger].sound = nil
+		self.triggers[trigger].soundDropdown:SetValue(nil)
+		self.triggers[trigger].role:ClearSelections()
+	end
+end
+
+-- MARK: Render Event Settings
+---Create trigger setting widgets for each event trigger type.
+---@param self table encounter sound panel instance
+local function SetTriggersSetting(self)
+	self.triggers = {}
+	for trigger, triggerName in pairs(EVENT_TRIGGERS) do
+		self.triggers[trigger] = GUI:CreateInlineGroup(self.eventSettingsGroup, triggerName)
+		self.triggers[trigger].sound = nil
+		
+		self.triggers[trigger].role = GUI:CreateMultiDropdown(nil, L["SelectGroupRole"], addon.Utilities.GroupRoles, nil, nil)
+		self.triggers[trigger].soundDropdown = GUI:CreateSoundSelect(nil, L["SoundSettings"], nil, function(value)
+			self.triggers[trigger].sound = value
+		end)
+		self.triggers[trigger].soundDropdown:SetRelativeWidth(0.5)
+
+		self.triggers[trigger]:AddChild(self.triggers[trigger].role:GetWidget())
+		self.triggers[trigger]:AddChild(self.triggers[trigger].soundDropdown)
+
+		-- Add
+		GUI:CreateButton(self.triggers[trigger], L["Add"], function()
+			AddSound(self.inputEncounter, self.inputEvent, trigger, self.triggers[trigger].sound, self.triggers[trigger].role:GetSelectedKeys())
+		end)
+		-- Remove
+		GUI:CreateButton(self.triggers[trigger], L["Remove"], function()
+			if RemoveSound(self.inputEncounter, self.inputEvent, trigger) then
+				self.triggers[trigger].sound = nil
+				self.triggers[trigger].soundDropdown:SetValue(nil)
+				self.triggers[trigger].role:ClearSelections()
 			end
-		else
-			addon.Utilities:print(string.format("%d-%d-Color: %s", encounterID, eventID, L["RemoveFailed"]))
+		end)
+	end
+end
+
+---Create event color picker and remove button.
+---@param self table encounter sound panel instance
+---@param colorGroup table GUI container for color controls
+local function SetColorSetting(self, colorGroup)
+	self.eventColor = GUI:CreateColorPicker(colorGroup, L["EventColor"], false, "ffffffff", function(hex)
+		AddColor(self.inputEncounter, self.inputEvent, hex)
+	end)
+
+	GUI:CreateButton(colorGroup, L["Remove"], function()
+		if RemoveColor(self.inputEncounter, self.inputEvent) then
+			self.eventColor:SetColor(addon.Utilities:HexToRGB("ffffffff"))
 		end
 	end)
 end
 
-local function RenderEncounterSettings(mapID, encounterID, container)
-	for _, eventID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[encounterID].events) do
+---Render event buttons for selected encounter and bind event detail loading.
+---@param self table encounter sound panel instance
+local function RenderEncounterSettings(self)
+	for _, eventID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter].events) do
 		local encounterSpellID = C_EncounterEvents.GetEventInfo(eventID).spellID
 		local name = "UNKNOWN"
 		local spell = nil
 		
 		if encounterSpellID then
 			spell = Spell:CreateFromSpellID(encounterSpellID)
-			name = string.format("|T%s:0|t %s(%s)", spell:GetSpellTexture(), spell:GetSpellName(), L["EncounterEvent"])
+			name = string.format("|T%s:0|t %s", spell:GetSpellTexture(), spell:GetSpellName())
 		end
 		
-		local group = GUI:CreateInlineGroup(container, name)
-		
-		if spell then
-			local description = GUI:CreateInformationTag(group, "UNKNOWN", "LEFT")
-			spell:ContinueOnSpellLoad(function()
-				description:SetText((spell:GetSpellDescription() or "UNKNOWN") .. "\n")
-			end)
-		end
-		CreateTimelineSettings(encounterID, eventID, group)
+		GUI:CreateButton(self.eventSelectGroup, name, function()
+			self.inputEvent = eventID
+
+			if CheckDataExist(self.inputEncounter, self.inputEvent, "color") then
+				self.eventColor:SetColor(addon.Utilities:HexToRGB(addon.db.EncounterSound.data[self.inputEncounter][self.inputEvent].color))
+			else
+				self.eventColor:SetColor(addon.Utilities:HexToRGB("ffffffff"))
+			end
+
+			for trigger = 0, 2 do
+				if CheckDataExist(self.inputEncounter, self.inputEvent, trigger) then
+					local sound = addon.db.EncounterSound.data[self.inputEncounter][self.inputEvent][trigger].sound
+					local role = addon.db.EncounterSound.data[self.inputEncounter][self.inputEvent][trigger].role
+					self.triggers[trigger].soundDropdown:SetValue(sound)
+					self.triggers[trigger].sound = sound
+					if role then
+						self.triggers[trigger].role:SetSelectedKeys(role)
+					end
+				else
+					self.triggers[trigger].soundDropdown:SetValue(nil)
+					self.triggers[trigger].sound = nil
+					self.triggers[trigger].role:ClearSelections()
+				end
+			end
+
+			if spell then
+				spell:ContinueOnSpellLoad(function()
+					self.eventDescription:SetText(name.. "\n" .. (spell:GetSpellDescription() or "UNKNOWN") .. "\n")
+					self.frame:DoLayout()
+				end)
+			end
+		end):SetRelativeWidth(0.24)
+
+		self.frame:DoLayout()
 	end
 end
 
-local function CreatePrivateAuraSettings(encounterID, spellID, container)
-    local currentSound = addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][spellID] or nil
-    local soundSelect = GUI:CreateSoundSelect(container, L["SoundSettings"], currentSound, function (value)
-        AddPASound(encounterID, spellID, value)
-    end)
-    GUI:CreateButton(container, L["Remove"], function ()
-        if RemovePASound(encounterID, spellID) then
-            soundSelect:SetValue(nil)
-        end
-    end)
+-- MARK: Reset PA Settings
+
+---Reset private aura controls and clear current aura selection state.
+---@param self table encounter sound panel instance
+local function ResetPASettings(self)
+	self.PASelectGroup:ReleaseChildren()
+	self.PADescription:SetText("|T134400:0|t" .. L["SelectPA"])
+	self.inputPA = nil
+	self.PASoundDropdown:SetValue(nil)
 end
 
-local function RenderPrivateAuraSettings(mapID, encounterID, container)
-	for _, spellID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[encounterID].privateAuras) do
+-- MARK: Render PA Settings
+---Create private aura sound setting widgets.
+---@param self table encounter sound panel instance
+local function SetPASettings(self)
+	self.PASoundDropdown = GUI:CreateSoundSelect(self.PASettingsGroup, L["SoundSettings"], nil, function(value)
+		if value then
+			AddPASound(self.inputEncounter, self.inputPA, value)
+		end
+	end)
+	self.PASoundDropdown:SetRelativeWidth(0.5)
+	GUI:CreateButton(self.PASettingsGroup, L["Remove"], function()
+		if RemovePASound(self.inputEncounter, self.inputPA) then
+			self.PASoundDropdown:SetValue(nil)
+		end
+	end)
+end
+
+---Render private aura buttons for selected encounter.
+---@param self table encounter sound panel instance
+local function RenderPrivateAuraSettings(self)
+	for _, spellID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter].privateAuras) do
 		local spell = Spell:CreateFromSpellID(spellID) or nil
 		local name = "UNKNOWN"
 		if spell then
-			name = string.format("|T%s:0|t %s(%s)", spell:GetSpellTexture(), spell:GetSpellName(), L["PrivateAura"])
+			name = string.format("|T%s:0|t %s", spell:GetSpellTexture(), spell:GetSpellName())
 		end
 		
-		local group = GUI:CreateInlineGroup(container, name)
-		local description = GUI:CreateInformationTag(group, "UNKNOWN", "LEFT")
-		
-		if spell then
-			spell:ContinueOnSpellLoad(function()
-				description:SetText((spell:GetSpellDescription() or "UNKNOWN") .. "\n")
-			end)
-		end
-		CreatePrivateAuraSettings(encounterID, spellID, group)
+		GUI:CreateButton(self.PASelectGroup, name, function()
+			self.inputPA = spellID
+
+			if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[self.inputEncounter] and addon.db.EncounterSound.dataPA[self.inputEncounter][self.inputPA] then
+				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputEncounter][self.inputPA])
+			else
+				self.PASoundDropdown:SetValue(nil)
+			end
+
+			if spell then
+				spell:ContinueOnSpellLoad(function()
+					self.PADescription:SetText(name.. "\n" .. (spell:GetSpellDescription() or "UNKNOWN") .. "\n")
+					self.frame:DoLayout()
+				end)
+			end
+		end):SetRelativeWidth(0.24)
 	end
 end
 
 -- GUI
-GUI.TagPanels.EncounterSound = {}
+GUI.TagPanels.EncounterSound = {
+	frame = nil,
+	inputMap = nil,
+	inputEncounter = nil,
+	inputEvent = nil,
+	inputPA = nil,
+}
+
+---Create the Encounter Sound tab panel.
+---@param parent table parent GUI container
+---@param isRaid boolean true for raid tab, false for dungeon tab
+---@return table frame created scroll frame
 function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 	-- MARK: General
-	local frame = GUI:CreateScrollFrame(parent)
-
-    GUI:CreateInformationTag(frame, L["EncounterSoundSettingsDesc"], "LEFT")
+	self.inputMap = nil
+	self.inputEncounter = nil
+	self.inputEvent = nil
+	self.inputPA = nil
+	self.frame = GUI:CreateScrollFrame(parent)
+    GUI:CreateInformationTag(self.frame, L["EncounterSoundSettingsDesc"], "LEFT")
 	local togglePA = GUI:CreateToggleCheckBox(nil, L["Enable"] .. "|cffffff00" .. L["PrivateAuraSettings"] .. "|r", addon.db.EncounterSound.EnablePrivateAuras, function(value)
 		addon.db.EncounterSound.EnablePrivateAuras = value
 	end)
 	togglePA:SetDisabled(not addon.db.EncounterSound.Enabled)
-	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["EncounterSoundSettings"] .. "|r", addon.db.EncounterSound.Enabled, function(value)
+	GUI:CreateToggleCheckBox(self.frame, L["Enable"] .. "|cff0070DD" .. L["EncounterSoundSettings"] .. "|r", addon.db.EncounterSound.Enabled, function(value)
 		addon.db.EncounterSound.Enabled = value
 		togglePA:SetDisabled(not value)
 		if addon.core:HasModuleLoaded(MOD_KEY) then -- if module is loaded
@@ -298,11 +443,11 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
             end
         end
 	end)
-	frame:AddChild(togglePA)
-	GUI:CreateDropdown(frame, L["SoundChannelSettings"], addon.Utilities.SoundChannels, nil, addon.db.EncounterSound.SoundChannel, function(key)
+	self.frame:AddChild(togglePA)
+	GUI:CreateDropdown(self.frame, L["SoundChannelSettings"], addon.Utilities.SoundChannels, nil, addon.db.EncounterSound.SoundChannel, function(key)
         addon.db.EncounterSound.SoundChannel = key
     end)
-	GUI:CreateButton(frame, L["ResetMod"], function ()
+	GUI:CreateButton(self.frame, L["ResetMod"], function ()
 		addon.Utilities:SetPopupDialog(
 			ADDON_NAME .. "ResetMod",
 			"|cffC41E3A" .. L["EncounterSoundSettings"] .. "|r: " .. L["ComfirmResetMod"],
@@ -315,45 +460,67 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 	end)
 
     -- MARK: Setting Part
-	local inputMap, inputEncounter = nil, nil
-	local selectGroup = GUI:CreateInlineGroup(frame, L["Select"])
+	local selectGroup = GUI:CreateInlineGroup(self.frame, L["Select"])
 	GUI:CreateInformationTag(selectGroup, L["EncounterSoundInstruction"], "LEFT")
 	local settingsGroup = GUI:CreateInlineGroup(nil, L["EncounterSettings"])
-	local privateAuraGroup = GUI:CreateInlineGroup(nil, L["PrivateAuraSettings"])
-	local encounterGroup = 	GUI:CreateDropdown(nil, L["SelectEncounter"], {}, nil, nil, function (value)
-		settingsGroup:ReleaseChildren()
-		privateAuraGroup:ReleaseChildren()
-		
-		inputEncounter = value
+	GUI:CreateInformationTag(settingsGroup, L["EncounterEventsInstruction"], "LEFT")
+	GUI:CreateButton(settingsGroup, L["TestTimeline"], function()
+		if self.inputEncounter then
+			addon.core:GetModule(MOD_KEY):TestSound(self.inputEncounter)
+		end
+	end)
 
-		GUI:CreateInformationTag(settingsGroup, L["EncounterEventsInstruction"], "LEFT")
-		GUI:CreateButton(settingsGroup, L["TestTimeline"], function()
-			addon.core:GetModule(MOD_KEY):TestSound(inputEncounter)
-		end)
-		RenderEncounterSettings(inputMap, inputEncounter, settingsGroup)
-		GUI:CreateInformationTag(privateAuraGroup, L["PrivateAuraInstruction"], "LEFT")
-		RenderPrivateAuraSettings(inputMap, inputEncounter, privateAuraGroup)
-		
-		C_Timer.After(0.5, function() frame:DoLayout() end) -- make a latency for render to let spell info loaded
+	-- event setting group
+	self.eventSelectGroup = GUI:CreateInlineGroup(settingsGroup, L["EncounterEvent"])
+	self.eventSettingsGroup = GUI:CreateInlineGroup(settingsGroup, "")
+	self.eventDescription = GUI:CreateInformationTag(self.eventSettingsGroup, "|T134400:0|t" .. L["SelectAnEvent"], "LEFT")
+	local colorGroup = GUI:CreateInlineGroup(self.eventSettingsGroup, L["ColorSettings"])
+	SetColorSetting(self, colorGroup)
+	SetTriggersSetting(self)
+
+	-- PA setting group
+	self.PAGroup = GUI:CreateInlineGroup(settingsGroup, L["PrivateAuraSettings"])
+	GUI:CreateInformationTag(self.PAGroup, L["PrivateAuraInstruction"], "LEFT")
+	self.PASelectGroup = GUI:CreateInlineGroup(self.PAGroup, L["PrivateAura"])
+	self.PASettingsGroup = GUI:CreateInlineGroup(self.PAGroup, "")
+	self.PADescription = GUI:CreateInformationTag(self.PASettingsGroup, "|T134400:0|t" .. L["SelectPA"], "LEFT")
+	SetPASettings(self)
+	
+	local encounterGroup = 	GUI:CreateDropdown(nil, L["SelectEncounter"], {}, nil, nil, function (value)
+		ResetEventSettings(self)
+		ResetPASettings(self)
+
+		self.inputEncounter = value
+		self.inputEvent = nil
+		RenderEncounterSettings(self)
+
+		RenderPrivateAuraSettings(self)
+
+		self.frame:DoLayout()
 	end)
 	GUI:CreateDropdown(selectGroup, L["SelectInstance"], GetMapsList(isRaid), nil, nil, function (value)
-		inputMap = value
+		ResetEventSettings(self)
+		ResetPASettings(self)
+		
+		self.inputMap = value
+		self.inputEncounter = nil
+		self.inputEvent = nil
 		local list = GetEncountersList(value)
 		encounterGroup:SetList(list)
 		encounterGroup:SetValue(nil)
-		settingsGroup:ReleaseChildren()
-		privateAuraGroup:ReleaseChildren()
 
-		frame:DoLayout()
+		self.frame:DoLayout()
 	end)
 	selectGroup:AddChild(encounterGroup)
 	selectGroup:AddChild(settingsGroup)
-	selectGroup:AddChild(privateAuraGroup)
 
-	return frame
+	return self.frame
 end
 
 -- MARK: General Sound Panel
+---Create the general sound settings panel.
+---@param parent table parent GUI container
+---@return table frame created scroll frame
 function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 	local frame = GUI:CreateScrollFrame(parent)
 

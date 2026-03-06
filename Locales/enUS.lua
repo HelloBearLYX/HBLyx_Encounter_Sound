@@ -32,9 +32,7 @@ L["ChangeLogContent"] =
 
 --MARK: Issues
 L["Issues"] = "Issues"
-L["AnyIssues"] = "If you encounter any issue, please feedback to the author through the contact information"
-L["IssuesContent"] = "Q: Can you add XXX spell as an interrupt spell in Focus Interrupt module?\nA: No, spells with GCD cannot be added due to Blizzard's API restrictions. If you want to add a spell without GCD, please inform me with the spell details" .. "\n\n" ..
-"Q: The BattleRes cannot display at the start of some Beta M+ dungeons and \"reload\" can fix it, why?\nA: It is caused by Blizzard's failure to trigger the CHALLENGE_MODE_START event in some dungeons with M+ mode, there is currently no good solution, wait for Blizzard to fix it\n\n" ..
+L["AnyIssues"] =
 "Q: There are some missing/incorrect events/private auras in Encounter Sound module, will them be corrected?\nA: Yes, as this module is highly dependent on data mining toward the game and Blizzard is constantly changing the Boss fight, it takes some time to fetch new data\n\n" ..
 "Thanks for your understanding and support!"
 
@@ -96,6 +94,8 @@ L["TestLoadFailed"] = "Test |cffff0000Failed|r: No data found for encounter: "
 L["TestLoadSuccess"] = "Test load |cff00ff00success|r: Test for encounter: "
 L["ClearPrivateAurasData"] = "Cleared registed private aura sounds data: "
 L["CurrentProfile"] = "Current Profile: "
+L["SelectAnEvent"] = "Select an encounter event to begin setting"
+L["SelectPA"] = "Select a private aura to begin setting"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"
@@ -103,34 +103,24 @@ L["FrameStrata"] = "Frame Strata Level"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"
-L["EncounterSoundSettingsDesc"] = "Set and play custom sound alert for encounter time line events.\n\n" ..
-"Specifically, this module provide a customized sound alert setting for each Boss fight in the instances.(only include current season instances)\n\n\n" ..
-"Firstly, added M+ dungeons in 12.0 season 1, and then will add raids soon. As this module is highly dependent on data mining toward the game data, it is relatively costly to get data.\n\n" ..
+L["EncounterSoundSettingsDesc"] = "Set and play custom sound alert for encounter time line events and private auras.\n\n" ..
 "Many issue will be fixed and module will be improved with the process of data mining, thanks for your feedback and support!\n\n" ..
-"This module is still working in progress, and hope this module can provide more flexible sound alerts for encounters.\n\n" ..
-"|cffff0000NOTE|r: This module is defaultly disabled, as it is still in early stage and changing may be frequent. You can enable it by the checkbox below.\n"
+"This module is keeping working in progress, and hope this module can provide more flexible sound alerts for encounters.\n\n"
 
 L["EncounterSettings"] = "Encounter Events Settings"
 L["SelectEncounter"] = "Select Encounter"
 L["SelectInstance"] = "Select Instance"
 L["EncounterEventTrigger"] = "Encounter Event Trigger"
 L["EncounterEventSound"] = "Encounter Event Sound"
-L["OnTextWarningShown"] = "Text Warning Shown"
-L["OnTimelineEventFinished"] = "Event Finished"
-L["OnTimelineEventHighlight"] = "Event Highlighted"
+L["OnTextWarningShown"] = "|cffff5c00Text Warning Shown|r: trigger when an text warning is shown initially"
+L["OnTimelineEventFinished"] = "|cffff5c00Event Finished|r: trigger when the event is finished on the timeline"
+L["OnTimelineEventHighlight"] = "|cffff5c00Event Highlighted|r: trigger when the event will be finished in 5 seconds on the timeline"
 L["EventColor"] = "Event Color"
 L["PrivateAuraSettings"] = "Private Aura Settings"
 L["EncounterEvent"] = "Encounter Event"
 L["SelectGroupRole"] = "Group Role"
-L["EncounterSoundInstruction"] = "After selected |cffffff00an instance|r and |cffffff00an encounter|r, the settings for the encounter will pop up below.\nThere is a 0.5 second delay for the settings to render, as game need to take time to load spell descriptions.\n\n"
-L["EncounterEventsInstruction"] = "To set sound, select |cffffff00an event trigger|r and |cffffff00a valid sound|r, the settings will be applied accordingly. Also, you can use |cffffff00\"Remove\"|r to remove the sound setting for the trigger selected.\n\n"..
-"To set color(Text Color of Event), just use the color picker to select a |cffffff00color|r, and it will be applied to the encounter event. To remove the color setting, you can use the |cffffff00\"Remove\"|r button similarly.\n\n"..
-"|cffff0000NOTE|r: |cffffff00Event Triggers|r are provided by Blizzard's APIs, and descriptions below:\n" ..
-"|cffff5c00Text Warning Shown|r: trigger when |cffff5c00an text warning is shown initially|r\n" ..
-"|cffff5c00Events Finished|r: trigger when the event is |cffff5c00finished|r on the timeline\n" ..
-"|cffff5c00Events Highlighted|r: trigger when the event |cffff5c00will be finished in 5 seconds|r on the timeline\n" ..
-"More information about the triggers on: |cff00ffffhttps://warcraft.wiki.gg/wiki/API_C_EncounterEvents.SetEventSound|r\n\n" ..
-"e.g. If you want a \"AoE Incoming-3-2-1\", you should join the \"AoE Incoming\" and countdown sound into a single media file, and set it to play on the \"Event Highlighted\" trigger(play at 5 seconds before the AoE).\n\n" ..
+L["EncounterSoundInstruction"] = "After selected |cffffff00an instance|r and |cffffff00an encounter|r, the settings for the encounter will pop up below.\n\n"
+L["EncounterEventsInstruction"] =
 "|cffff0000NOTE|r: Must |cffffff00enable Blizzard's Boss Warnings(including Boss Text Warning and Boss Ability Timeline)|r to make the corresponding event triggers active\n\n" ..
 "|cffffff00Test Timeline|r: simulate the timeline for all events of this Boss with 6 seconds intervals(not actual timeline), to test the correctness and effect of the settings, but the actual timeline trigger perform differently\n\n"
 L["PrivateAuraInstruction"] = "Apply a sound alert for private auras, and the sound alert is played when the private aura is applied on \"player\".\n\n" ..

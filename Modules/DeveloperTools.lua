@@ -207,7 +207,7 @@ function addon.DeveloperTools:DisplayAddonInfo()
     --     return output
     -- end
     -- output["Data"] = ScanPrivateAuras()
-    -- output["Data"] = self:FecthAllEncounterSections(2793, 23) -- get encounter spellIDs
+    output["Data"] = self:FecthAllEncounterSections(2795, 15) -- get encounter spellIDs
     -- output["Data"] = self:AttemptsFetchAllEEInfo() -- get encounter events info
 
     if self.isOpened and self.displayFrame then
@@ -256,11 +256,9 @@ end
 
 local function FetchSection(currentSectionID, output)
     local info = C_EncounterJournal.GetSectionInfo(currentSectionID)
-    if not info.filteredByDifficulty then
-        local spellID = info.spellID or -1
-        if spellID == 0 then spellID = -1 end
-        output = output .. string.format("%d,%s\n", spellID, info.title or "nil")
-    end
+    local spellID = info.spellID or -1
+    if spellID == 0 then spellID = -1 end
+    output = output .. string.format("%d,%s,%s\n", spellID, info.title or "nil", tostring(info.filteredByDifficulty))
 
     -- child sections first
     if info.firstChildSectionID then
@@ -277,7 +275,7 @@ end
 
 function addon.DeveloperTools:FecthAllEncounterSections(encounterID, difficultyID)
     EJ_SetDifficulty(difficultyID)
-    local output = "SpellID,SpellName\n"
+    local output = "SpellID,SpellName,FilteredByDifficulty\n"
     local currentSectionID = select(4, EJ_GetEncounterInfo(encounterID))
 
     output = FetchSection(currentSectionID, output)
