@@ -19,10 +19,11 @@ addon.configurationList[MOD_KEY] = {
 
 -- MARK: Constants
 local EVENT_TRIGGERS = {
-	[0] = L["OnTextWarningShown"],
-	[1] = L["OnTimelineEventFinished"],
-	[2] = L["OnTimelineEventHighlight"],
+	["0"] = L["OnTextWarningShown"],
+	["1"] = L["OnTimelineEventFinished"],
+	["2"] = L["OnTimelineEventHighlight"],
 }
+local TRIGGER_ORDER = {"0", "1", "2"} -- keep a separate order table since the trigger keys are string type
 
 -- MARK: Adds
 
@@ -242,7 +243,7 @@ local function ResetEventSettings(self)
 	self.eventSelectGroup:ReleaseChildren()
 	self.eventDescription:SetText("|T134400:0|t" .. L["SelectAnEvent"])
 	self.eventColor:SetColor(addon.Utilities:HexToRGB("ffffffff"))
-	for trigger = 0, 2 do
+	for trigger, _ in pairs(EVENT_TRIGGERS) do
 		self.triggers[trigger].sound = nil
 		self.triggers[trigger].soundDropdown:SetValue(nil)
 		self.triggers[trigger].role:ClearSelections()
@@ -254,7 +255,8 @@ end
 ---@param self table encounter sound panel instance
 local function SetTriggersSetting(self)
 	self.triggers = {}
-	for trigger, triggerName in pairs(EVENT_TRIGGERS) do
+	for _, trigger in ipairs(TRIGGER_ORDER) do
+		local triggerName = EVENT_TRIGGERS[trigger]
 		self.triggers[trigger] = GUI:CreateInlineGroup(self.eventSettingsGroup, triggerName)
 		self.triggers[trigger].sound = nil
 		
@@ -319,7 +321,7 @@ local function RenderEncounterSettings(self)
 				self.eventColor:SetColor(addon.Utilities:HexToRGB("ffffffff"))
 			end
 
-			for trigger = 0, 2 do
+			for trigger, _ in pairs(EVENT_TRIGGERS) do
 				if CheckDataExist(self.inputEncounter, self.inputEvent, trigger) then
 					local sound = addon.db.EncounterSound.data[self.inputEncounter][self.inputEvent][trigger].sound
 					local role = addon.db.EncounterSound.data[self.inputEncounter][self.inputEvent][trigger].role

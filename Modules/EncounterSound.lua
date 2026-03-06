@@ -17,44 +17,26 @@ function EncounterSound:Initialize()
     self.role = nil
 
     -- 3.11 data change migration
-    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.11") then
-        local events = {}
-        events[3073] = {[99] = nil}
-        local pa = {}
-        pa[3073] = {[1224104] = nil}
-        pa[2067] = {[1263523] = nil}
+    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.13") then
+        for encounterID, eventData in pairs(addon.db.EncounterSound.data or {}) do
+            for eventID, attributes in pairs(eventData) do
+                local migratedAttributes = {}
 
-        -- remove incorrect event entry
-        for encounterID, eventData in pairs(events) do
-            if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] then
-                for eventID, _ in pairs(eventData) do
-                    if addon.db.EncounterSound.data[encounterID][eventID] then
-                        addon.db.EncounterSound.data[encounterID][eventID] = nil -- remove incorrect entry
+                for trigger, data in pairs(attributes) do
+                    if trigger == "color" then
+                        migratedAttributes.color = data
+                    elseif type(data) == "table" then
+                        -- Convert trigger into string format for stability, e.g. "1" for trigger 1, "2" for trigger 2.
+                        -- Build a new table instead of mutating while iterating to avoid data loss.
+                        local newTrigger = tostring(trigger)
+                        migratedAttributes[newTrigger] = {
+                            sound = data.sound,
+                            role = data.role,
+                        }
                     end
                 end
-            end
-        end
-        -- remove incorrect PA entries
-        for encounterID, spellData in pairs(pa) do
-            if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[encounterID] then
-                for spellID, _ in pairs(spellData) do
-                    if addon.db.EncounterSound.dataPA[encounterID][spellID] then
-                        addon.db.EncounterSound.dataPA[encounterID][spellID] = nil -- remove incorrect entry
-                    end
-                end
-            end
-        end
 
-        -- a general data parse for new version
-        for encounterID, encounterData in pairs(addon.db.EncounterSound.data or {}) do
-            for eventID, eventData in pairs(encounterData) do
-                for attribute, data in pairs(eventData) do
-                    if type(attribute) ~= "string" then
-                        if type(data) == "string" then
-                            eventData[attribute] = {sound = data} -- migrate old sound setting to new format
-                        end
-                    end
-                end
+                addon.db.EncounterSound.data[encounterID][eventID] = migratedAttributes
             end
         end
 
@@ -89,17 +71,18 @@ local function LoadEventSounds(self, encounterID)
         local encounterData = addon.db.EncounterSound.data[encounterID]
         for eventID, eventData in pairs(encounterData) do
             for attribute, value in pairs(eventData) do
-                if type(attribute) == "string" then
+                if attribute == "color" then
                     -- Handle color
                     C_EncounterEvents.SetEventColor(eventID, CreateColorFromHexString(addon.db.EncounterSound.data[encounterID][eventID].color))
                 else
                     if CheckRole(self, value.role) then -- handle role, role can be nil
                         -- Handle sound trigger
                         local sound = addon.LSM:Fetch("sound", value.sound)
-                        if sound then
+                        local trigger = tonumber(attribute)
+                        if sound and trigger then
                             C_EncounterEvents.SetEventSound(
                                 eventID,
-                                attribute, -- trigger
+                                trigger,
                                 {file = sound, channel = addon.db.EncounterSound.SoundChannel or "Master", volume = 1}
                             )
                         end
@@ -187,12 +170,12 @@ local function TestHelper(encounterID, eventID, timeOffset)
     })
 
     for trigger, data in pairs(addon.db.EncounterSound.data[encounterID][eventID]) do
-        if trigger ~= "color" and type(trigger) == "number" then
-            if trigger == 1 then
+        if trigger ~= "color" then
+            if trigger == "1" then
                 C_Timer.After(10 + (timeOffset or 0), function()
                     PlaySoundFile(addon.LSM:Fetch("sound", data.sound), addon.db.EncounterSound.SoundChannel or "Master")
                 end)
-            elseif trigger == 2 then
+            elseif trigger == "2" then
                 C_Timer.After(5 + (timeOffset or 0), function()
                     PlaySoundFile(addon.LSM:Fetch("sound", data.sound), addon.db.EncounterSound.SoundChannel or "Master")
                 end)
