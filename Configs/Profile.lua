@@ -14,12 +14,15 @@ function GUI.TagPanels.Profile:CreateTabPanel(parent)
     -- MARK: General Profile
     local generalProfileGroup = GUI:CreateInlineGroup(frame, L["Profile"])
     GUI:CreateInformationTag(generalProfileGroup, L["ProfileSettingsDesc"], "LEFT")
-    GUI:CreateEditBox(generalProfileGroup, L["CurrentProfile"], addon.db["EncounterSound"].ProfileName or "None", function(value)
+    local exportBox = GUI:CreateMultiLineEditBox(nil, L["Export"], addon:ExportProfile(), nil)
+    local editBox = GUI:CreateEditBox(generalProfileGroup, L["CurrentProfile"], addon.db["EncounterSound"].ProfileName or "None", function(value)
         addon.db["EncounterSound"].ProfileName = value
+        exportBox:SetText(addon:ExportProfile() or "")
     end)
-    GUI:CreateMultiLineEditBox(generalProfileGroup, L["Export"], addon:ExportProfile(), nil)
+    generalProfileGroup:AddChild(exportBox)
     GUI:CreateMultiLineEditBox(generalProfileGroup, L["Import"], "", function(value)
         addon:ImportProfile(value)
+        editBox:SetText(addon.db["EncounterSound"].ProfileName or "None")
     end)
 
     return frame
