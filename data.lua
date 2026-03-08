@@ -7,77 +7,193 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		seasonMapID = 402,
 		name = select(1, EJ_GetInstanceInfo(1201)) or "Algeth'ar Academy",
 		encounters = {
-			[2562] = {events = {274, 275, 276, 277}, journalID = 2509, privateAuras = {386201, 391977}},
-			[2563] = {events = {282, 283, 284, 285}, journalID = 2512, privateAuras = {388544, 389033, 396716}},
-			[2564] = {events = {278, 279, 280, 397}, journalID = 2495, privateAuras = {376760, 376997, 377009}},
-			[2565] = {events = {293, 294, 295, 296}, journalID = 2514, privateAuras = {389007, 389011}},
+			[2562] = {
+				events = {274, 275, 276, 277},
+				journalID = 2509,
+				privateAuras = {386201, 391977}
+			},
+			[2563] = {
+				events = {282, 283, 284, 285},
+				journalID = 2512,
+				privateAuras = {388544, 389033, 396716}
+			},
+			[2564] = {
+				events = {278, 279, 280, 397},
+				journalID = 2495,
+				privateAuras = {376760, 376997, 377009}
+			},
+			[2565] = {
+				events = {293, 294, 295, 296},
+				journalID = 2514,
+				privateAuras = {389007, 389011}
+			},
 		},
 	},
 	[945] = {
 		seasonMapID = 239,
 		name = select(1, EJ_GetInstanceInfo(945)) or "Seat of the Triumvirate",
 		encounters = {
-			[2065] = {events = {223, 224, 225, 226, 238}, journalID = 1979, privateAuras = {244588, 244599}},
-			[2066] = {events = {234, 235, 236, 237, 243}, journalID = 1980, privateAuras = {245742, 246026, 1263523}},
-			[2067] = {events = {246, 247, 376, 245}, journalID = 1981, privateAuras = {1263542, 1268733}},
-			[2068] = {events = {248, 249, 250, 251, 252, 253, 254}, journalID = 1982, privateAuras = {1265426, 1265650}},
+			[2065] = {
+				events = {223, 224, 225, 226, 238},
+				journalID = 1979,
+				privateAuras = {244588, 244599}
+			},
+			[2066] = {
+				events = {234, 235, 236, 237, 243},
+				journalID = 1980,
+				privateAuras = {245742, 246026, 1263523}
+			},
+			[2067] = {
+				events = {246, 247, 376, 245},
+				journalID = 1981,
+				privateAuras = {1263542, 1268733}
+			},
+			[2068] = {
+				events = {248, 249, 250, 251, 252, 253, 254},
+				journalID = 1982,
+				privateAuras = {1265426, 1265650}
+			},
 		},
 	},
 	[1316] = {
 		seasonMapID = 559,
 		name = select(1, EJ_GetInstanceInfo(1316)) or "Nexus-Point Xenas",
 		encounters = {
-			[3328] = {events = {106, 107, 108, 172}, journalID = 2813, privateAuras = {1251772}},
-			[3332] = {events = {33, 34, 35, 36, 313}, journalID = 2814, privateAuras = {1249020, 1252828}},
-			[3333] = {events = {109, 110, 111, 112}, journalID = 2815, privateAuras = {}},
+			[3328] = {
+				events = {106, 107, 108, 172},
+				journalID = 2813,
+				privateAuras = {1251626, 1251772, 1264042, 1276485}
+			},
+			[3332] = {
+				events = {33, 34, 35, 36, 313},
+				journalID = 2814,
+				privateAuras = {1247975, 1249020, 1252828}
+			},
+			[3333] = {
+				events = {109, 110, 111, 112},
+				journalID = 2815,
+				privateAuras = {1255310, 1255335, 1255503}
+			},
 		},
 	},
 	[1315] = {
 		seasonMapID = 560,
 		name = select(1, EJ_GetInstanceInfo(1315)) or "Maisara Caverns",
 		encounters = {
-			[3212] = {events = {150, 151, 152, 153, 154, 155}, journalID = 2810, privateAuras = {1249478, 1260643}},
-			[3213] = {events = {16, 17, 18, 19, 20}, journalID = 2811, privateAuras = {1251775}},
-			[3214] = {events = {156, 157, 158}, journalID = 2812, privateAuras = {1252675}},
+			[3212] = {
+				events = {150, 151, 152, 153, 154, 155},
+				journalID = 2810,
+				privateAuras = {1243741, 1243752, 1249478, 1260643, 1266488}
+			},
+			[3213] = {
+				events = {16, 17, 18, 19, 20},
+				journalID = 2811,
+				privateAuras = {1251568, 1251775, 1251813, 1251833, 1252130, 1266706}
+			},
+			[3214] = {
+				events = {156, 157, 158},
+				journalID = 2812,
+				privateAuras = {1251023, 1252675, 1252777, 1252816, 1253779, 1253844, 1254043, 1254175, 1255629, 1266188}
+			},
 		},
 	},
 	[476] = {
 		seasonMapID = 161,
 		name = select(1, EJ_GetInstanceInfo(476)) or "Skyreach",
 		encounters = {
-			[1698] = {events = {298, 299, 300, 301}, journalID = 965, privateAuras = {153757, 1252733}},
-			[1699] = {events = {302, 303, 304}, journalID = 966, privateAuras = {154150}},
-			[1700] = {events = {305, 306, 308, 603}, journalID = 967, privateAuras = {1253511, 1253520}},
-			[1701] = {events = {309, 310, 311, 312}, journalID = 968, privateAuras = {153954, 1253541}},
+			[1698] = {
+				events = {298, 299, 300, 301},
+				journalID = 965,
+				privateAuras = {153757, 1252733}
+			},
+			[1699] = {
+				events = {302, 303, 304},
+				journalID = 966,
+				privateAuras = {154150}
+			},
+			[1700] = {
+				events = {305, 306, 308, 603},
+				journalID = 967,
+				privateAuras = {1253511, 1253520}
+			},
+			[1701] = {
+				events = {309, 310, 311, 312},
+				journalID = 968,
+				privateAuras = {153954, 1253541}
+			},
 		},
 	},
 	[1299] = {
 		seasonMapID = 557,
 		name = select(1, EJ_GetInstanceInfo(1299)) or "Windrunner Spire",
 		encounters = {
-			[3056] = {events = {239, 241, 242}, journalID = 2655, privateAuras = {}},
-			[3057] = {events = {25, 26, 27, 28, 29}, journalID = 2656, privateAuras = {472793, 474129}},
-			[3058] = {events = {210, 211, 213, 212, 214, 215, 216}, journalID = 2657, privateAuras = {467620, 470966, 1283247}},
-			[3059] = {events = {21, 22, 23, 24, 538}, journalID = 2658, privateAuras = {472662, 1282911, 1253979}},
+			[3056] = {
+				events = {239, 241, 242},
+				journalID = 2655,
+				privateAuras = {466091, 466559, 470212, 472118}
+			},
+			[3057] = {
+				events = {25, 26, 27, 28, 29},
+				journalID = 2656,
+				privateAuras = {472777, 472793, 472888, 474129, 1253834, 1215803, 1219491, 1282272}
+			},
+			[3058] = {
+				events = {210, 211, 213, 212, 214, 215, 216},
+				journalID = 2657,
+				privateAuras = {467620, 468659, 470966, 1283247, 1253030}
+			},
+			[3059] = {
+				events = {21, 22, 23, 24, 538},
+				journalID = 2658,
+				privateAuras = {468442, 472662, 474528, 1282911, 1216042, 1253979, 1282955}
+			},
 		},
 	},
 	[1300] = {
 		seasonMapID = 558,
 		name = select(1, EJ_GetInstanceInfo(1300)) or "Magister's Terrace",
 		encounters = {
-			[3071] = {events = {281, 286, 287, 288}, journalID = 2659, privateAuras = {}},
-			[3072] = {events = {93, 94, 95, 513, 96}, journalID = 2661, privateAuras = {1225792}},
-			[3073] = {events = {635, 97, 98, 100}, journalID = 2660, privateAuras = {1253709}},
-			[3074] = {events = {290, 292, 420}, journalID = 2662, privateAuras = {1215157, 1269631}},
+			[3071] = {
+				events = {281, 286, 287, 288},
+				journalID = 2659,
+				privateAuras = {1214038, 1214089, 1243905}
+			},
+			[3072] = {
+				events = {93, 94, 95, 513, 96},
+				journalID = 2661,
+				privateAuras = {1225015, 1225205, 1225792, 1246446}
+			},
+			[3073] = {
+				events = {635, 97, 98, 100},
+				journalID = 2660,
+				privateAuras = {1224104, 1224401, 1284958, 1224299, 1253709}
+			},
+			[3074] = {
+				events = {290, 292, 420},
+				journalID = 2662,
+				privateAuras = {1215157, 1215161, 1215897, 1269631}
+			},
 		},
 	},
 	[278] = {
 		seasonMapID = 556,
 		name = select(1, EJ_GetInstanceInfo(278)) or "Pit of Saron",
 		encounters = {
-			[1999] = {events = {144, 145, 146, 147}, journalID = 608, privateAuras = {1261286, 1261799}},
-			[2000] = {events = {164, 165, 166, 167, 168, 375}, journalID = 610, privateAuras = {1262772, 1262596}},
-			[2001] = {events = {203, 204, 205, 206, 561}, journalID = 609, privateAuras = {1264453, 1264299}},
+			[1999] = {
+				events = {144, 145, 146, 147},
+				journalID = 608,
+				privateAuras = {1261286, 1261799}
+			},
+			[2000] = {
+				events = {164, 165, 166, 167, 168, 375},
+				journalID = 610,
+				privateAuras = {1262772, 1262596}
+			},
+			[2001] = {
+				events = {203, 204, 205, 206, 561},
+				journalID = 609,
+				privateAuras = {1264186, 1264453, 1264299}
+			},
 		},
 	},
 	-- MARK: Non-season Dungeons 
@@ -87,22 +203,22 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3199] = {
 				events = {177, 173, 174, 175, 176},
 				journalID = 2769,
-				privateAuras = {}
+				privateAuras = {1234802, 1235574, 1235828, 1235865}
 			},
 			[3200] = {
 				events = {179, 180, 178},
 				journalID = 2770,
-				privateAuras = {}
+				privateAuras = {1237091, 1237267, 1272290}
 			},
 			[3201] = {
 				events = {181, 182, 184, 188, 115, 183},
 				journalID = 2771,
-				privateAuras = {}
+				privateAuras = {1239825, 1239919, 1241058, 1251345, 1257094}
 			},
 			[3202] = {
 				events = {192, 191, 189, 190},
 				journalID = 2772,
-				privateAuras = {}
+				privateAuras = {1246751, 1246753, 1247746}
 			},
 		},
 	},
@@ -112,17 +228,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3101] = {
 				events = {610, 202, 122, 120},
 				journalID = 2679,
-				privateAuras = {}
+				privateAuras = {1228198}
 			},
 			[3102] = {
 				events = {124, 127, 193, 123, 125},
 				journalID = 2680,
-				privateAuras = {474545}
+				privateAuras = {474515, 474545, 1214352}
 			},
 			[3103] = {
 				events = {30, 31, 32},
 				journalID = 2681,
-				privateAuras = {}
+				privateAuras = {473898, 474234, 1214650}
 			},
 			[3105] = {
 				events = {37, 38, 207},
@@ -137,17 +253,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3207] = {
 				events = {86, 87, 88},
 				journalID = 2776,
-				privateAuras = {}
+				privateAuras = {1234846, 1235125}
 			},
 			[3208] = {
 				events = {67, 70, 68, 69},
 				journalID = 2777,
-				privateAuras = {1235549}
+				privateAuras = {1235549, 1235829, 1235841, 1235641, 1236289}
 			},
 			[3209] = {
 				events = {92, 90, 89, 91},
 				journalID = 2778,
-				privateAuras = {}
+				privateAuras = {1242869, 1243590, 1255577, 1262253, 1261781}
 			},
 
 		},
@@ -158,17 +274,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3285] = {
 				events = {39, 558, 40, 42, 41},
 				journalID = 2791,
-				privateAuras = {}
+				privateAuras = {1222103, 1262283}
 			},
 			[3286] = {
 				events = {297, 47, 54, 55, 46},
 				journalID = 2792,
-				privateAuras = {}
+				privateAuras = {1222484, 1222642, 1226031, 1263971}
 			},
 			[3287] = {
 				events = {56, 57, 58, 171},
 				journalID = 2793,
-				privateAuras = {}
+				privateAuras = {1227197, 1248130, 1264188}
 			},
 
 		},
@@ -242,25 +358,10 @@ addon.data.CHANGED_DATA = {
 }
 
 addon.data.CHANGED_PRIVATEAURAS = {
-	[1316] = { -- 3 deleted auras
-		[1251626] = nil,[1264042] = nil,[1276485] = nil,
+	[2001] = { -- 1 deleted auras
+		[1264186] = nil,
 	},
-	[3332] = { -- 1 deleted auras
-		[1247975] = nil,
-	},
-	[3333] = { -- 3 deleted auras
-		[1255310] = nil,[1255335] = nil,[1255503] = nil,
-	},
-	[1315] = { -- 3 deleted auras
-		[1243741] = nil,[1243752] = nil,[1266488] = nil,
-	},
-	[3213] = { -- 5 deleted auras
-		[1251568] = nil,[1251813] = nil,[1251833] = nil,[1252130] = nil,[1266706] = nil,
-	},
-	[3214] = { -- 9 deleted auras
-		[1251023] = nil,[1252777] = nil,[1252816] = nil,[1253779] = nil,[1253844] = nil,[1254043] = nil,[1254175] = nil,[1255629] = nil,[1266188] = nil,
-	},
-	[1299] = { -- 4 deleted auras
+	[3056] = { -- 4 deleted auras
 		[466091] = nil,[466559] = nil,[470212] = nil,[472118] = nil,
 	},
 	[3057] = { -- 6 deleted auras
@@ -272,7 +373,7 @@ addon.data.CHANGED_PRIVATEAURAS = {
 	[3059] = { -- 4 deleted auras
 		[468442] = nil,[474528] = nil,[1216042] = nil,[1282955] = nil,
 	},
-	[1300] = { -- 3 deleted auras
+	[3071] = { -- 3 deleted auras
 		[1214038] = nil,[1214089] = nil,[1243905] = nil,
 	},
 	[3072] = { -- 3 deleted auras
@@ -284,10 +385,16 @@ addon.data.CHANGED_PRIVATEAURAS = {
 	[3074] = { -- 2 deleted auras
 		[1215161] = nil,[1215897] = nil,
 	},
-	[2001] = { -- 1 deleted auras
-		[1264186] = nil,
+	[3101] = { -- 1 deleted auras
+		[1228198] = nil,
 	},
-	[1309] = { -- 4 deleted auras
+	[3102] = { -- 2 deleted auras
+		[474515] = nil,[1214352] = nil,
+	},
+	[3103] = { -- 3 deleted auras
+		[473898] = nil,[474234] = nil,[1214650] = nil,
+	},
+	[3199] = { -- 4 deleted auras
 		[1234802] = nil,[1235574] = nil,[1235828] = nil,[1235865] = nil,
 	},
 	[3200] = { -- 3 deleted auras
@@ -299,16 +406,7 @@ addon.data.CHANGED_PRIVATEAURAS = {
 	[3202] = { -- 3 deleted auras
 		[1246751] = nil,[1246753] = nil,[1247746] = nil,
 	},
-	[1304] = { -- 1 deleted auras
-		[1228198] = nil,
-	},
-	[3102] = { -- 2 deleted auras
-		[474515] = nil,[1214352] = nil,
-	},
-	[3103] = { -- 3 deleted auras
-		[473898] = nil,[474234] = nil,[1214650] = nil,
-	},
-	[1311] = { -- 2 deleted auras
+	[3207] = { -- 2 deleted auras
 		[1234846] = nil,[1235125] = nil,
 	},
 	[3208] = { -- 4 deleted auras
@@ -317,7 +415,16 @@ addon.data.CHANGED_PRIVATEAURAS = {
 	[3209] = { -- 5 deleted auras
 		[1242869] = nil,[1243590] = nil,[1255577] = nil,[1262253] = nil,[1261781] = nil,
 	},
-	[1313] = { -- 2 deleted auras
+	[3212] = { -- 3 deleted auras
+		[1243741] = nil,[1243752] = nil,[1266488] = nil,
+	},
+	[3213] = { -- 5 deleted auras
+		[1251568] = nil,[1251813] = nil,[1251833] = nil,[1252130] = nil,[1266706] = nil,
+	},
+	[3214] = { -- 9 deleted auras
+		[1251023] = nil,[1252777] = nil,[1252816] = nil,[1253779] = nil,[1253844] = nil,[1254043] = nil,[1254175] = nil,[1255629] = nil,[1266188] = nil,
+	},
+	[3285] = { -- 2 deleted auras
 		[1222103] = nil,[1262283] = nil,
 	},
 	[3286] = { -- 4 deleted auras
@@ -325,5 +432,14 @@ addon.data.CHANGED_PRIVATEAURAS = {
 	},
 	[3287] = { -- 3 deleted auras
 		[1227197] = nil,[1248130] = nil,[1264188] = nil,
+	},
+	[3328] = { -- 3 deleted auras
+		[1251626] = nil,[1264042] = nil,[1276485] = nil,
+	},
+	[3332] = { -- 1 deleted auras
+		[1247975] = nil,
+	},
+	[3333] = { -- 3 deleted auras
+		[1255310] = nil,[1255335] = nil,[1255503] = nil,
 	},
 }
