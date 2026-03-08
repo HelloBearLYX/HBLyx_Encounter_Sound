@@ -62,17 +62,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3328] = {
 				events = {106, 107, 108, 172},
 				journalID = 2813,
-				privateAuras = {1251626, 1251772, 1264042, 1276485}
+				privateAuras = {1251772}
 			},
 			[3332] = {
 				events = {33, 34, 35, 36, 313},
 				journalID = 2814,
-				privateAuras = {1247975, 1249020, 1252828}
+				privateAuras = {1249020, 1252828}
 			},
 			[3333] = {
 				events = {109, 110, 111, 112},
 				journalID = 2815,
-				privateAuras = {1255310, 1255335, 1255503}
+				privateAuras = {}
 			},
 		},
 	},
@@ -83,17 +83,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3212] = {
 				events = {150, 151, 152, 153, 154, 155},
 				journalID = 2810,
-				privateAuras = {1243741, 1243752, 1249478, 1260643, 1266488}
+				privateAuras = {1249478, 1260643}
 			},
 			[3213] = {
 				events = {16, 17, 18, 19, 20},
 				journalID = 2811,
-				privateAuras = {1251568, 1251775, 1251813, 1251833, 1252130, 1266706}
+				privateAuras = {1251775}
 			},
 			[3214] = {
 				events = {156, 157, 158},
 				journalID = 2812,
-				privateAuras = {1251023, 1252675, 1252777, 1252816, 1253779, 1253844, 1254043, 1254175, 1255629, 1266188}
+				privateAuras = {1252675}
 			},
 		},
 	},
@@ -130,22 +130,22 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3056] = {
 				events = {239, 241, 242},
 				journalID = 2655,
-				privateAuras = {466091, 466559, 470212, 472118}
+				privateAuras = {}
 			},
 			[3057] = {
 				events = {25, 26, 27, 28, 29},
 				journalID = 2656,
-				privateAuras = {472777, 472793, 472888, 474129, 1253834, 1215803, 1219491, 1282272}
+				privateAuras = {472793, 474129}
 			},
 			[3058] = {
 				events = {210, 211, 213, 212, 214, 215, 216},
 				journalID = 2657,
-				privateAuras = {467620, 468659, 470966, 1283247, 1253030}
+				privateAuras = {467620, 470966, 1283247}
 			},
 			[3059] = {
 				events = {21, 22, 23, 24, 538},
 				journalID = 2658,
-				privateAuras = {468442, 472662, 474528, 1282911, 1216042, 1253979, 1282955}
+				privateAuras = {472662, 1282911, 1253979}
 			},
 		},
 	},
@@ -156,22 +156,22 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3071] = {
 				events = {281, 286, 287, 288},
 				journalID = 2659,
-				privateAuras = {1214038, 1214089, 1243905}
+				privateAuras = {}
 			},
 			[3072] = {
 				events = {93, 94, 95, 513, 96},
 				journalID = 2661,
-				privateAuras = {1225015, 1225205, 1225792, 1246446}
+				privateAuras = {1225792}
 			},
 			[3073] = {
 				events = {635, 97, 98, 100},
 				journalID = 2660,
-				privateAuras = {1224104, 1224401, 1284958, 1224299, 1253709}
+				privateAuras = {1253709}
 			},
 			[3074] = {
 				events = {290, 292, 420},
 				journalID = 2662,
-				privateAuras = {1215157, 1215161, 1215897, 1269631}
+				privateAuras = {1215157, 1269631}
 			},
 		},
 	},
@@ -192,7 +192,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2001] = {
 				events = {203, 204, 205, 206, 561},
 				journalID = 609,
-				privateAuras = {1264186, 1264453, 1264299}
+				privateAuras = {1264453, 1264299}
 			},
 		},
 	},
@@ -203,22 +203,22 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3199] = {
 				events = {177, 173, 174, 175, 176},
 				journalID = 2769,
-				privateAuras = {1234802, 1235574, 1235828, 1235865}
+				privateAuras = {}
 			},
 			[3200] = {
 				events = {179, 180, 178},
 				journalID = 2770,
-				privateAuras = {1237091, 1237267, 1272290}
+				privateAuras = {}
 			},
 			[3201] = {
 				events = {181, 182, 184, 188, 115, 183},
 				journalID = 2771,
-				privateAuras = {1239825, 1239919, 1241058, 1251345, 1257094}
+				privateAuras = {}
 			},
 			[3202] = {
 				events = {192, 191, 189, 190},
 				journalID = 2772,
-				privateAuras = {1246751, 1246753, 1247746}
+				privateAuras = {}
 			},
 		},
 	},
@@ -228,17 +228,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3101] = {
 				events = {610, 202, 122, 120},
 				journalID = 2679,
-				privateAuras = {1228198}
+				privateAuras = {}
 			},
 			[3102] = {
 				events = {124, 127, 193, 123, 125},
 				journalID = 2680,
-				privateAuras = {474515, 474545, 1214352}
+				privateAuras = {474545}
 			},
 			[3103] = {
 				events = {30, 31, 32},
 				journalID = 2681,
-				privateAuras = {473898, 474234, 1214650}
+				privateAuras = {}
 			},
 			[3105] = {
 				events = {37, 38, 207},
@@ -253,17 +253,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3207] = {
 				events = {86, 87, 88},
 				journalID = 2776,
-				privateAuras = {1234846, 1235125}
+				privateAuras = {}
 			},
 			[3208] = {
 				events = {67, 70, 68, 69},
 				journalID = 2777,
-				privateAuras = {1235549, 1235829, 1235841, 1235641, 1236289}
+				privateAuras = {1235549}
 			},
 			[3209] = {
 				events = {92, 90, 89, 91},
 				journalID = 2778,
-				privateAuras = {1242869, 1243590, 1255577, 1262253, 1261781}
+				privateAuras = {}
 			},
 
 		},
@@ -274,17 +274,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3285] = {
 				events = {39, 558, 40, 42, 41},
 				journalID = 2791,
-				privateAuras = {1222103, 1262283}
+				privateAuras = {}
 			},
 			[3286] = {
 				events = {297, 47, 54, 55, 46},
 				journalID = 2792,
-				privateAuras = {1222484, 1222642, 1226031, 1263971}
+				privateAuras = {}
 			},
 			[3287] = {
 				events = {56, 57, 58, 171},
 				journalID = 2793,
-				privateAuras = {1227197, 1248130, 1264188}
+				privateAuras = {}
 			},
 
 		},
