@@ -99,6 +99,7 @@ L["ClearEventSound"] = "已清除注册的事件音效: "
 L["CurrentProfile"] = "当前配置文件: "
 L["SelectAnEvent"] = "选择一个BOSS战事件开始设置"
 L["SelectPA"] = "选择一个私有光环开始设置"
+L["NoSuchEncounterToTest"] = "如果你想测试, 请输入类似\"|cff8788ee\\hbes test <encounterID>|r\"的命令, 其中<encounterID>是你想测试的BOSS战的ID"
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"

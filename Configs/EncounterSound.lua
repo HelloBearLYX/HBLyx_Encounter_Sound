@@ -209,6 +209,9 @@ local function GetEncountersList(mapID)
 	if addon.data.MAP_ENCOUNTER_EVENTS[mapID] and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters then
 		for encounterID, encounterInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters) do
 			output[encounterID] = encounterInfo.journalID and EJ_GetEncounterInfo(encounterInfo.journalID) or encounterID
+			if type(output[encounterID]) == "string" then
+				output[encounterID] = output[encounterID] .. "(" .. tostring(encounterID) .. ")"
+			end
 		end
 	end
 

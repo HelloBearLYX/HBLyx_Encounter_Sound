@@ -99,8 +99,22 @@ end
 ---Register in-game Slash Command
 local function SetUpSlashCommand()
 	SLASH_HBES1 = "/hbes"
-	SlashCmdList["HBES"] = function()
-		addon.GUI:OpenGUI()
+	SlashCmdList["HBES"] = function(message)
+		local command, rest = strsplit(" ", message, 2)
+		if command == "" then
+			if addon.GUI and addon.GUI.isOpened then
+				addon.GUI:CloseGUI()
+			else
+				addon.GUI:OpenGUI()
+			end
+		elseif command == "test" then
+			if not rest or rest == "" then
+				addon.Utilities:print(L["NoSuchEncounterToTest"])
+				return
+			end
+
+			addon.core:GetModule("EncounterSound"):TestSound(tonumber(rest))
+		end
 	end
 end
 
@@ -131,7 +145,7 @@ end
 
 ---Initialization before main
 function addon:Initialize()
-	addon.version = "3.13"
+	addon.version = "3.14"
 
 	-- set up profile and configures
 	InitializeConfig()

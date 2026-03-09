@@ -34,7 +34,7 @@ local function DataMigration()
         end
 
         -- 3.14 delete private auras which has been removed on 03/02/2026
-        for encounterID, eventData in pairs(addon.db.CHANGED_PRIVATEAURAS) do
+        for encounterID, eventData in pairs(addon.data.CHANGED_PRIVATEAURAS) do
             for eventID, change in pairs(eventData) do
                 if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][eventID] then
                     addon.db.EncounterSound.dataPA[encounterID][eventID] = change
