@@ -6,19 +6,11 @@ local EncounterSound = {
     modName = "EncounterSound",
 }
 
--- MARK: Constants
+-- MARK: Data Migration
 
--- MARK: Initialize
-
----Initialize (Constructor)
----@return EncounterSound EncounterSound a EncounterSound object
-function EncounterSound:Initialize()
-    self.privateAuras = {}
-    self.role = nil
-    self.lastEncounterID = nil
-
-    -- 3.11 data change migration
-    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.13") then
+local function DataMigration()
+    -- 3.13 data structure change: number keys to string keys for trigger for better stability
+    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14") then
         for encounterID, eventData in pairs(addon.db.EncounterSound.data or {}) do
             for eventID, attributes in pairs(eventData) do
                 local migratedAttributes = {}
@@ -41,9 +33,31 @@ function EncounterSound:Initialize()
             end
         end
 
+        -- 3.14 delete private auras which has been removed on 03/02/2026
+        for encounterID, eventData in pairs(addon.db.CHANGED_PRIVATEAURAS) do
+            for eventID, change in pairs(eventData) do
+                if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][eventID] then
+                    addon.db.EncounterSound.dataPA[encounterID][eventID] = change
+                end
+            end
+        end
+
         addon.db.EncounterSound.version = addon.version -- update version after migration
         addon.Utilities:print("EncounterSound data has been migrated to the new format")
     end
+end
+
+-- MARK: Initialize
+
+---Initialize (Constructor)
+---@return EncounterSound EncounterSound a EncounterSound object
+function EncounterSound:Initialize()
+    self.privateAuras = {}
+    self.role = nil
+    self.lastEncounterID = nil
+
+    -- 3.13 data change migration
+    DataMigration()
 
     return self
 end
