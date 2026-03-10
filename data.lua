@@ -86,7 +86,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {1249478, 1260643}
 			},
 			[3213] = {
-				events = {16, 17, 18, 19, 20},
+				events = {16, 17, 19, 20},
 				journalID = 2811,
 				privateAuras = {1251775}
 			},
@@ -159,7 +159,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {}
 			},
 			[3072] = {
-				events = {93, 94, 95, 513, 96},
+				events = {93, 94, 513, 96},
 				journalID = 2661,
 				privateAuras = {1225792}
 			},
@@ -355,6 +355,9 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 addon.data.CHANGED_DATA = {
 	[3103] = {[559] = nil},
 	[3286] = {[557] = nil},
+	[3213] = {[18] = nil},
+	[3058] = {[213] = nil, [214] = nil},
+	[3072] = {[95] = nil},
 }
 
 addon.data.CHANGED_PRIVATEAURAS = { -- 03/02/26 changes

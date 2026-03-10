@@ -9,7 +9,7 @@ local EncounterSound = {
 -- MARK: Data Migration
 
 local function DataMigration()
-    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14.1") then
+    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14.2") then
         for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
             for privateAuraID, change in pairs(privateAuraChange) do
                 if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
@@ -22,7 +22,19 @@ local function DataMigration()
             end
         end
 
-        addon.db.EncounterSound.version = addon.version .. ".1" -- update version after migration
+        for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS) do
+            for eventID, change in pairs(eventChange) do
+                if addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
+                    if change then
+                        local data = addon.db.EncounterSound.data[encounterID][eventID]
+                        addon.db.EncounterSound.data[encounterID][change] = data
+                    end
+                    addon.db.EncounterSound.data[encounterID][eventID] = nil
+                end
+            end
+        end
+
+        addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
         addon.Utilities:print("EncounterSound data has been migrated to the new format")
     end
 end
