@@ -9,40 +9,20 @@ local EncounterSound = {
 -- MARK: Data Migration
 
 local function DataMigration()
-    -- 3.13 data structure change: number keys to string keys for trigger for better stability
-    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14") then
-        for encounterID, eventData in pairs(addon.db.EncounterSound.data or {}) do
-            for eventID, attributes in pairs(eventData) do
-                local migratedAttributes = {}
-
-                for trigger, data in pairs(attributes) do
-                    if trigger == "color" then
-                        migratedAttributes.color = data
-                    elseif type(data) == "table" then
-                        -- Convert trigger into string format for stability, e.g. "1" for trigger 1, "2" for trigger 2.
-                        -- Build a new table instead of mutating while iterating to avoid data loss.
-                        local newTrigger = tostring(trigger)
-                        migratedAttributes[newTrigger] = {
-                            sound = data.sound,
-                            role = data.role,
-                        }
+    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14.1") then
+        for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
+            for privateAuraID, change in pairs(privateAuraChange) do
+                if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
+                    if change then
+                        local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
+                        addon.db.EncounterSound.dataPA[encounterID][change] = data
                     end
-                end
-
-                addon.db.EncounterSound.data[encounterID][eventID] = migratedAttributes
-            end
-        end
-
-        -- 3.14 delete private auras which has been removed on 03/02/2026
-        for encounterID, eventData in pairs(addon.data.CHANGED_PRIVATEAURAS) do
-            for eventID, change in pairs(eventData) do
-                if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][eventID] then
-                    addon.db.EncounterSound.dataPA[encounterID][eventID] = change
+                    addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
                 end
             end
         end
 
-        addon.db.EncounterSound.version = addon.version -- update version after migration
+        addon.db.EncounterSound.version = addon.version .. ".1" -- update version after migration
         addon.Utilities:print("EncounterSound data has been migrated to the new format")
     end
 end
@@ -56,7 +36,7 @@ function EncounterSound:Initialize()
     self.role = nil
     self.lastEncounterID = nil
 
-    -- 3.13 data change migration
+    -- 3.14.1 data change migration
     DataMigration()
 
     return self

@@ -30,7 +30,7 @@ local TRIGGER_ORDER = {"0", "1", "2"} -- keep a separate order table since the t
 ---Add Sounds to DB
 ---@param encounterID integer encounterID
 ---@param eventID integer eventID
----@param trigger integer trigger type, 0 for text warning shown, 1 for timeline event finished, 2 for timeline event highlighted
+---@param trigger string trigger type, 0 for text warning shown, 1 for timeline event finished, 2 for timeline event highlighted
 ---@param sound string sound file path or sound kit ID
 ---@param role table<string, boolean>|nil role table for group roles
 local function AddSound(encounterID, eventID, trigger, sound, role)
@@ -332,6 +332,8 @@ local function RenderEncounterSettings(self)
 					self.triggers[trigger].sound = sound
 					if role then
 						self.triggers[trigger].role:SetSelectedKeys(role)
+					else
+						self.triggers[trigger].role:ClearSelections()
 					end
 				else
 					self.triggers[trigger].soundDropdown:SetValue(nil)

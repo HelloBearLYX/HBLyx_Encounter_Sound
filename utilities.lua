@@ -363,20 +363,35 @@ end
 
 -- MARK: version check
 
+---Parse a version string into major, minor, patch numbers.
+---Supports legacy format "major.minor" by treating it as "major.minor.0".
+---@param version string|nil version string
+---@return number major
+---@return number minor
+---@return number patch
+local function ParseVersion(version)
+	version = tostring(version or "0.0.0")
+	local mainVersion, subVersion, patchVersion = strsplit(".", version)
+
+	return tonumber(mainVersion) or 0, tonumber(subVersion) or 0, tonumber(patchVersion) or 0
+end
+
 ---Check if the version is less than current version
 ---@param version string the current version
 ---@param targetVersion string|nil the target version to compare against, if nil, compare against the addon's current version
 ---@return boolean true if the version is less than target version, false otherwise
 function addon.Utilities:CheckVersion(version, targetVersion)
-	local mainVersion, subVersion = strsplit(".", version)
-	targetVersion = targetVersion or addon.db.version or "0.0"
-	local currentMainVersion, currentSubVersion = strsplit(".", targetVersion)
-	mainVersion, subVersion = tonumber(mainVersion), tonumber(subVersion)
-	currentMainVersion, currentSubVersion = tonumber(currentMainVersion), tonumber(currentSubVersion)
+	local mainVersion, subVersion, patchVersion = ParseVersion(version)
+	targetVersion = targetVersion or addon.db.version or "0.0.0"
+	local currentMainVersion, currentSubVersion, currentPatchVersion = ParseVersion(targetVersion)
 
-	if mainVersion < currentMainVersion or (mainVersion == currentMainVersion and subVersion < currentSubVersion) then
-		return true
+	if mainVersion ~= currentMainVersion then
+		return mainVersion < currentMainVersion
 	end
 
-	return false
+	if subVersion ~= currentSubVersion then
+		return subVersion < currentSubVersion
+	end
+
+	return patchVersion < currentPatchVersion
 end

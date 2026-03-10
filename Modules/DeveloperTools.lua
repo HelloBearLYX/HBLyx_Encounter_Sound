@@ -208,7 +208,7 @@ function addon.DeveloperTools:DisplayAddonInfo()
     -- end
     -- output["Data"] = ScanPrivateAuras()
     -- output["Data"] = self:FecthAllEncounterSections(2795, 15) -- get encounter spellIDs
-    -- output["Data"] = self:AttemptsFetchAllEEInfo() -- get encounter events info
+    output["Data"] = self:AttemptsFetchAllEEInfo() -- get encounter events info
 
     if self.isOpened and self.displayFrame then
         self.displayFrame:Hide()
@@ -240,10 +240,12 @@ function addon.DeveloperTools:FetchEncounterEventInfo(encounterEventID)
 end
 
 function addon.DeveloperTools:AttemptsFetchAllEEInfo()
-    local output = "EncounterEventID, Severity, SpellID, SpellName\n"
-    for i = 1, 1000 do
-        local data = self:FetchEncounterEventInfo(i)
-        output = output .. string.format("%d, %s, %s, %s\n",
+    local output = "EncounterEventID,Severity,SpellID,SpellName\n"
+    local allEventIDs = C_EncounterEvents.GetEventList()
+
+    for _, eventID in ipairs(allEventIDs) do
+        local data = self:FetchEncounterEventInfo(eventID)
+        output = output .. string.format("%d,%s,%s,%s\n",
             data.encounterEventID or -1,
             data.severity or "nil",
             tostring(data.spellID),
