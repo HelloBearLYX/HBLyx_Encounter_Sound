@@ -98,6 +98,7 @@ L["CurrentProfile"] = "Current Profile: "
 L["SelectAnEvent"] = "Select an encounter event to begin setting"
 L["SelectPA"] = "Select a private aura to begin setting"
 L["NoSuchEncounterToTest"] = "If you want to test, please enter the encounter ID like \"|cff8788ee\\hbes test <encounterID>|r\", where <encounterID> is the ID of the encounter you want to test"
+L["DataMigration"] = "Data Migration"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"
