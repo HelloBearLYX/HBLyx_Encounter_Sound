@@ -8,34 +8,42 @@ local EncounterSound = {
 
 -- MARK: Data Migration
 
+--- used to make data migration, may change due to different patch changes
+local function DataMigrationHelper()
+    for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
+        for privateAuraID, change in pairs(privateAuraChange) do
+            if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
+                if change then
+                    local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
+                    addon.db.EncounterSound.dataPA[encounterID][change] = data
+                end
+                addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
+            end
+        end
+    end
+
+    for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS) do
+        for eventID, change in pairs(eventChange) do
+            if addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
+                if change then
+                    local data = addon.db.EncounterSound.data[encounterID][eventID]
+                    addon.db.EncounterSound.data[encounterID][change] = data
+                end
+                addon.db.EncounterSound.data[encounterID][eventID] = nil
+            end
+        end
+    end
+end
+
+--- used to apply the data migration if needed, and update the version after change the data migration
 local function DataMigration()
     if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14.2") then
-        for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
-            for privateAuraID, change in pairs(privateAuraChange) do
-                if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
-                    if change then
-                        local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
-                        addon.db.EncounterSound.dataPA[encounterID][change] = data
-                    end
-                    addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
-                end
-            end
+        if pcall(DataMigrationHelper) then
+            addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
+            addon.Utilities:print("EncounterSound-Data updated-Auto data migration has been |cffff0000completed|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r")
+        else
+            addon.Utilities:print("EncounterSound-Data updated-Auto data migration |cffff0000failed|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r. Please report this issue to the author.")
         end
-
-        for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS) do
-            for eventID, change in pairs(eventChange) do
-                if addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
-                    if change then
-                        local data = addon.db.EncounterSound.data[encounterID][eventID]
-                        addon.db.EncounterSound.data[encounterID][change] = data
-                    end
-                    addon.db.EncounterSound.data[encounterID][eventID] = nil
-                end
-            end
-        end
-
-        addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
-        addon.Utilities:print("EncounterSound data has been migrated to the new format")
     end
 end
 
@@ -107,7 +115,7 @@ local function ClearEventSounds(self, encounterID)
     if addon.db.EncounterSound.data and addon.db.EncounterSound.data[encounterID] then
         local encounterData = addon.db.EncounterSound.data[encounterID]
         for eventID, eventData in pairs(encounterData) do
-            -- do not reset color if not needed(still considering)
+            -- do not reset color yet(still considering)
             -- C_EncounterEvents.SetEventColor(eventID, CreateColor(1, 1, 1, 1)) -- reset to white
             for attribute, value in pairs(eventData) do
                 if attribute ~= "color" then
