@@ -119,7 +119,7 @@ local function SetUpSlashCommand()
 end
 
 ---Get Addon's Version number
----@return number version number
+---@return string version number
 function addon:GetVersion()
 	return addon.version
 end
@@ -145,7 +145,7 @@ end
 
 ---Initialization before main
 function addon:Initialize()
-	addon.version = "3.14"
+	addon.version = "3.15"
 
 	-- set up profile and configures
 	InitializeConfig()

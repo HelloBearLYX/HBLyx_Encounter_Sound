@@ -521,7 +521,7 @@ addon.data.SPELL_INFO = {
 }
 
 -- MARK: Data Changes
-addon.data.CHANGED_DATA = {
+addon.data.CHANGED_EVENTS = {
 	[3103] = {[559] = nil},
 	[3286] = {[557] = nil},
 	[3213] = {[18] = nil},
