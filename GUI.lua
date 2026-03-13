@@ -16,6 +16,7 @@ local TABS = {
     {text = L["EncounterSoundEffects"], value = "EncounterGeneral"},
     {text = L["Raid"], value = "Raid"},
     {text = L["Dungeon"], value = "Dungeon"},
+    {text = L["TemplateSettings"], value = "Template"},
     {text = L["Profile"], value = "Profile"},
 }
 
@@ -146,6 +147,9 @@ function addon.GUI:Render()
             panel:DoLayout()
         elseif tab == "Dungeon" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, false)
+            panel:DoLayout()
+        elseif tab == "Template" then
+            local panel = addon.GUI.TagPanels.EncounterSound:CreateTemplatePanel(container)
             panel:DoLayout()
         elseif tab == "Profile" then
             local panel = addon.GUI.TagPanels.Profile:CreateTabPanel(container)

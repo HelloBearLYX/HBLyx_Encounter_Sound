@@ -59,6 +59,22 @@ L["GroupRole"] = {
 	DAMAGER = "输出",
 }
 
+-- MARK: Spell Flags
+L["SpellFlagTank"] = "坦克"
+L["SpellFlagDamager"] = "输出"
+L["SpellFlagHealer"] = "治疗"
+L["SpellFlagHeroic"] = "|cffec8b27H|r英雄"
+L["SpellFlagDeadly"] = "致命"
+L["SpellFlagImportant"] = "重要"
+L["SpellFlagInterrupt"] = "打断"
+L["SpellFlagMagic"] = "魔法"
+L["SpellFlagCurse"] = "诅咒"
+L["SpellFlagPoison"] = "中毒"
+L["SpellFlagDisease"] = "疾病"
+L["SpellFlagEnrage"] = "激怒"
+L["SpellFlagMythic"] = "|cffbf42f5M|r史诗"
+L["SpellFlagBleed"] = "流血"
+
 -- MARK: Config
 L["ConfigPanel"] = "打开配置面板"
 L["Test"] = "测试/解锁(拖动移动)"
@@ -101,6 +117,7 @@ L["SelectAnEvent"] = "选择一个BOSS战事件开始设置"
 L["SelectPA"] = "选择一个私有光环开始设置"
 L["NoSuchEncounterToTest"] = "如果你想测试, 请输入类似\"|cff8788ee\\hbes test <encounterID>|r\"的命令, 其中<encounterID>是你想测试的BOSS战的ID"
 L["DataMigration"] = "数据迁移"
+L["GeneralSettings"] = "通用设置"
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"
@@ -130,3 +147,13 @@ L["EncounterEventsInstruction"] =
 "|cffffff00测试时间轴|r: 会模拟本Boss所有的时间轴事件(非实际Boss时间轴), 并以6秒为间隔, 以便测试设置的正确性和效果, 但是实际时间轴时间表现可能会不同\n\n"
 L["PrivateAuraInstruction"] = "为私有光环应用一个声音警报, 当私有光环被施加在\"玩家\"身上时播放声音警报\n\n" ..
 "为了防止不必要的冲突或冗余, 私有光环的锚点在这个模块中没有提供, 因为有许多UI插件提供了私有光环的自定义位置\n\n"
+
+-- MARK: Templates
+L["TemplateSettings"] = "模板"
+L["SelectTemplate"] = "选择模板"
+L["TemplateNameNew"] = "新模板"
+L["ApplyTemplate"] = "应用模板"
+L["TemplateDesc"] = "模板用于快速应用于具有相似条件的事件\n\n" ..
+"在你设置好模板后, 你可以将它应用于一个事件, 设置将会立即应用于该事件, 你也可以在应用模板后修改设置以适应特定事件\n\n" ..
+"模板名称是|cffffff00模板的唯一键|r, 所以当你创建一个新模板时,请确保名称与现有模板不同, 否则同名的现有模板将会被覆盖而没有警告\n\n" ..
+"可以从下拉菜单中选择模板来删除/更新, 你可以通过输入一个新的模板名字来添加新模板"

@@ -57,6 +57,22 @@ L["GroupRole"] = {
 	DAMAGER = "DPS",
 }
 
+-- MARK: Spell Flags
+L["SpellFlagTank"] = "Tank"
+L["SpellFlagDamager"] = "Damager"
+L["SpellFlagHealer"] = "Healer"
+L["SpellFlagHeroic"] = "|cffec8b27H|reroic"
+L["SpellFlagDeadly"] = "Deadly"
+L["SpellFlagImportant"] = "Important"
+L["SpellFlagInterrupt"] = "Interrupt"
+L["SpellFlagMagic"] = "Magic"
+L["SpellFlagCurse"] = "Curse"
+L["SpellFlagPoison"] = "Poison"
+L["SpellFlagDisease"] = "Disease"
+L["SpellFlagEnrage"] = "Enrage"
+L["SpellFlagMythic"] = "|cffbf42f5M|rythic"
+L["SpellFlagBleed"] = "Bleed"
+
 -- MARK: Config
 L["ConfigPanel"] = "Open Configurations Panel"
 L["Test"] = "Test/Unlock(Drag to Move)"
@@ -99,6 +115,7 @@ L["SelectAnEvent"] = "Select an encounter event to begin setting"
 L["SelectPA"] = "Select a private aura to begin setting"
 L["NoSuchEncounterToTest"] = "If you want to test, please enter the encounter ID like \"|cff8788ee\\hbes test <encounterID>|r\", where <encounterID> is the ID of the encounter you want to test"
 L["DataMigration"] = "Data Migration"
+L["GeneralSettings"] = "General Settings"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"
@@ -128,3 +145,13 @@ L["EncounterEventsInstruction"] =
 "|cffffff00Test Timeline|r: simulate the timeline for all events of this Boss with 6 seconds intervals(not actual timeline), to test the correctness and effect of the settings, but the actual timeline trigger perform differently\n\n"
 L["PrivateAuraInstruction"] = "Apply a sound alert for private auras, and the sound alert is played when the private aura is applied on \"player\".\n\n" ..
 "To prevent unneccessary conflicts or redundancy, private auras' anchor are not provided in this module, since there are many UI addons offer the customized position of private auras.\n\n"
+
+-- MARK: Templates
+L["TemplateSettings"] = "Template"
+L["SelectTemplate"] = "Select Template"
+L["TemplateNameNew"] = "New Template"
+L["ApplyTemplate"] = "Apply Template"
+L["TemplateDesc"] = "The templates are used to rapidly apply to events with similar conditions.\n\n" ..
+"After you set templates up, you can apply it on an event, and the settings will be applied to the event immediately, and you can also modify the settings after applying template to fit the specific event.\n\n" ..
+"The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates, or the existing template with the same name will be overwritten without warning.\n\n" ..
+"You can choose template from the dropdown menu to delete or update, and the new template will be added when enter the new template name in the editbos\n"
