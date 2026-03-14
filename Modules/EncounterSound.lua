@@ -10,6 +10,20 @@ local EncounterSound = {
 
 --- used to make data migration, may change due to different patch changes
 local function DataMigrationHelper()
+    -- events
+    for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS) do
+        for eventID, change in pairs(eventChange) do
+            if addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
+                if change then
+                    local data = addon.db.EncounterSound.data[encounterID][eventID]
+                    addon.db.EncounterSound.data[encounterID][change] = data
+                end
+                addon.db.EncounterSound.data[encounterID][eventID] = nil
+            end
+        end
+    end
+    
+    -- private auras
     for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
         for privateAuraID, change in pairs(privateAuraChange) do
             if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
@@ -22,24 +36,13 @@ local function DataMigrationHelper()
         end
     end
 
-    for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS) do
-        for eventID, change in pairs(eventChange) do
-            if addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
-                if change then
-                    local data = addon.db.EncounterSound.data[encounterID][eventID]
-                    addon.db.EncounterSound.data[encounterID][change] = data
-                end
-                addon.db.EncounterSound.data[encounterID][eventID] = nil
-            end
-        end
-    end
-
-    addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
+    -- update version after migration
+    addon.db.EncounterSound.version = addon.version .. ".3" -- update version after migration
 end
 
 --- used to apply the data migration if needed, and update the version after change the data migration
 local function DataMigration()
-    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.14.2") then
+    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.15.3") then
         if pcall(DataMigrationHelper) then
             -- addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
             addon.Utilities:print(L["DataMigration"] .. " |cffff0000succeeded|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r")

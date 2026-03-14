@@ -767,6 +767,9 @@ function GUI.TagPanels.EncounterSound:CreateTemplatePanel(parent)
 		if addon.db.EncounterSound.templates and addon.db.EncounterSound.templates[text] then
 			addon.Utilities:print(string.format("Template %s already exists. Please choose another name or delete the existing template first.", text))
 			return
+		elseif text == "" then
+			addon.Utilities:print("Template name cannot be empty.")
+			return
 		else -- create new template with empty settings
 			if not addon.db.EncounterSound.templates then
 				addon.db.EncounterSound.templates = {}

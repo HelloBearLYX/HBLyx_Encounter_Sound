@@ -522,96 +522,96 @@ addon.data.SPELL_INFO = {
 
 -- MARK: Data Changes
 addon.data.CHANGED_EVENTS = {
-	[3103] = {[559] = nil},
-	[3286] = {[557] = nil},
-	[3213] = {[18] = nil},
-	[3058] = {[213] = nil, [214] = nil},
-	[3072] = {[95] = nil},
+	[3103] = {[559] = false},
+	[3286] = {[557] = false},
+	[3213] = {[18] = false},
+	[3058] = {[213] = false, [214] = false},
+	[3072] = {[95] = false},
 }
 
 addon.data.CHANGED_PRIVATEAURAS = { -- 03/02/26 changes
 	[2001] = { -- 1 deleted auras
-		[1264186] = nil,
+		[1264186] = false,
 	},
 	[3056] = { -- 4 deleted auras
-		[466091] = nil,[466559] = nil,[470212] = nil,[472118] = nil,
+		[466091] = false,[466559] = false,[470212] = false,[472118] = false,
 	},
 	[3057] = { -- 6 deleted auras
-		[472777] = nil,[472888] = nil,[1253834] = nil,[1215803] = nil,[1219491] = nil,[1282272] = nil,
+		[472777] = false,[472888] = false,[1253834] = false,[1215803] = false,[1219491] = false,[1282272] = false,
 	},
 	[3058] = { -- 2 deleted auras
-		[468659] = nil,[1253030] = nil,
+		[468659] = false,[1253030] = false,
 	},
 	[3059] = { -- 4 deleted auras
-		[468442] = nil,[474528] = nil,[1216042] = nil,[1282955] = nil,
+		[468442] = false,[474528] = false,[1216042] = false,[1282955] = false,
 	},
 	[3071] = { -- 3 deleted auras
-		[1214038] = nil,[1214089] = nil,[1243905] = nil,
+		[1214038] = false,[1214089] = false,[1243905] = false,
 	},
 	[3072] = { -- 3 deleted auras
-		[1225015] = nil,[1225205] = nil,[1246446] = nil,
+		[1225015] = false,[1225205] = false,[1246446] = false,
 	},
 	[3073] = { -- 4 deleted auras
-		[1224104] = nil,[1224401] = nil,[1284958] = nil,[1224299] = nil,
+		[1224104] = false,[1224401] = false,[1284958] = false,[1224299] = false,
 	},
 	[3074] = { -- 2 deleted auras
-		[1215161] = nil,[1215897] = nil,
+		[1215161] = false,[1215897] = false,
 	},
 	[3101] = { -- 1 deleted auras
-		[1228198] = nil,
+		[1228198] = false,
 	},
 	[3102] = { -- 2 deleted auras
-		[474515] = nil,[1214352] = nil,
+		[474515] = false,[1214352] = false,
 	},
 	[3103] = { -- 3 deleted auras
-		[473898] = nil,[474234] = nil,[1214650] = nil,
+		[473898] = false,[474234] = false,[1214650] = false,
 	},
 	[3199] = { -- 4 deleted auras
-		[1234802] = nil,[1235574] = nil,[1235828] = nil,[1235865] = nil,
+		[1234802] = false,[1235574] = false,[1235828] = false,[1235865] = false,
 	},
 	[3200] = { -- 3 deleted auras
-		[1237091] = nil,[1237267] = nil,[1272290] = nil,
+		[1237091] = false,[1237267] = false,[1272290] = false,
 	},
 	[3201] = { -- 5 deleted auras
-		[1239825] = nil,[1239919] = nil,[1241058] = nil,[1251345] = nil,[1257094] = nil,
+		[1239825] = false,[1239919] = false,[1241058] = false,[1251345] = false,[1257094] = false,
 	},
 	[3202] = { -- 3 deleted auras
-		[1246751] = nil,[1246753] = nil,[1247746] = nil,
+		[1246751] = false,[1246753] = false,[1247746] = false,
 	},
 	[3207] = { -- 2 deleted auras
-		[1234846] = nil,[1235125] = nil,
+		[1234846] = false,[1235125] = false,
 	},
 	[3208] = { -- 4 deleted auras
-		[1235829] = nil,[1235841] = nil,[1235641] = nil,[1236289] = nil,
+		[1235829] = false,[1235841] = false,[1235641] = false,[1236289] = false,
 	},
 	[3209] = { -- 5 deleted auras
-		[1242869] = nil,[1243590] = nil,[1255577] = nil,[1262253] = nil,[1261781] = nil,
+		[1242869] = false,[1243590] = false,[1255577] = false,[1262253] = false,[1261781] = false,
 	},
 	[3212] = { -- 3 deleted auras
-		[1243741] = nil,[1243752] = nil,[1266488] = nil,
+		[1243741] = false,[1243752] = false,[1266488] = false,
 	},
 	[3213] = { -- 5 deleted auras
-		[1251568] = nil,[1251813] = nil,[1251833] = nil,[1252130] = nil,[1266706] = nil,
+		[1251568] = false,[1251813] = false,[1251833] = false,[1252130] = false,[1266706] = false,
 	},
 	[3214] = { -- 9 deleted auras
-		[1251023] = nil,[1252777] = nil,[1252816] = nil,[1253779] = nil,[1253844] = nil,[1254043] = nil,[1254175] = nil,[1255629] = nil,[1266188] = nil,
+		[1251023] = false,[1252777] = false,[1252816] = false,[1253779] = false,[1253844] = false,[1254043] = false,[1254175] = false,[1255629] = false,[1266188] = false,
 	},
 	[3285] = { -- 2 deleted auras
-		[1222103] = nil,[1262283] = nil,
+		[1222103] = false,[1262283] = false,
 	},
 	[3286] = { -- 4 deleted auras
-		[1222484] = nil,[1222642] = nil,[1226031] = nil,[1263971] = nil,
+		[1222484] = false,[1222642] = false,[1226031] = false,[1263971] = false,
 	},
 	[3287] = { -- 3 deleted auras
-		[1227197] = nil,[1248130] = nil,[1264188] = nil,
+		[1227197] = false,[1248130] = false,[1264188] = false,
 	},
 	[3328] = { -- 3 deleted auras
-		[1251626] = nil,[1264042] = nil,[1276485] = nil, [1251772] = 1251785
+		[1251626] = false,[1264042] = false,[1276485] = false, [1251772] = 1251785
 	},
 	[3332] = { -- 1 deleted auras
-		[1247975] = nil,
+		[1247975] = false,
 	},
 	[3333] = { -- 3 deleted auras
-		[1255310] = nil,[1255335] = nil,[1255503] = nil,
+		[1255310] = false,[1255335] = false,[1255503] = false,
 	},
 }
