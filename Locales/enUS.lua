@@ -153,5 +153,5 @@ L["TemplateNameNew"] = "New Template"
 L["ApplyTemplate"] = "Apply Template"
 L["TemplateDesc"] = "The templates are used to rapidly apply to events with similar conditions.\n\n" ..
 "After you set templates up, you can apply it on an event, and the settings will be applied to the event immediately, and you can also modify the settings after applying template to fit the specific event.\n\n" ..
-"The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates, or the existing template with the same name will be overwritten without warning.\n\n" ..
+"The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates.\n\n" ..
 "You can choose template from the dropdown menu to delete or update, and the new template will be added when enter the new template name in the editbos\n"
