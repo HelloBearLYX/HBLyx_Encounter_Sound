@@ -104,7 +104,7 @@ L["Select"] = "Select"
 L["PrivateAura"] = "Private Aura"
 L["EncounterSoundEffects"] = "Encounter Sound Effects"
 L["VictorySound"] = "Victory Sound"
-L["StartSound"] = "Encounter Start Sound"
+L["StartSound"] = "Start Sound"
 L["TestTimeline"] = "Test Timeline"
 L["TestLoadFailed"] = "Test |cffff0000Failed|r: No data found for encounter: "
 L["TestLoadSuccess"] = "Test load |cff00ff00success|r: Test for encounter: "
@@ -156,6 +156,6 @@ L["TemplateDesc"] = "The templates are used to rapidly apply to events with simi
 "The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates.\n\n" ..
 "You can choose template from the dropdown menu to delete or update, and the new template will be added when enter the new template name in the editbos\n"
 
--- MARK: Higih Performance Sound Select
-L["HighPerformanceSoundSelect"] = "High Performance Sound Select"
+-- MARK: High Performance Sound Select
+L["HighPerformanceSoundSelect"] = "High Performance Sound Select Widget"
 L["HighPerformanceSoundDesc"] = "|cffff0000Advanced|r: Use high performance(less time complexity but slightly higher memory usage) sound select widget for better performance when you have a large number of sounds in your sound library instead of the default sound select widget(Some Ace GUI skins from other addons may not be compatible).\n"

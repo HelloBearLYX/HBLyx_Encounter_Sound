@@ -158,6 +158,6 @@ L["TemplateDesc"] = "模板用于快速应用于具有相似条件的事件\n\n"
 "模板名称是|cffffff00模板的唯一键|r, 所以当你创建一个新模板时,请确保名称与现有模板不同\n\n" ..
 "可以从下拉菜单中选择模板来删除/更新, 你可以通过输入一个新的模板名字来添加新模板"
 
--- MARK: Higih Performance Sound Select
-L["HighPerformanceSoundSelect"] = "高性能音效选择"
+-- MARK: High Performance Sound Select
+L["HighPerformanceSoundSelect"] = "高性能音效选择组件"
 L["HighPerformanceSoundDesc"] = "|cffff0000高级|r: 使用高性能(更低的时间复杂度但稍高的内存使用)音效选择组件, 当你的音效库中有大量音效时可以获得更好的性能表现, 代替默认的音效选择组件(其他插件的一些Ace GUI美化可能不兼容)\n"
