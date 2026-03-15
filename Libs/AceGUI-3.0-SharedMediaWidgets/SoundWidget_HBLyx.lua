@@ -10,6 +10,9 @@ do
 	local widgetType = "LSM30_Sound_HBLyx"
 	local widgetVersion = 1
 
+	---@param this table
+	---@param event string
+	---@param checked boolean
 	local function OnItemValueChanged(this, event, checked)
 		local self = this:GetUserData("obj")
 		if not self then
@@ -28,6 +31,11 @@ do
 		end
 	end
 
+	---@param self table
+	---@param value string
+	---@param text string
+	---@param itemType? string
+	---@return nil
 	local function AddListItem(self, value, text, itemType)
 		if not itemType then itemType = "Dropdown-Item-Toggle" end
 		local exists = AceGUI:GetWidgetVersion(itemType)
@@ -35,6 +43,7 @@ do
 			error(("The given item type, %q, does not exist within AceGUI-3.0"):format(tostring(itemType)), 2)
 		end
 
+		---@diagnostic disable-next-line: param-type-mismatch
 		local item = AceGUI:Create(itemType)
 		---@diagnostic disable-next-line: undefined-field
 		if item.SetText then
@@ -48,6 +57,9 @@ do
 	end
 
 	local sortlist = {}
+	---@param x string|number
+	---@param y string|number
+	---@return boolean
 	local function sortTbl(x, y)
 		local num1, num2 = tonumber(x), tonumber(y)
 		if num1 and num2 then
@@ -56,6 +68,10 @@ do
 		return tostring(x) < tostring(y)
 	end
 
+	---@param self table
+	---@param order? table
+	---@param itemType? string
+	---@return nil
 	local function RebuildPullout(self, order, itemType)
 		if not self.pullout then
 			return
@@ -84,6 +100,8 @@ do
 		end
 	end
 
+	---@param this table
+	---@return nil
 	local function WidgetPlaySound(this)
 		local self = this.obj
 		local sound = self.frame.text:GetText()
@@ -96,14 +114,20 @@ do
 		end
 	end
 
+	---@param this table
+	---@return nil
 	local function Drop_OnEnter(this)
 		this.obj:Fire("OnEnter")
 	end
 
+	---@param this table
+	---@return nil
 	local function Drop_OnLeave(this)
 		this.obj:Fire("OnLeave")
 	end
 
+	---@param this table
+	---@return nil
 	local function Dropdown_OnHide(this)
 		local self = this.obj
 		if self.open then
@@ -111,6 +135,8 @@ do
 		end
 	end
 
+	---@param this table
+	---@return nil
 	local function ToggleDrop(this)
 		local self = this.obj
 		if self.open then
@@ -125,6 +151,8 @@ do
 		end
 	end
 
+	---@param this table
+	---@return nil
 	local function OnPulloutOpen(this)
 		local self = this:GetUserData("obj")
 		if not self then
@@ -141,6 +169,8 @@ do
 		self:Fire("OnOpened")
 	end
 
+	---@param this table
+	---@return nil
 	local function OnPulloutClose(this)
 		local self = this:GetUserData("obj")
 		if not self then
@@ -150,6 +180,8 @@ do
 		self:Fire("OnClosed")
 	end
 
+	---@param self table
+	---@return nil
 	local function OnAcquire(self)
 		---@diagnostic disable-next-line: param-type-mismatch
 		local pullout = AceGUI:Create("Dropdown-Pullout")
@@ -165,6 +197,8 @@ do
 		self:SetList(Media:HashTable("sound"))
 	end
 
+	---@param self table
+	---@return nil
 	local function OnRelease(self)
 		if self.open and self.pullout then
 			self.pullout:Close()
@@ -187,14 +221,23 @@ do
 		self.frame:Hide()
 	end
 
+	---@param self table
+	---@param text? string
+	---@return nil
 	local function SetText(self, text)
 		self.frame.text:SetText(text or "")
 	end
 
+	---@param self table
+	---@param text? string
+	---@return nil
 	local function SetLabel(self, text)
 		self.frame.label:SetText(text or "")
 	end
 
+	---@param self table
+	---@param value? string
+	---@return nil
 	local function SetValue(self, value)
 		if self.list then
 			self:SetText(value or "")
@@ -202,10 +245,17 @@ do
 		self.value = value
 	end
 
+	---@param self table
+	---@return string|nil
 	local function GetValue(self)
 		return self.value
 	end
 
+	---@param self table
+	---@param list? table
+	---@param order? table
+	---@param itemType? string
+	---@return nil
 	local function SetList(self, list, order, itemType)
 		self.list = list or Media:HashTable("sound")
 		RebuildPullout(self, order, itemType)
@@ -214,6 +264,11 @@ do
 		end
 	end
 
+	---@param self table
+	---@param key string
+	---@param value string
+	---@param itemType? string
+	---@return nil
 	local function AddItem(self, key, value, itemType)
 		self.list = self.list or {}
 		self.list[key] = value
@@ -223,12 +278,20 @@ do
 	end
 	local SetItemValue = AddItem
 
+	---@param self table
+	---@param flag boolean
+	---@return nil
 	local function SetMultiselect(self, flag)
 		self.multiselect = false
 	end
+	---@return boolean
 	local function GetMultiselect()
 		return false
 	end
+	---@param self table
+	---@param key string
+	---@param disabled boolean
+	---@return nil
 	local function SetItemDisabled(self, key, disabled)
 		if not self.pullout then return end
 		for _, item in self.pullout:IterateItems() do
@@ -238,10 +301,16 @@ do
 		end
 	end
 
+	---@param self table
+	---@param width? number
+	---@return nil
 	local function SetPulloutWidth(self, width)
 		self.pulloutWidth = width
 	end
 
+	---@param self table
+	---@param disabled boolean
+	---@return nil
 	local function SetDisabled(self, disabled)
 		self.disabled = disabled
 		if disabled then
@@ -257,12 +326,15 @@ do
 		end
 	end
 
+	---@param self table
+	---@return nil
 	local function ClearFocus(self)
 		if self.open and self.pullout then
 			self.pullout:Close()
 		end
 	end
 
+	---@return table
 	local function Constructor()
 		local frame = AGSMW:GetBaseFrame()
 		local self = {}
