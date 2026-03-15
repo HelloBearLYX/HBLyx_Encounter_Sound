@@ -383,23 +383,23 @@ end
 ---@param callback fun(key: string) callback function when value changed
 ---@return AceGUIWidget
 function addon.GUI:CreateSoundSelect(parent, label, get, callback)
-    local soundSelectKey = "LSM30_Sound"
-    if addon.db.EncounterSound.HighPerformanceSoundSelect then
-        soundSelectKey = "LSM30_Sound_HBLyx"
-    end
-    local soundSelect = AceGUI:Create(soundSelectKey)
+    local soundSelect = AceGUI:Create("SharedDropdown")
     soundSelect:SetLabel(label)
-    soundSelect:SetList(addon.LSM:HashTable("sound"))
+    soundSelect:SetList(addon.states.soundList)
     soundSelect:SetValue(get)
     soundSelect:SetCallback("OnValueChanged", function(self, _, key)
         self:SetValue(key)
+        local soundKey = addon.states.soundList[key]
+        PlaySoundFile(addon.LSM:Fetch("sound", soundKey), "Master")
         if callback then
-            callback(key)
+            callback(soundKey)
         end
     end)
+
     if parent then
         parent:AddChild(soundSelect)
     end
+
     return soundSelect
 end
 
@@ -638,5 +638,21 @@ function addon.GUI:CreateFrameStrataDropdown(parent, get, callback)
     end)
 end
 
+-- MARK: Initialize Sound List
+
+function addon.GUI:InitializeSoundList()
+    local rawList = addon.LSM:HashTable("sound")
+    addon.states.soundList = {}
+    for key in pairs(rawList) do
+        table.insert(addon.states.soundList, key)
+    end
+    table.sort(addon.states.soundList, function(a, b)
+        return string.upper(a) < string.upper(b)
+    end)
+end
+
 -- Initialize Tag Panels
 addon.GUI.TagPanels = {}
+addon.core:RegisterState("PLAYER_ENTERING_WORLD", nil, "soundList", function()
+    addon.GUI:InitializeSoundList()
+end)

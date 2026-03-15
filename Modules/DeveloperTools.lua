@@ -297,8 +297,17 @@ function addon.DeveloperTools:DisplayAddonInfo()
     output["StatesInfo"] = GetStatesInfo() .. "\n" .. GetStateMonitorsInfo()
     -- Fetch data
     -- output["Data"] = ScanPrivateAuras()
-    output["Data"] = FetchAllEncounterInfo() -- get all encounter sections info
+    -- output["Data"] = FetchAllEncounterInfo() -- get all encounter sections info
     -- output["Data"] = AttemptsFetchAllEEInfo() -- get encounter events info
+    local function GetLSMSoundData()
+        local output = ""
+        for name, path in pairs(addon.LSM:HashTable("sound")) do
+            output = output .. string.format("%s,%s\n", name, path)
+        end
+
+        return output
+    end
+    output["Data"] = GetLSMSoundData() -- get all shared media info
 
     if self.isOpened and self.displayFrame then
         self.displayFrame:Hide()
