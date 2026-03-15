@@ -21,14 +21,10 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
 L["ChangeLogContent"] =
-"v3.12\n" ..
-"-Encounter Sound: totally dispatch the Encounter Sound module from |cff8788eeHBLyx_Tools|r, and put it as a standalone module |cff8788eeHBLyx_Encounter_Sound|r\n" ..
-"v3.11\n" ..
-"-Encounter Sound: add a new option to set group role for encounter events sound alert\n" ..
-"v3.10\n" ..
-"-Encounter Sound: Private Auras sub-module has been implemented\n" ..
-"v3.9\n" ..
-"-Encounter Sound: add a new module \"Encounter Sound\" which set and play custom sound alert for encounter time line events\n"
+"v3.15\n" .. "-Implemented Templates, Spell Tags, and High-Performance-Sound-Select-Widget\n" ..
+"v3.14\n" .. "-Apply Blizzard 03/02/26 private aura data update, and continuously correct data\n" ..
+"v3.13\n" .. "-Significantly improve UIUX\n" ..
+"v3.12\n" .. "-Totally dispatch the Encounter Sound module from |cff8788eeHBLyx_Tools|r, and put it as a standalone module |cff8788eeHBLyx_Encounter_Sound|r\n"
 
 --MARK: Issues
 L["Issues"] = "Issues"

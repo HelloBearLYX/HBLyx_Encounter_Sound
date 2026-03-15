@@ -725,22 +725,22 @@ function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["VictorySound"] .. "|r", addon.db.EncounterSound.EnableVictorySound, function(value)
 		addon.db.EncounterSound.EnableVictorySound = value
-	end)
+	end):SetRelativeWidth(0.45)
 	GUI:CreateSoundSelect(frame, L["VictorySound"], addon.db.EncounterSound.VictorySound, function(value)
 		addon.db.EncounterSound.VictorySound = value
-	end)
+	end):SetRelativeWidth(0.45)
 	GUI:CreateInformationTag(frame, "\n")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["StartSound"] .. "|r", addon.db.EncounterSound.EnableStartSound, function(value)
 		addon.db.EncounterSound.EnableStartSound = value
-	end)
+	end):SetRelativeWidth(0.45)
 	GUI:CreateSoundSelect(frame, L["StartSound"], addon.db.EncounterSound.StartSound, function(value)
 		addon.db.EncounterSound.StartSound = value
-	end)
+	end):SetRelativeWidth(0.45)
 	GUI:CreateInformationTag(frame, "\n" .. L["HighPerformanceSoundDesc"], "LEFT")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["HighPerformanceSoundSelect"] .. "|r", addon.db.EncounterSound.HighPerformanceSoundSelect, function(value)
 		addon.db.EncounterSound.HighPerformanceSoundSelect = value
 		addon:ShowDialog(ADDON_NAME.."RLNeeded")
-	end):SetRelativeWidth(1)
+	end):SetRelativeWidth(0.9)
 
 	return frame
 end
