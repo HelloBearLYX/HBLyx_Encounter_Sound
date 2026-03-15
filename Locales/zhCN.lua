@@ -114,6 +114,10 @@ L["SelectPA"] = "选择一个私有光环开始设置"
 L["NoSuchEncounterToTest"] = "如果你想测试, 请输入类似\"|cff8788ee\\hbes test <encounterID>|r\"的命令, 其中<encounterID>是你想测试的BOSS战的ID"
 L["DataMigration"] = "数据迁移"
 L["GeneralSettings"] = "通用设置"
+L["HideEncounterPrint"] = "隐藏BOSS战开始/结束的信息打印"
+L["Applied"] = "已应用"
+L["Duplicated"] = "重复"
+L["EmptyKey"] = "空key"
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"
@@ -130,9 +134,12 @@ L["SelectEncounter"] = "选择BOSS战"
 L["SelectInstance"] = "选择副本"
 L["EncounterEventTrigger"] = "BOSS战事件触发器"
 L["EncounterEventSound"] = "BOSS战事件音效"
-L["OnTextWarningShown"] = "|cffff5c00文本警告显示时|r: 当一个文本警告最初显示时触发"
-L["OnTimelineEventFinished"] = "|cffff5c00事件完成时|r: 当时间轴上的事件完成时触发"
-L["OnTimelineEventHighlight"] = "|cffff5c00事件高亮时|r: 当时间轴上的事件将在5秒内完成时触发"
+L["OnTextWarningShown"] = "|cffff5c00文本警告显示时|r"
+L["OnTextWarningShownDesc"] = ": 当一个文本警告最初显示时触发"
+L["OnTimelineEventFinished"] = "|cffff5c00事件完成时|r"
+L["OnTimelineEventFinishedDesc"] = ": 当时间轴上的事件完成时触发"
+L["OnTimelineEventHighlight"] = "|cffff5c00事件高亮时|r"
+L["OnTimelineEventHighlightDesc"] = ": 当时间轴上的事件将在5秒内完成时触发"
 L["EventColor"] = "事件颜色"
 L["PrivateAuraSettings"] = "私有光环设置"
 L["EncounterEvent"] = "BOSS战事件"
@@ -140,7 +147,8 @@ L["SelectGroupRole"] = "团队职责"
 L["EncounterSoundInstruction"] = "选择|cffffff00一个副本|r和|cffffff00一个BOSS战|r后, 该BOSS战的设置将会在下面弹出\n\n"
 L["EncounterEventsInstruction"] =
 "|cffff0000注意|r: 你必须|cffffff00启用暴雪的首领预警(包括文本警告和时间轴)|r, 才能让相应的事件触发器激活\n\n" ..
-"|cffffff00测试时间轴|r: 会模拟本Boss所有的时间轴事件(非实际Boss时间轴), 并以6秒为间隔, 以便测试设置的正确性和效果, 但是实际时间轴时间表现可能会不同\n\n"
+"|cffffff00测试时间轴|r: 会模拟本Boss所有的时间轴事件(非实际Boss时间轴), 并以6秒为间隔, 以便测试设置的正确性和效果, 但是实际时间轴时间表现可能会不同\n\n" ..
+"|cffff0000注意|r: 测试时间轴仅适用于已设置的事件, 因此, |cffFF7C0A如果该BOSS战没有设置任何事件, 测试时间轴将无法工作|r\n\n"
 L["PrivateAuraInstruction"] = "为私有光环应用一个声音警报, 当私有光环被施加在\"玩家\"身上时播放声音警报\n\n" ..
 "为了防止不必要的冲突或冗余, 私有光环的锚点在这个模块中没有提供, 因为有许多UI插件提供了私有光环的自定义位置\n\n"
 
@@ -153,7 +161,3 @@ L["TemplateDesc"] = "模板用于快速应用于具有相似条件的事件\n\n"
 "在你设置好模板后, 你可以将它应用于一个事件, 设置将会立即应用于该事件, 你也可以在应用模板后修改设置以适应特定事件\n\n" ..
 "模板名称是|cffffff00模板的唯一键|r, 所以当你创建一个新模板时,请确保名称与现有模板不同\n\n" ..
 "可以从下拉菜单中选择模板来删除/更新, 你可以通过输入一个新的模板名字来添加新模板"
-
--- MARK: High Performance Sound Select
-L["HighPerformanceSoundSelect"] = "高性能音效选择组件"
-L["HighPerformanceSoundDesc"] = "|cffff0000高级|r: 使用高性能(更低的时间复杂度但稍高的内存使用)音效选择组件, 当你的音效库中有大量音效时可以获得更好的性能表现, 代替默认的音效选择组件(其他插件的一些Ace GUI美化可能不兼容)\n"

@@ -385,7 +385,7 @@ end
 function addon.GUI:CreateSoundSelect(parent, label, get, callback)
     local soundSelect = AceGUI:Create("SharedDropdown")
     soundSelect:SetLabel(label)
-    soundSelect:SetList(addon.states.soundList, addon.states.soundListOrder)
+    soundSelect:SetList(addon.states.soundList)
     soundSelect:SetValue(get)
     soundSelect:SetCallback("OnValueChanged", function(self, _, key)
         self:SetValue(key)
@@ -640,17 +640,10 @@ end
 -- MARK: Initialize Sound List
 
 function addon.GUI:InitializeSoundList()
-    local rawList = addon.LSM:HashTable("sound")
-    addon.states.soundListOrder = {}
     addon.states.soundList = {}
-    local i = 1
-    for key in pairs(rawList) do
-        table.insert(addon.states.soundListOrder, key)
+    for _, key in ipairs(addon.LSM:List("sound")) do
         addon.states.soundList[key] = key
     end
-    table.sort(addon.states.soundListOrder, function(a, b)
-        return string.upper(a) < string.upper(b)
-    end)
 end
 
 -- Initialize Tag Panels

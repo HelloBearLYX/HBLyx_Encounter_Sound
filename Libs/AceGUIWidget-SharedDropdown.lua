@@ -1,6 +1,7 @@
 -- soooooo hacky, AceGUIWidget-DropDown with a single shared pullout!
 -- removes the extra overhead when loading many LSM (or whatever) dropdowns in a layout
 -- uses the last :SetList as the pullout for _every_ SharedDropdown, GOOD LUCK EVERYONE
+-- modified by HBLyx, to fit the LibSharedMedia Sound only
 
 local AceGUI = LibStub("AceGUI-3.0")
 
@@ -222,12 +223,12 @@ do
 			tsort(sortlist, sortTbl)
 
 			for i, key in ipairs(sortlist) do
-				AddListItem(self, key, list[key], itemType)
+				AddListItem(self, key, key, itemType)
 				sortlist[i] = nil
 			end
 		else
 			for i, key in ipairs(order) do
-				AddListItem(self, key, list[key], itemType)
+				AddListItem(self, key, key, itemType)
 			end
 		end
 	end

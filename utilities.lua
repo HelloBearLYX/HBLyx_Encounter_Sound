@@ -58,7 +58,7 @@ addon.Utilities.GroupRoles = {
 ---Use addon's identifier to print
 ---@param message string message to print
 function addon.Utilities:print(message)
-	print("|cff8788ee" .. ADDON_NAME .. "|r: " .. message)
+	print("|cff8788eeHBES|r: " .. message)
 end
 
 ---Debug print

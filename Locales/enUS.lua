@@ -112,6 +112,10 @@ L["SelectPA"] = "Select a private aura to begin setting"
 L["NoSuchEncounterToTest"] = "If you want to test, please enter the encounter ID like \"|cff8788ee\\hbes test <encounterID>|r\", where <encounterID> is the ID of the encounter you want to test"
 L["DataMigration"] = "Data Migration"
 L["GeneralSettings"] = "General Settings"
+L["HideEncounterPrint"] = "Hide Encounter Start/End Print"
+L["Applied"] = " applied"
+L["Duplicated"] = "duplicated"
+L["EmptyKey"] = "Empty key"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"
@@ -128,9 +132,12 @@ L["SelectEncounter"] = "Select Encounter"
 L["SelectInstance"] = "Select Instance"
 L["EncounterEventTrigger"] = "Encounter Event Trigger"
 L["EncounterEventSound"] = "Encounter Event Sound"
-L["OnTextWarningShown"] = "|cffff5c00Text Warning Shown|r: trigger when an text warning is shown initially"
-L["OnTimelineEventFinished"] = "|cffff5c00Event Finished|r: trigger when the event is finished on the timeline"
-L["OnTimelineEventHighlight"] = "|cffff5c00Event Highlighted|r: trigger when the event will be finished in 5 seconds on the timeline"
+L["OnTextWarningShown"] = "|cffff5c00Text Warning Shown|r"
+L["OnTextWarningShownDesc"] = ": trigger when an text warning is shown initially"
+L["OnTimelineEventFinished"] = "|cffff5c00Event Finished|r"
+L["OnTimelineEventFinishedDesc"] = ": trigger when the event is finished on the timeline"
+L["OnTimelineEventHighlight"] = "|cffff5c00Event Highlighted|r"
+L["OnTimelineEventHighlightDesc"] = ": trigger when the event will be finished in 5 seconds on the timeline"
 L["EventColor"] = "Event Color"
 L["PrivateAuraSettings"] = "Private Aura Settings"
 L["EncounterEvent"] = "Encounter Event"
@@ -138,7 +145,8 @@ L["SelectGroupRole"] = "Group Role"
 L["EncounterSoundInstruction"] = "After selected |cffffff00an instance|r and |cffffff00an encounter|r, the settings for the encounter will pop up below.\n\n"
 L["EncounterEventsInstruction"] =
 "|cffff0000NOTE|r: Must |cffffff00enable Blizzard's Boss Warnings(including Boss Text Warning and Boss Ability Timeline)|r to make the corresponding event triggers active\n\n" ..
-"|cffffff00Test Timeline|r: simulate the timeline for all events of this Boss with 6 seconds intervals(not actual timeline), to test the correctness and effect of the settings, but the actual timeline trigger perform differently\n\n"
+"|cffffff00Test Timeline|r: simulate the timeline for all events of this Boss with 6 seconds intervals(not actual timeline), to test the correctness and effect of the settings, but the actual timeline trigger perform differently\n\n" ..
+"|cffff0000NOTE|r: Test Timeline only works with the events which has been set already, and, therefore, |cffFF7C0Aif there is no event has been set for this encounter, Test Timeline will not work|r.\n\n"
 L["PrivateAuraInstruction"] = "Apply a sound alert for private auras, and the sound alert is played when the private aura is applied on \"player\".\n\n" ..
 "To prevent unneccessary conflicts or redundancy, private auras' anchor are not provided in this module, since there are many UI addons offer the customized position of private auras.\n\n"
 
@@ -151,7 +159,3 @@ L["TemplateDesc"] = "The templates are used to rapidly apply to events with simi
 "After you set templates up, you can apply it on an event, and the settings will be applied to the event immediately, and you can also modify the settings after applying template to fit the specific event.\n\n" ..
 "The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates.\n\n" ..
 "You can choose template from the dropdown menu to delete or update, and the new template will be added when enter the new template name in the editbos\n"
-
--- MARK: High Performance Sound Select
-L["HighPerformanceSoundSelect"] = "High Performance Sound Select Widget"
-L["HighPerformanceSoundDesc"] = "|cffff0000Advanced|r: Use high performance(less time complexity but slightly higher memory usage) sound select widget for better performance when you have a large number of sounds in your sound library instead of the default sound select widget(Some Ace GUI skins from other addons may not be compatible).\n"

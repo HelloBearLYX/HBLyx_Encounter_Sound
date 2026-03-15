@@ -36,13 +36,17 @@ local function DataMigrationHelper()
         end
     end
 
+    if addon.db.EncounterSound.HighPerformanceSoundSelect then
+        addon.db.EncounterSound.HighPerformanceSoundSelect = nil
+    end
+
     -- update version after migration
-    addon.db.EncounterSound.version = addon.version .. ".3" -- update version after migration
+    addon.db.EncounterSound.version = addon.version .. ".4" -- update version after migration
 end
 
 --- used to apply the data migration if needed, and update the version after change the data migration
 local function DataMigration()
-    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.15.3") then
+    if not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.15.4") then
         if pcall(DataMigrationHelper) then
             -- addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
             addon.Utilities:print(L["DataMigration"] .. " |cffff0000succeeded|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r")
@@ -110,7 +114,10 @@ local function LoadEventSounds(self, encounterID)
                 end
             end
         end
-        addon.Utilities:print(L["EncounterSoundSettings"] .. ": |cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
+
+        if not addon.db.EncounterSound.HideEncounterPrint then
+            addon.Utilities:print(L["EncounterSoundSettings"] .. ": |cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
+        end
     end
 end
 
@@ -132,7 +139,9 @@ local function ClearEventSounds(self, encounterID)
             end
         end
 
-        addon.Utilities:print(L["ClearEventSound"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
+        if not addon.db.EncounterSound.HideEncounterPrint then
+            addon.Utilities:print(L["ClearEventSound"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
+        end
     end
 end
 
@@ -156,7 +165,10 @@ local function LoadPrivateAuraSounds(self, encounterID)
                 table.insert(self.privateAuras, pa)
             end
         end
-        addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
+
+        if not addon.db.EncounterSound.HideEncounterPrint then
+            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
+        end
     end
 end
 
@@ -170,7 +182,10 @@ local function ClearPrivateAuraSounds(self)
             C_UnitAuras.RemovePrivateAuraAppliedSound(pa)
         end
         self.privateAuras = {}
-        addon.Utilities:print(L["ClearPrivateAurasData"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
+
+        if not addon.db.EncounterSound.HideEncounterPrint then
+            addon.Utilities:print(L["ClearPrivateAurasData"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
+        end
     end
 end
 

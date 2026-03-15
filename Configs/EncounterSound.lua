@@ -13,7 +13,7 @@ addon.configurationList[MOD_KEY] = {
 	EnableStartSound = false,
 	StartSound = "",
 	ProfileName = "Default",
-	HighPerformanceSoundSelect = false,
+	HideEncounterPrint = true,
 	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
 	dataPA = {}, -- data structure: { [encounterID] = { [spellID] = sound } }
 	templates = {}, -- data structure: { [templateName] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
@@ -26,6 +26,23 @@ local EVENT_TRIGGERS = {
 	["2"] = L["OnTimelineEventHighlight"],
 }
 local TRIGGER_ORDER = {"0", "1", "2"} -- keep a separate order table since the trigger keys are string type
+
+-- MARK: Get Trigger Desc
+
+---Get trigger description for current trigger type
+---@param trigger string trigger type
+---@return string trigger description
+local function GetTriggerDesc(trigger)
+	if trigger == "0" then
+		return L["OnTextWarningShownDesc"]
+	elseif trigger == "1" then
+		return L["OnTimelineEventFinishedDesc"]
+	elseif trigger == "2" then
+		return L["OnTimelineEventHighlightDesc"]
+	else
+		return ""
+	end
+end
 
 -- MARK: Check data exist
 
@@ -45,6 +62,45 @@ local function CheckDataExist(encounterID, eventID, field)
 	end
 
 	return result
+end
+
+-- MARK: IO Print
+
+--- Get display label for the sound/event based on its ID and type (event or private aura)
+--- @param trigger string|nil trigger type for event sound, nil for private aura sound
+--- @param ID integer eventID for event or spellID for private aura
+--- @return string display label with icon and name
+local function GetIOLabel(trigger, ID)
+	local info, output
+	if trigger then
+		info = C_Spell.GetSpellInfo(C_EncounterEvents.GetEventInfo(ID).spellID or 134400)
+		local triggerLabel = EVENT_TRIGGERS[trigger] or trigger
+		output = string.format((trigger ~= "" and "%s%s-%s" or "%s%s%s"), "|T" .. (info.iconID or "") .. ":0|t", info.name, triggerLabel)
+	else
+		info = C_Spell.GetSpellInfo(ID or 134400)
+		output = string.format("%s%s", "|T" .. (info.iconID or "") .. ":0|t", info.name)
+	end
+
+	return output
+end
+
+---Print whether the I/O operation is successful
+---@param isSuccess boolean true if the operation is successful, otherwise false
+---@param isAdd boolean true for add/update operation, false for remove operation
+---@param trigger string|nil trigger type for event sound, nil for private aura sound
+---@param ID number eventID for events or spellID for private auras
+---@param isUpdate boolean|nil true when add operation is actually an update
+local function PrintIOResult(isSuccess, isAdd, trigger, ID, isUpdate)
+	local label = GetIOLabel(trigger, ID)
+	if isSuccess then
+		if isAdd and isUpdate then
+			addon.Utilities:print(string.format("%s: %s", label, L["UpdateSuccess"]))
+		else
+			addon.Utilities:print(string.format("%s: %s", label, isAdd and L["AddSuccess"] or L["RemoveSuccess"]))
+		end
+	else
+		addon.Utilities:print(string.format("%s: %s", label, isAdd and L["AddFailed"] or L["RemoveFailed"]))
+	end
 end
 
 -- MARK: Add - Sound
@@ -81,11 +137,7 @@ local function AddSound(encounterID, eventID, trigger, sound, role)
 		end
 	end
 
-	if isNew then
-		addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, eventID, sound, L["AddSuccess"]))
-	else
-		addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, eventID, sound, L["UpdateSuccess"]))
-	end
+	PrintIOResult(true, true, trigger, eventID, not isNew)
 end
 
 -- MARK: Add - Color
@@ -135,7 +187,7 @@ local function AddPASound(encounterID, spellID, sound)
 
 	addon.db.EncounterSound.dataPA[encounterID][spellID] = sound
 
-	addon.Utilities:print(string.format("%d-%d-%s: %s", encounterID, spellID, sound, L["AddSuccess"]))
+	PrintIOResult(true, true, nil, spellID)
 end
 
 -- MARK: Add - Template
@@ -146,7 +198,6 @@ end
 --- @param value table|string|integer the setting value to be added to the template, e.g. {sound = "path/to/sound", role = {TANK = true}}, or a hex color string, etc.
 local function UpdateTemplate(templateName, attribute, value)
 	if not templateName or templateName == "" or attribute == nil then
-		addon.Utilities:print("Invalid template name or attribute.")
 		return
 	end
 
@@ -161,14 +212,14 @@ local function UpdateTemplate(templateName, attribute, value)
 	if attribute == "color" then
 		if value == "None" then
 			addon.db.EncounterSound.templates[templateName].color = nil
-			addon.Utilities:print(string.format("Color removed from template %s", templateName))
+			addon.Utilities:print(string.format("%s-color: %s", templateName, L["RemoveSuccess"]))
 		else
 			addon.db.EncounterSound.templates[templateName].color = value
 			-- no print for color update since the color pick update it too frequently
 		end
 	else
 		addon.db.EncounterSound.templates[templateName][attribute] = value
-		addon.Utilities:print(string.format("Template %s updated: trigger %s", templateName, attribute))
+		addon.Utilities:print(string.format("%s: %s", templateName, L["UpdateSuccess"]))
 	end
 end
 
@@ -178,12 +229,7 @@ end
 ---@param self table encounter sound panel instance
 ---@param templateName string template name
 local function ApplyTemplate(self, templateName)
-	if not self.inputEncounter or not self.inputEvent then
-		return
-	end
-
-	if not addon.db.EncounterSound.templates or not addon.db.EncounterSound.templates[templateName] then
-		addon.Utilities:print(string.format("Template %s not found", templateName))
+	if not self.inputEncounter or not self.inputEvent or not addon.db.EncounterSound.templates or not addon.db.EncounterSound.templates[templateName] then
 		return
 	end
 
@@ -226,7 +272,8 @@ local function ApplyTemplate(self, templateName)
 		end
 	end
 
-	addon.Utilities:print(string.format("%s applied to: %d-%d", templateName, self.inputEncounter, self.inputEvent))
+	local label = GetIOLabel("", self.inputEvent)
+	addon.Utilities:print(string.format("%s: %s %s", label, templateName, L["Applied"]))
 end
 
 -- MARK: Remove - Sound
@@ -234,7 +281,7 @@ end
 ---Remove one trigger sound from DB.
 ---@param encounterID integer encounterID
 ---@param eventID integer eventID
----@param trigger integer trigger type
+---@param trigger string trigger type
 ---@return boolean removed true if removed
 local function RemoveSound(encounterID, eventID, trigger)
 	if not encounterID or not eventID or not trigger then
@@ -249,7 +296,8 @@ local function RemoveSound(encounterID, eventID, trigger)
 		if not next(addon.db.EncounterSound.data[encounterID]) then
 			addon.db.EncounterSound.data[encounterID] = nil
 		end
-		addon.Utilities:print(string.format("%d-%d: %s", encounterID, eventID, L["RemoveSuccess"]))
+
+		PrintIOResult(true, false, trigger, eventID)
 		return true
 	end
 
@@ -275,10 +323,11 @@ local function RemoveColor(encounterID, eventID)
 		if not next(addon.db.EncounterSound.data[encounterID]) then
 			addon.db.EncounterSound.data[encounterID] = nil
 		end
-		addon.Utilities:print(string.format("%d-%d-Color: %s", encounterID, eventID, L["RemoveSuccess"]))
+
+		PrintIOResult(true, false, "color", eventID)
 		return true
 	else
-		addon.Utilities:print(string.format("%d-%d-Color: %s", encounterID, eventID, L["RemoveFailed"]))
+		PrintIOResult(false, false, "color", eventID)
 		return false
 	end
 end
@@ -299,10 +348,10 @@ local function RemovePASound(encounterID, spellID)
 		if not next(addon.db.EncounterSound.dataPA[encounterID]) then
 			addon.db.EncounterSound.dataPA[encounterID] = nil
 		end
-		addon.Utilities:print(string.format("%d-%d: %s", encounterID, spellID, L["RemoveSuccess"]))
+		PrintIOResult(true, false, nil, spellID)
 		return true
 	else
-		addon.Utilities:print(string.format("%d-%d: %s", encounterID, spellID, L["RemoveFailed"]))
+		PrintIOResult(false, false, nil, spellID)
 		return false
 	end
 end
@@ -377,7 +426,7 @@ end
 local function SetTriggersSetting(self)
 	self.triggers = {}
 	for _, trigger in ipairs(TRIGGER_ORDER) do
-		local triggerName = EVENT_TRIGGERS[trigger]
+		local triggerName = EVENT_TRIGGERS[trigger] .. GetTriggerDesc(trigger)
 		self.triggers[trigger] = GUI:CreateInlineGroup(self.eventSettingsGroup, triggerName)
 		self.triggers[trigger].sound = nil
 		
@@ -586,7 +635,7 @@ local function SetTemplateSettings(self, settingsGroup)
 	self.triggers = {}
 	local eventSettingsGroup = GUI:CreateInlineGroup(settingsGroup, "")
 	for _, trigger in ipairs(TRIGGER_ORDER) do
-		local triggerName = EVENT_TRIGGERS[trigger]
+		local triggerName = EVENT_TRIGGERS[trigger] .. GetTriggerDesc(trigger)
 		self.triggers[trigger] = GUI:CreateInlineGroup(eventSettingsGroup, triggerName)
 		self.triggers[trigger].sound = nil
 		
@@ -736,10 +785,9 @@ function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 	GUI:CreateSoundSelect(frame, L["StartSound"], addon.db.EncounterSound.StartSound, function(value)
 		addon.db.EncounterSound.StartSound = value
 	end):SetRelativeWidth(0.45)
-	GUI:CreateInformationTag(frame, "\n" .. L["HighPerformanceSoundDesc"], "LEFT")
-	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["HighPerformanceSoundSelect"] .. "|r", addon.db.EncounterSound.HighPerformanceSoundSelect, function(value)
-		addon.db.EncounterSound.HighPerformanceSoundSelect = value
-		addon:ShowDialog(ADDON_NAME.."RLNeeded")
+	GUI:CreateInformationTag(frame, "\n")
+	GUI:CreateToggleCheckBox(frame, L["HideEncounterPrint"], addon.db.EncounterSound.HideEncounterPrint, function(value)
+		addon.db.EncounterSound.HideEncounterPrint = value
 	end):SetRelativeWidth(0.9)
 
 	return frame
@@ -771,10 +819,10 @@ function GUI.TagPanels.EncounterSound:CreateTemplatePanel(parent)
 	end)
 	GUI:CreateEditBox(frame, L["TemplateNameNew"], nil, function(text)
 		if addon.db.EncounterSound.templates and addon.db.EncounterSound.templates[text] then
-			addon.Utilities:print(string.format("Template %s already exists. Please choose another name or delete the existing template first.", text))
+			addon.Utilities:print(string.format("%s: %s(%s)", text, L["AddFailed"], L["Duplicated"]))
 			return
 		elseif text == "" then
-			addon.Utilities:print("Template name cannot be empty.")
+			addon.Utilities:print(L["EmptyKey"])
 			return
 		else -- create new template with empty settings
 			if not addon.db.EncounterSound.templates then
