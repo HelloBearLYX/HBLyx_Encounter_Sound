@@ -1,5 +1,5 @@
 -- Widget is based on the AceGUIWidget-DropDown.lua supplied with AceGUI-3.0
--- Widget created for HBLyx: keeps only the main speaker button
+-- Widget created for HBLyx: keeps only the main speaker button and sort and cache the sound list to improve performance
 
 local AceGUI = LibStub("AceGUI-3.0")
 local Media = LibStub("LibSharedMedia-3.0")
