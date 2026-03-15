@@ -155,3 +155,7 @@ L["TemplateDesc"] = "The templates are used to rapidly apply to events with simi
 "After you set templates up, you can apply it on an event, and the settings will be applied to the event immediately, and you can also modify the settings after applying template to fit the specific event.\n\n" ..
 "The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates.\n\n" ..
 "You can choose template from the dropdown menu to delete or update, and the new template will be added when enter the new template name in the editbos\n"
+
+-- MARK: Higih Performance Sound Select
+L["HighPerformanceSoundSelect"] = "High Performance Sound Select"
+L["HighPerformanceSoundDesc"] = "|cffff0000Advanced|r: Use high performance(less time complexity but slightly higher memory usage) sound select widget for better performance when you have a large number of sounds in your sound library instead of the default sound select widget(Some Ace GUI skins from other addons may not be compatible).\n"

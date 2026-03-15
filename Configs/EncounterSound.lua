@@ -13,6 +13,7 @@ addon.configurationList[MOD_KEY] = {
 	EnableStartSound = false,
 	StartSound = "",
 	ProfileName = "Default",
+	HighPerformanceSoundSelect = false,
 	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
 	dataPA = {}, -- data structure: { [encounterID] = { [spellID] = sound } }
 	templates = {}, -- data structure: { [templateName] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
@@ -735,6 +736,11 @@ function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 	GUI:CreateSoundSelect(frame, L["StartSound"], addon.db.EncounterSound.StartSound, function(value)
 		addon.db.EncounterSound.StartSound = value
 	end)
+	GUI:CreateInformationTag(frame, "\n" .. L["HighPerformanceSoundDesc"], "LEFT")
+	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["HighPerformanceSoundSelect"] .. "|r", addon.db.EncounterSound.HighPerformanceSoundSelect, function(value)
+		addon.db.EncounterSound.HighPerformanceSoundSelect = value
+		addon:ShowDialog(ADDON_NAME.."RLNeeded")
+	end):SetRelativeWidth(1)
 
 	return frame
 end

@@ -383,7 +383,11 @@ end
 ---@param callback fun(key: string) callback function when value changed
 ---@return AceGUIWidget
 function addon.GUI:CreateSoundSelect(parent, label, get, callback)
-    local soundSelect = AceGUI:Create("LSM30_Sound")
+    local soundSelectKey = "LSM30_Sound"
+    if addon.db.EncounterSound.HighPerformanceSoundSelect then
+        soundSelectKey = "LSM30_Sound_HBLyx"
+    end
+    local soundSelect = AceGUI:Create(soundSelectKey)
     soundSelect:SetLabel(label)
     soundSelect:SetList(addon.LSM:HashTable("sound"))
     soundSelect:SetValue(get)
