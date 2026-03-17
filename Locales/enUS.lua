@@ -167,3 +167,10 @@ L["TemplateDesc"] = "The templates are used to rapidly apply to events with simi
 "After you set templates up, you can apply it on an event, and the settings will be applied to the event immediately, and you can also modify the settings after applying template to fit the specific event.\n\n" ..
 "The template name is the |cffffff00unique key for templates|r, so when you create a new template, please make sure the name is not the same as existing templates.\n\n" ..
 "You can choose template from the dropdown menu to delete or update, and the new template will be added when enter the new template name in the editbos\n"
+
+-- MARK: Contributors
+L["Contributors"] = "Contributors"
+L["ThanksTo"] = "Thanks for the contributons from the following:"
+L["AnonymousContributors"] = "\nAlso thanks many others who submitted data correction, bug reports, and suggestions."
+L["ContributeData"] = "If you want to Contribute data or any issues, please use the GitHub or Discord channel! You can find the links in the Contact section, the Pull Request(PR) is recommended if possible.\n" ..
+"If you want to help to improve the data, you can use the command \"|cff8788ee/hbes dev|r\" to open the developer tools panel, and there is a \"Data Fetch\" tab which provide the data fetching tools to fetch in-game data in format of CSV, and you can submit it if needed. Thank you so much!\n"

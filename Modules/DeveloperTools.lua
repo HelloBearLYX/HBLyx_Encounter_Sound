@@ -294,7 +294,7 @@ local function RenderDisplayFrame(self, info)
             panel:DoLayout()
         elseif tab == "DataFetch" then
             local panel = GUI:CreateScrollFrame(container)
-            local dataOutput = GUI:CreateMultiLineEditBox(panel, "Copy the data below:", "")
+            local dataOutput = GUI:CreateMultiLineEditBox(panel, "Data Output:", "")
             GUI:CreateButton(panel, "Fetch Encounter Events Info", function()
                 local data = AttemptsFetchAllEEInfo()
                 dataOutput:SetText(data)

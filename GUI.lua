@@ -18,7 +18,37 @@ local TABS = {
     {text = L["Dungeon"], value = "Dungeon"},
     {text = L["TemplateSettings"], value = "Template"},
     {text = L["Profile"], value = "Profile"},
+    {text = L["Contributors"], value = "Contributors"},
 }
+
+-- MARK: Contact Group
+local function CreateContactGroup(container)
+    local contactGroup = addon.GUI:CreateInlineGroup(container, L["Contact"])
+    local discordInteractive = AceGUI:Create("InteractiveLabel")
+    discordInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Discord.png:20:20|t |cFF8080FFDiscord|r")
+    discordInteractive:SetJustifyV("MIDDLE")
+    discordInteractive:SetRelativeWidth(0.25)
+    discordInteractive:SetCallback("OnClick", function() addon.Utilities:OpenURL(L["Discord"], "https://discord.gg/EVFmd6uVYg") end)
+    discordInteractive:SetCallback("OnEnter", function() discordInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Discord.png:20:20|t |cFFFFFFFFDiscord|r") end)
+    discordInteractive:SetCallback("OnLeave", function() discordInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Discord.png:20:20|t |cFF8080FFDiscord|r") end)
+    contactGroup:AddChild(discordInteractive)
+    local gitHubInteractive = AceGUI:Create("InteractiveLabel")
+    gitHubInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Github.png:20:20|t |cFF8080FFGitHub|r")
+    gitHubInteractive:SetJustifyV("MIDDLE")
+    gitHubInteractive:SetRelativeWidth(0.25)
+    gitHubInteractive:SetCallback("OnClick", function() addon.Utilities:OpenURL(L["GitHub"], "https://github.com/HelloBearLYX/HBLyx_Encounter_Sound/issues") end)
+    gitHubInteractive:SetCallback("OnEnter", function() gitHubInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\GitHub.png:20:20|t |cFFFFFFFFGitHub|r") end)
+    gitHubInteractive:SetCallback("OnLeave", function() gitHubInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\GitHub.png:20:20|t |cFF8080FFGitHub|r") end)
+    contactGroup:AddChild(gitHubInteractive)
+    local curseForgeInteractive = AceGUI:Create("InteractiveLabel")
+    curseForgeInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\CurseForge.png:20:20|t |cFF8080FFCurseForge|r")
+    curseForgeInteractive:SetJustifyV("MIDDLE")
+    curseForgeInteractive:SetRelativeWidth(0.25)
+    curseForgeInteractive:SetCallback("OnClick", function() addon.Utilities:OpenURL(L["CurseForge"], "https://www.curseforge.com/wow/addons/hblyx-encounter-sound/comments") end)
+    curseForgeInteractive:SetCallback("OnEnter", function() curseForgeInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\CurseForge.png:20:20|t |cFFFFFFFFCurseForge|r") end)
+    curseForgeInteractive:SetCallback("OnLeave", function() curseForgeInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\CurseForge.png:20:20|t |cFF8080FFCurseForge|r") end)
+    contactGroup:AddChild(curseForgeInteractive)
+end
 
 -- MARK: General Panel
 
@@ -63,32 +93,31 @@ local function CreateGeneralPanel(container)
     local issueGroup = addon.GUI:CreateInlineGroup(panel, L["Issues"])
     addon.GUI:CreateInformationTag(issueGroup, L["IssuesContent"], "LEFT")
     -- contact
-    local contactGroup = addon.GUI:CreateInlineGroup(panel, L["Contact"])
-    local discordInteractive = AceGUI:Create("InteractiveLabel")
-    discordInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Discord.png:20:20|t |cFF8080FFDiscord|r")
-    discordInteractive:SetJustifyV("MIDDLE")
-    discordInteractive:SetRelativeWidth(0.25)
-    discordInteractive:SetCallback("OnClick", function() addon.Utilities:OpenURL(L["Discord"], "https://discord.gg/EVFmd6uVYg") end)
-    discordInteractive:SetCallback("OnEnter", function() discordInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Discord.png:20:20|t |cFFFFFFFFDiscord|r") end)
-    discordInteractive:SetCallback("OnLeave", function() discordInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Discord.png:20:20|t |cFF8080FFDiscord|r") end)
-    contactGroup:AddChild(discordInteractive)
-    local gitHubInteractive = AceGUI:Create("InteractiveLabel")
-    gitHubInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Github.png:20:20|t |cFF8080FFGitHub|r")
-    gitHubInteractive:SetJustifyV("MIDDLE")
-    gitHubInteractive:SetRelativeWidth(0.25)
-    gitHubInteractive:SetCallback("OnClick", function() addon.Utilities:OpenURL(L["GitHub"], "https://github.com/HelloBearLYX/HBLyx_Encounter_Sound/issues") end)
-    gitHubInteractive:SetCallback("OnEnter", function() gitHubInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\GitHub.png:20:20|t |cFFFFFFFFGitHub|r") end)
-    gitHubInteractive:SetCallback("OnLeave", function() gitHubInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\GitHub.png:20:20|t |cFF8080FFGitHub|r") end)
-    contactGroup:AddChild(gitHubInteractive)
-    local curseForgeInteractive = AceGUI:Create("InteractiveLabel")
-    curseForgeInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\CurseForge.png:20:20|t |cFF8080FFCurseForge|r")
-    curseForgeInteractive:SetJustifyV("MIDDLE")
-    curseForgeInteractive:SetRelativeWidth(0.25)
-    curseForgeInteractive:SetCallback("OnClick", function() addon.Utilities:OpenURL(L["CurseForge"], "https://www.curseforge.com/wow/addons/hblyx-encounter-sound/comments") end)
-    curseForgeInteractive:SetCallback("OnEnter", function() curseForgeInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\CurseForge.png:20:20|t |cFFFFFFFFCurseForge|r") end)
-    curseForgeInteractive:SetCallback("OnLeave", function() curseForgeInteractive:SetText("|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\CurseForge.png:20:20|t |cFF8080FFCurseForge|r") end)
-    contactGroup:AddChild(curseForgeInteractive)
+    CreateContactGroup(panel)
 
+    return panel
+end
+
+-- MARK: Contributors Panel
+
+local function CreateContributorPanel(container)
+    local panel = addon.GUI:CreateScrollFrame(container)
+    panel:SetFullWidth(true)
+    local contributorsGroup = addon.GUI:CreateInlineGroup(panel, L["ThanksTo"])
+    -- addon.GUI:CreateInformationTag(panel, , "LEFT")
+    local RUI = AceGUI:Create("InteractiveLabel")
+    RUI:SetText("|cFF0070DDRUI|r - data correction, testing, feedbacks, and configuration sharing")
+    RUI:SetJustifyV("MIDDLE")
+    RUI:SetRelativeWidth(0.9)
+    RUI:SetCallback("OnClick", function() addon.Utilities:OpenURL("RUI's profile", "https://space.bilibili.com/26688835") end)
+    RUI:SetCallback("OnEnter", function() RUI:SetText("|cFFFFFFFFRUI|r - data correction, testing, feedbacks, and configuration sharing") end)
+    RUI:SetCallback("OnLeave", function() RUI:SetText("|cFF0070DDRUI|r - data correction, testing, feedbacks, and configuration sharing") end)
+    contributorsGroup:AddChild(RUI)
+    addon.GUI:CreateInformationTag(contributorsGroup, L["AnonymousContributors"], "LEFT")
+
+    addon.GUI:CreateInformationTag(panel, L["ContributeData"], "LEFT")
+
+    CreateContactGroup(panel)
     return panel
 end
 
@@ -161,6 +190,9 @@ function addon.GUI:Render()
             panel:DoLayout()
         elseif tab == "Profile" then
             local panel = addon.GUI.TagPanels.Profile:CreateTabPanel(container)
+            panel:DoLayout()
+        elseif tab == "Contributors" then
+            local panel = CreateContributorPanel(container)
             panel:DoLayout()
         end
     end)

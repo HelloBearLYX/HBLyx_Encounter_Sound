@@ -114,6 +114,8 @@ local function SetUpSlashCommand()
 			end
 
 			addon.core:GetModule("EncounterSound"):TestSound(tonumber(rest))
+		elseif command == "dev" or command == "developer" then
+			addon.DeveloperTools:DisplayAddonInfo()
 		end
 	end
 end
