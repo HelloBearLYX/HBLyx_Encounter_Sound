@@ -80,6 +80,24 @@ end
 
 -- MARK: Profile Merge
 
+--- Print a summary of the merge results
+---@param countEvents integer total number of events in the new profile
+---@param newEventsCount integer number of new events added to the current profile
+---@param countPA integer total number of private auras in the new profile
+---@param newPAcount integer number of new private auras added to the current profile
+local function PrintMergeSummary(countEvents, newEventsCount, countPA, newPAcount)
+    local printMsg = string.format(
+        L["MergeSummary"] .. ":\n%d " .. L["Events"] .. " (|cff79aa38%d " .. L["New"] .. "|r + |cffffdd99%d " .. L["Overwritten"] .. "|r)\n%d " .. L["PrivateAuras"] .. " (|cff79aa38%d " .. L["New"] .. "|r + |cffffdd99%d " .. L["Overwritten"] .. "|r)",
+        countEvents,
+        newEventsCount,
+        countEvents - newEventsCount,
+        countPA,
+        newPAcount,
+        countPA - newPAcount
+    )
+    addon.Utilities:print(printMsg)
+end
+
 ---Merge a profile into the current profile
 ---@param data string profile string to merge
 ---@return boolean success if the merge was successful
@@ -125,8 +143,7 @@ function addon:MergeProfile(data)
         countPA = countPA + 1
     end
 
-    local printMsg = string.format("|cffff5c00Merged|r:\nevents: |cffff5c00%d|r = |cff79aa38%d(new)|r + |cff3d65ba%d(overwritten)|r\nprivate auras: |cffff5c00%d|r = |cff79aa38%d(new)|r + |cff3d65ba%d(overwritten)|r", countEvents, newEventsCount, countEvents - newEventsCount, countPA, newPAcount, countPA - newPAcount)
-    addon.Utilities:print(printMsg)
+    PrintMergeSummary(countEvents, newEventsCount, countPA, newPAcount)
 
     addon.db["EncounterSound"] = currentProfile
     addon.Utilities:print(L["MergeSuccess"])
