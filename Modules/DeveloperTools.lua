@@ -14,60 +14,10 @@ local TABS = {
     {text = "Copy Info", value = "CopyInfo"},
     {text = "Modules Info", value = "ModulesInfo"},
     {text = "States Info", value = "StatesInfo"},
+    {text = "Data Fetch", value = "DataFetch"},
 }
 
 -- private methods
-
--- MARK: Render
-local function RenderDisplayFrame(self, info)
-    self.isOpened = true
-    self.displayFrame = AceGUI:Create("Frame")
-    self.displayFrame:SetTitle("|cFF8788EEHBLyx Tools|r - Developer Tools")
-    self.displayFrame:SetLayout("Flow")
-    self.displayFrame:SetWidth(900)
-    self.displayFrame:SetHeight(600)
-    self.displayFrame:SetStatusText("|cff8788ee"..  ADDON_NAME .. "|r v" .. addon:GetVersion() .. " " .. "Developer Tools")
-    self.displayFrame:SetCallback("OnClose", function(widget)
-        if widget then
-            widget:Release()
-        end
-
-        self.isOpened = false
-    end)
-
-    local tabs = AceGUI:Create("TabGroup")
-    tabs:SetLayout("Flow")
-    tabs:SetFullWidth(true)
-    tabs:SetFullHeight(true)
-    tabs:SetTabs(TABS)
-    self.displayFrame:AddChild(tabs)
-    tabs:SetCallback("OnGroupSelected", function (container, _, tab)
-        container:ReleaseChildren()
-
-        if tab == "CopyInfo" then
-            local panel = GUI:CreateScrollFrame(container)
-            
-            local addonInfo = ""
-            for _, value in pairs(info) do
-                addonInfo = addonInfo .. value .. "\n------\n\n"
-            end
-            GUI:CreateMultiLineEditBox(panel, "Copy the addon info below:", addonInfo)
-            GUI:CreateMultiLineEditBox(panel, "Copy the data below:", info["Data"] or "")
-
-            panel:DoLayout()
-        elseif tab == "ModulesInfo" then
-            local panel = GUI:CreateScrollFrame(container)
-            GUI:CreateInformationTag(panel, info["ModulesInfo"], "LEFT")
-            panel:DoLayout()
-        elseif tab == "StatesInfo" then
-            local panel = GUI:CreateScrollFrame(container)
-            GUI:CreateInformationTag(panel, info["StatesInfo"], "LEFT")
-            panel:DoLayout()
-        end
-    end)
-    
-    tabs:SelectTab("CopyInfo")
-end
 
 -- MARK: Events Info
 local function GetEventsInfo()
@@ -112,8 +62,12 @@ local function GetStatesInfo()
 
     for _, var in ipairs(vars) do
         if type(addon.states[var]) == "table" then
-            for name, value in pairs(addon.states[var]) do
-                output = output .. string.format("|cff0070DD%s|r.|cffffff00%s|r|cffC41E3A(%s)|r: %s\n", var, name, type(value), tostring(value))
+            if var == "soundList" then
+                output = output .. string.format("|cff0070DD%s|r.|cffffff00%s|r|cffC41E3A(%s)|r: %s\n", var, "soundList", "table", "soundList")
+            else
+                for name, value in pairs(addon.states[var]) do
+                    output = output .. string.format("|cff0070DD%s|r.|cffffff00%s|r|cffC41E3A(%s)|r: %s\n", var, name, type(value), tostring(value))
+                end
             end
         else
             output = output .. string.format("|cff0070DD%s|r|cffC41E3A(%s)|r: %s\n", var, type(addon.states[var]), tostring(addon.states[var]))
@@ -217,12 +171,14 @@ local function AttemptsFetchAllEEInfo()
 
     for _, eventID in ipairs(allEventIDs) do
         local data = FetchEncounterEventInfo(eventID)
-        output = output .. string.format("%d,%s,%s,%s\n",
-            data.encounterEventID or -1,
-            data.severity or "nil",
-            tostring(data.spellID),
-            data.spellName or "nil"
-        )
+        if data.encounterEventID then
+            output = output .. string.format("%d,%s,%s,%s\n",
+                data.encounterEventID,
+                data.severity or "nil",
+                tostring(data.spellID),
+                data.spellName or "nil"
+            )
+        end
     end
 
     return output
@@ -278,16 +234,84 @@ local function FetchAllEncounterInfo()
 end
 
 -- MARK: Private Auras
-
-local ScanPrivateAuras = function(data)
-    local output = "SpellID,Result,SpellName\n"
-
-    for _, spellID in ipairs(data) do
-        local result = C_UnitAuras.AuraIsPrivate(spellID)
-        output = output .. string.format("%d,%s,%s\n", spellID, tostring(result), C_Spell.GetSpellInfo(spellID) and C_Spell.GetSpellInfo(spellID).name or "None")
+local function ScanAllPrivateAuras()
+    local output = "SpellID,Result,SpellName,EncounterID\n"
+    for _, mapData in pairs(addon.data.MAP_ENCOUNTER_EVENTS) do
+        for encounterID, encounterData in pairs(mapData.encounters) do
+            for _, privateAuraID in ipairs(encounterData.privateAuras or {}) do
+                local result = C_UnitAuras.AuraIsPrivate(privateAuraID)
+                output = output .. string.format("%d,%s,%s,%d\n", privateAuraID, tostring(result), C_Spell.GetSpellInfo(privateAuraID) and C_Spell.GetSpellInfo(privateAuraID).name or "None", encounterID)
+            end
+        end
     end
 
     return output
+end
+
+-- MARK: Render
+local function RenderDisplayFrame(self, info)
+    self.isOpened = true
+    self.displayFrame = AceGUI:Create("Frame")
+    self.displayFrame:SetTitle("|cFF8788EEHBES|r - Developer Tools")
+    self.displayFrame:SetLayout("Flow")
+    self.displayFrame:SetWidth(900)
+    self.displayFrame:SetHeight(600)
+    self.displayFrame:SetStatusText("|cff8788ee"..  ADDON_NAME .. "|r v" .. addon:GetVersion() .. " " .. "Developer Tools")
+    self.displayFrame:SetCallback("OnClose", function(widget)
+        if widget then
+            widget:Release()
+        end
+
+        self.isOpened = false
+    end)
+
+    local tabs = AceGUI:Create("TabGroup")
+    tabs:SetLayout("Flow")
+    tabs:SetFullWidth(true)
+    tabs:SetFullHeight(true)
+    tabs:SetTabs(TABS)
+    self.displayFrame:AddChild(tabs)
+    tabs:SetCallback("OnGroupSelected", function (container, _, tab)
+        container:ReleaseChildren()
+
+        if tab == "CopyInfo" then
+            local panel = GUI:CreateScrollFrame(container)
+            
+            local addonInfo = ""
+            for _, value in pairs(info) do
+                addonInfo = addonInfo .. value .. "\n------\n\n"
+            end
+            GUI:CreateMultiLineEditBox(panel, "Copy the addon info below:", addonInfo)
+
+            panel:DoLayout()
+        elseif tab == "ModulesInfo" then
+            local panel = GUI:CreateScrollFrame(container)
+            GUI:CreateInformationTag(panel, info["ModulesInfo"], "LEFT")
+            panel:DoLayout()
+        elseif tab == "StatesInfo" then
+            local panel = GUI:CreateScrollFrame(container)
+            GUI:CreateInformationTag(panel, info["StatesInfo"], "LEFT")
+            panel:DoLayout()
+        elseif tab == "DataFetch" then
+            local panel = GUI:CreateScrollFrame(container)
+            local dataOutput = GUI:CreateMultiLineEditBox(panel, "Copy the data below:", "")
+            GUI:CreateButton(panel, "Fetch Encounter Events Info", function()
+                local data = AttemptsFetchAllEEInfo()
+                dataOutput:SetText(data)
+            end):SetRelativeWidth(0.32)
+            GUI:CreateButton(panel, "Fetch Encounter Sections Info", function()
+                local data = FetchAllEncounterInfo()
+                dataOutput:SetText(data)
+            end):SetRelativeWidth(0.32)
+            GUI:CreateButton(panel, "Scan Private Auras", function()
+                local data = ScanAllPrivateAuras()
+                dataOutput:SetText(data)
+            end):SetRelativeWidth(0.32)
+            panel:DoLayout()
+        end
+    end)
+    
+    tabs:SelectTab("CopyInfo")
 end
 
 -- MARK: DisplayAddonInfo
@@ -295,19 +319,6 @@ function addon.DeveloperTools:DisplayAddonInfo()
     local output = {}
     output["ModulesInfo"] = GetModulesInfo() .. "\n" .. GetEventsInfo()
     output["StatesInfo"] = GetStatesInfo() .. "\n" .. GetStateMonitorsInfo()
-    -- Fetch data
-    -- output["Data"] = ScanPrivateAuras()
-    -- output["Data"] = FetchAllEncounterInfo() -- get all encounter sections info
-    -- output["Data"] = AttemptsFetchAllEEInfo() -- get encounter events info
-    local function GetLSMSoundData()
-        local output = ""
-        for name, path in pairs(addon.LSM:HashTable("sound")) do
-            output = output .. string.format("%s,%s\n", name, path)
-        end
-
-        return output
-    end
-    output["Data"] = GetLSMSoundData() -- get all shared media info
 
     if self.isOpened and self.displayFrame then
         self.displayFrame:Hide()

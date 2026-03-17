@@ -132,15 +132,18 @@ function addon:MergeProfile(data)
         end
     end
     -- handle private auras
-    for spellID, configData in pairs(newProfile.dataPA or {}) do
+    for encounterID, paData in pairs(newProfile.dataPA or {}) do
         if not currentProfile.dataPA then currentProfile.dataPA = {} end
+        if not currentProfile.dataPA[encounterID] then currentProfile.dataPA[encounterID] = {} end
 
-        if not currentProfile.dataPA[spellID] then
-            newPAcount = newPAcount + 1
+        for spellID, sound in pairs(paData or {}) do
+            if not currentProfile.dataPA[encounterID][spellID] then
+                newPAcount = newPAcount + 1
+            end
+
+            currentProfile.dataPA[encounterID][spellID] = sound
+            countPA = countPA + 1
         end
-
-        currentProfile.dataPA[spellID] = configData
-        countPA = countPA + 1
     end
 
     PrintMergeSummary(countEvents, newEventsCount, countPA, newPAcount)
