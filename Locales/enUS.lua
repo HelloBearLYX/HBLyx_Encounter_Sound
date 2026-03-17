@@ -116,6 +116,9 @@ L["HideEncounterPrint"] = "Hide Encounter Start/End Print"
 L["Applied"] = " applied"
 L["Duplicated"] = "duplicated"
 L["EmptyKey"] = "Empty key"
+L["MergedInto"] = "merged into"
+L["MergeSuccess"] = "Profile merged |cffffff00successfully|r"
+L["MergeDesc"] = "|cffff5c00Merge|r\nMerge profile with current profile, the duplicated entries will be overwritten by the input profile. The merge action will only merge the events' settings and private auras' settings, and other settings will not be merged(victory sound, start sound, and templates etc.).\n\n"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"

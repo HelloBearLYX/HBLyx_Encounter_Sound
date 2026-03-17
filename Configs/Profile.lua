@@ -24,6 +24,10 @@ function GUI.TagPanels.Profile:CreateTabPanel(parent)
         addon:ImportProfile(value)
         editBox:SetText(addon.db["EncounterSound"].ProfileName or "None")
     end)
+    GUI:CreateInformationTag(generalProfileGroup, L["MergeDesc"], "LEFT")
+    GUI:CreateMultiLineEditBox(generalProfileGroup, nil, "", function(value)
+        addon:MergeProfile(value)
+    end)
 
     return frame
 end
@@ -68,6 +72,68 @@ function addon:ImportProfile(data)
     addon.Utilities:SetPopupDialog(
         "HB_Import_Success",
         L["CurrentProfile"] .. "|cffff0d01" .. (addon.db["EncounterSound"].ProfileName or "Default") .. "|r\n" .. L["ImportSuccess"],
+        true
+    )
+
+    return true
+end
+
+-- MARK: Profile Merge
+
+---Merge a profile into the current profile
+---@param data string profile string to merge
+---@return boolean success if the merge was successful
+function addon:MergeProfile(data)
+    local decodedData = Compress:DecodeForPrint(data:sub(#prefix + 1))
+    local decompressedData = Compress:DecompressDeflate(decodedData)
+    local success, profileData = Serialize:Deserialize(decompressedData)
+
+    if not success or type(profileData) ~= "table" or data:sub(1, #prefix) ~= prefix then
+        addon.Utilities:print("Invalid profile data.")
+        return false
+    end
+
+    local currentProfile = addon.db["EncounterSound"] or {}
+    local newProfile = profileData["EncounterSound"] or {}
+
+    -- Merge the new profile into the current profile
+    local countEvents, countPA = 0, 0
+    local newEventsCount, newPAcount = 0, 0
+    -- handle events
+    for encounterID, eventsData in pairs(newProfile.data or {}) do
+        for eventID, configData in pairs(eventsData) do
+            if not currentProfile.data then currentProfile.data = {} end
+            if not currentProfile.data[encounterID] then currentProfile.data[encounterID] = {} end
+
+            if not currentProfile.data[encounterID][eventID] then
+                newEventsCount = newEventsCount + 1
+            end
+
+            currentProfile.data[encounterID][eventID] = configData
+            countEvents = countEvents + 1
+        end
+    end
+    -- handle private auras
+    for spellID, configData in pairs(newProfile.dataPA or {}) do
+        if not currentProfile.dataPA then currentProfile.dataPA = {} end
+
+        if not currentProfile.dataPA[spellID] then
+            newPAcount = newPAcount + 1
+        end
+
+        currentProfile.dataPA[spellID] = configData
+        countPA = countPA + 1
+    end
+
+    local printMsg = string.format("|cffff5c00Merged|r:\nevents: |cffff5c00%d|r = |cff79aa38%d(new)|r + |cff3d65ba%d(overwritten)|r\nprivate auras: |cffff5c00%d|r = |cff79aa38%d(new)|r + |cff3d65ba%d(overwritten)|r", countEvents, newEventsCount, countEvents - newEventsCount, countPA, newPAcount, countPA - newPAcount)
+    addon.Utilities:print(printMsg)
+
+    addon.db["EncounterSound"] = currentProfile
+    addon.Utilities:print(L["MergeSuccess"])
+
+    addon.Utilities:SetPopupDialog(
+        "HB_Import_Success",
+        "|cffff0d01" .. (newProfile.ProfileName or "Default") .. "|r " .. L["MergedInto"] .. " |cffff0d01" .. (currentProfile.ProfileName or "Default") .. "|r",
         true
     )
 
