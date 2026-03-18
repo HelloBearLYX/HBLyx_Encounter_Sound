@@ -1,5 +1,5 @@
 ---@class HBLyx_Encounter_Sound: AceAddon
-HBLyx_Encounter_Sound = LibStub("AceAddon-3.0"):NewAddon("HBLyx_Encounter_Sound")
+local HBLyx_Encounter_Sound = LibStub("AceAddon-3.0"):NewAddon("HBLyx_Encounter_Sound")
 
 local ADDON_NAME, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
