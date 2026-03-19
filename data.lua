@@ -42,7 +42,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2066] = {
 				events = {234, 235, 236, 237, 243},
 				journalID = 1980,
-				privateAuras = {245742, 246026, 1263523}
+				privateAuras = {245742, 246026, 1263523, 1280064}
 			},
 			[2067] = {
 				events = {246, 247, 376, 245},
