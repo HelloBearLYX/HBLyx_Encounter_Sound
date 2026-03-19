@@ -25,7 +25,7 @@ local function fixlevels(parent, ...)
 end
 
 do
-	local widgetType = "SharedDropdown"
+	local widgetType = "SharedDropdown_Sound"
 	local widgetVersion = 1
 
 	--[[ Static data ]]--

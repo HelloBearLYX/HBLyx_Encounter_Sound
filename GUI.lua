@@ -423,7 +423,7 @@ end
 ---@param callback fun(key: string) callback function when value changed
 ---@return AceGUIWidget
 function addon.GUI:CreateSoundSelect(parent, label, get, callback)
-    local soundSelect = AceGUI:Create("SharedDropdown")
+    local soundSelect = AceGUI:Create("SharedDropdown_Sound")
     soundSelect:SetLabel(label)
     soundSelect:SetList(addon.states.soundList)
     soundSelect:SetValue(get)
