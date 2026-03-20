@@ -11,5 +11,5 @@
   <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml"/>
   <Include file="Libs\LibDeflate\lib.xml"/>
   <Include file="Libs\LibDBIcon-1.0\lib.xml"/>
-  <Script file="Libs\AceGUIWidget-SharedDropdown.lua"/>
+  <Script file="Libs\AceGUIWidget-SharedDropdown_Sound.lua"/>
 </Ui>

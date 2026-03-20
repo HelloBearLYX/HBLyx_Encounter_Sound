@@ -243,7 +243,7 @@ do
 	local function Constructor()
 		local count = AceGUI:GetNextWidgetNum(widgetType)
 		local frame = CreateFrame("Frame", nil, UIParent)
-		local dropdown = CreateFrame("Frame", "AceGUI30SharedDropdown" .. count, frame, "UIDropDownMenuTemplate")
+		local dropdown = CreateFrame("Frame", "AceGUI30SharedDropdown_Sound" .. count, frame, "UIDropDownMenuTemplate")
 
 		local self = {}
 		self.type = widgetType
