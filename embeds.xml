@@ -12,4 +12,5 @@
   <Include file="Libs\LibDeflate\lib.xml"/>
   <Include file="Libs\LibDBIcon-1.0\lib.xml"/>
   <Script file="Libs\AceGUIWidget-SharedDropdown_Sound.lua"/>
+  <Script file="Libs\LibDDI-1.0\lib.lua"/>
 </Ui>

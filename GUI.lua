@@ -438,7 +438,7 @@ end
 function addon.GUI:CreateSoundSelect(parent, label, get, callback)
     local soundSelect = AceGUI:Create("SharedDropdown_Sound")
     soundSelect:SetLabel(label)
-    soundSelect:SetList(addon.states.soundList)
+    soundSelect:SetList(addon.states.soundList, nil, "DDI-Sound")
     soundSelect:SetValue(get)
     soundSelect:SetCallback("OnValueChanged", function(self, _, key)
         self:SetValue(key)
