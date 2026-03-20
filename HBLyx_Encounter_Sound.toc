@@ -22,10 +22,12 @@ data.lua
 
 # modules
 Modules\EncounterSound.lua
+Modules\HighlightIcons.lua
 
 # handle configuration and options
 GUI.lua
 Configs\EncounterSound.lua
+Configs\HighlightIcons.lua
 
 Configs\Profile.lua
 

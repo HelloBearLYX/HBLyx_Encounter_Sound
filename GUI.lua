@@ -14,6 +14,7 @@ addon.GUI = {
 local TABS = {
     {text = L["General"], value = "General"},
     {text = L["EncounterSoundEffects"], value = "EncounterGeneral"},
+    {text = L["HighlightIconsSettings"], value = "HighlightIcons"},
     {text = L["Raid"], value = "Raid"},
     {text = L["Dungeon"], value = "Dungeon"},
     {text = L["TemplateSettings"], value = "Template"},
@@ -151,6 +152,15 @@ function addon.GUI:Render()
         addon.core:TestMode(false) -- turn off test mode when closing GUI
     end)
 
+    -- MARK: Test button
+    self.TestButton = AceGUI:Create("Button")
+    self.TestButton:SetText(L["Test"])
+    self.TestButton:SetWidth(200)
+    self.TestButton:SetCallback("OnClick", function()
+        addon.core:TestMode() -- toggle test mode on/off when click the button
+    end)
+    self.frame:AddChild(self.TestButton)
+
     addon.GUI:CreateToggleCheckBox(self.frame, L["HideMinimapIcon"], addon.db.MinimapIcon.hide, function(value)
         addon.db.MinimapIcon.hide = value
         if not addon.db.MinimapIcon.hide then
@@ -178,6 +188,9 @@ function addon.GUI:Render()
             panel:DoLayout()
         elseif tab == "EncounterGeneral" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateGeneralPanel(container)
+            panel:DoLayout()
+        elseif tab == "HighlightIcons" then
+            local panel = addon.GUI.TagPanels.HighlightIcons:CreateTabPanel(container)
             panel:DoLayout()
         elseif tab == "Raid" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true)

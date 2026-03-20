@@ -71,7 +71,7 @@ L["SpellFlagBleed"] = "Bleed"
 
 -- MARK: Config
 L["ConfigPanel"] = "Open Configurations Panel"
-L["Test"] = "Test/Unlock(Drag to Move)"
+L["Test"] = "Unlock(Drag to Move)"
 L["Enable"] = "Enable"
 L["SoundSettings"] = "Sound Settings"
 L["Reload"] = "Reload(RL)"
@@ -128,6 +128,22 @@ L["MergeDesc"] = "|cffff5c00Merge|r\nMerge profile with current profile, the dup
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"
 L["FrameStrata"] = "Frame Strata Level"
+L["StyleSettings"] = "Style Settings"
+L["IconSettings"] = "Icon Settings"
+L["PositionSettings"] = "Position Settings"
+L["FontSettings"] = "Font Settings"
+L["HighlightIconsSettings"] = "Highlight Icons"
+L["HighlightIconsSettingsDesc"] = "Show highlighted encounter timeline events as icons.\n\nYou can adjust icon size, grow direction, font placement, and anchor position here.\n\n"
+L["IconSize"] = "Icon Size"
+L["IconZoom"] = "Icon Zoom"
+L["X"] = "X"
+L["Y"] = "Y"
+L["Font"] = "Font"
+L["FontSize"] = "Font Size"
+L["FontYOffset"] = "Font Y Offset"
+L["GrowDirection"] = "Grow Direction"
+L["FontAnchor"] = "Font Anchor"
+L["TimeFontScale"] = "Time Font Scale"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"
