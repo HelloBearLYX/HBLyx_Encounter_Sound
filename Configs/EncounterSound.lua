@@ -577,7 +577,6 @@ local function SetPASettings(self)
 	self.PASoundDropdown = GUI:CreateSoundSelect(self.PASettingsGroup, L["SoundSettings"], nil, function(value)
 		if value then
 			if type(self.inputPA) == "table" then
-				addon:debug("multiple spellIDs")
 				for _, spellID in ipairs(self.inputPA) do
 					AddPASound(self.inputEncounter, spellID, value)
 				end
@@ -599,7 +598,7 @@ local function SetPASettings(self)
 		else
 			result = RemovePASound(self.inputEncounter, self.inputPA)
 		end
-		
+
 		if result then
 			self.PASoundDropdown:SetValue(nil)
 		end

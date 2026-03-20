@@ -525,12 +525,6 @@ addon.data.SPELL_INFO = {
 
 -- MARK: Data Changes
 addon.data.CHANGED_EVENTS = {
-	[3103] = {[559] = false},
-	[3286] = {[557] = false},
-	[3213] = {[18] = false},
-	[3058] = {[213] = false, [214] = false},
-	[3072] = {[95] = false},
-	[3178] = {[551] = false},
 }
 
 addon.data.CHANGED_PRIVATEAURAS = {
