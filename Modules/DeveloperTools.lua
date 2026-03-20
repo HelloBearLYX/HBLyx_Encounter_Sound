@@ -239,8 +239,15 @@ local function ScanAllPrivateAuras()
     for _, mapData in pairs(addon.data.MAP_ENCOUNTER_EVENTS) do
         for encounterID, encounterData in pairs(mapData.encounters) do
             for _, privateAuraID in ipairs(encounterData.privateAuras or {}) do
-                local result = C_UnitAuras.AuraIsPrivate(privateAuraID)
-                output = output .. string.format("%d,%s,%s,%d\n", privateAuraID, tostring(result), C_Spell.GetSpellInfo(privateAuraID) and C_Spell.GetSpellInfo(privateAuraID).name or "None", encounterID)
+                if type(privateAuraID) == "table" then
+                    for _, id in ipairs(privateAuraID) do
+                        local result = C_UnitAuras.AuraIsPrivate(id)
+                        output = output .. string.format("%d,%s,%s,%d\n", id, tostring(result), C_Spell.GetSpellInfo(id) and C_Spell.GetSpellInfo(id).name or "None", encounterID)
+                    end
+                else
+                    local result = C_UnitAuras.AuraIsPrivate(privateAuraID)
+                    output = output .. string.format("%d,%s,%s,%d\n", privateAuraID, tostring(result), C_Spell.GetSpellInfo(privateAuraID) and C_Spell.GetSpellInfo(privateAuraID).name or "None", encounterID)
+                end
             end
         end
     end
