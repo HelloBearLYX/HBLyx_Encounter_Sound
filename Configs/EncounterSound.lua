@@ -576,12 +576,31 @@ end
 local function SetPASettings(self)
 	self.PASoundDropdown = GUI:CreateSoundSelect(self.PASettingsGroup, L["SoundSettings"], nil, function(value)
 		if value then
-			AddPASound(self.inputEncounter, self.inputPA, value)
+			if type(self.inputPA) == "table" then
+				addon:debug("multiple spellIDs")
+				for _, spellID in ipairs(self.inputPA) do
+					AddPASound(self.inputEncounter, spellID, value)
+				end
+			else
+				AddPASound(self.inputEncounter, self.inputPA, value)
+			end
 		end
 	end)
 	self.PASoundDropdown:SetRelativeWidth(0.5)
 	GUI:CreateButton(self.PASettingsGroup, L["Remove"], function()
-		if RemovePASound(self.inputEncounter, self.inputPA) then
+		local result
+		if type(self.inputPA) == "table" then
+			result = true
+			for _, spellID in ipairs(self.inputPA) do
+				if not RemovePASound(self.inputEncounter, spellID) then
+					result = false
+				end
+			end
+		else
+			result = RemovePASound(self.inputEncounter, self.inputPA)
+		end
+		
+		if result then
 			self.PASoundDropdown:SetValue(nil)
 		end
 	end)
@@ -591,17 +610,21 @@ end
 ---@param self table encounter sound panel instance
 local function RenderPrivateAuraSettings(self)
 	for _, spellID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter].privateAuras) do
-		local spell = Spell:CreateFromSpellID(spellID) or nil
+		-- some private auras have the same name and description but different id, so only display one
+		local displayID = type(spellID) == "table" and spellID[1] or spellID
+
+		local spell = Spell:CreateFromSpellID(displayID) or nil
 		local name = "UNKNOWN"
 		if spell then
 			name = string.format("|T%s:20:20|t %s", spell:GetSpellTexture(), spell:GetSpellName())
 		end
 		
 		GUI:CreateButton(self.PASelectGroup, name, function()
+			local displayID = type(spellID) == "table" and spellID[1] or spellID
 			self.inputPA = spellID
 
-			if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[self.inputEncounter] and addon.db.EncounterSound.dataPA[self.inputEncounter][self.inputPA] then
-				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputEncounter][self.inputPA])
+			if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[self.inputEncounter] and addon.db.EncounterSound.dataPA[self.inputEncounter][displayID] then
+				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputEncounter][displayID])
 			else
 				self.PASoundDropdown:SetValue(nil)
 			end
