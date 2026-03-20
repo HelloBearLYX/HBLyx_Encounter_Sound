@@ -146,7 +146,7 @@ L["FontSize"] = "字体大小"
 L["FontYOffset"] = "字体Y偏移"
 L["GrowDirection"] = "增长方向"
 L["FontAnchor"] = "字体锚点"
-L["TimeFontScale"] = "倒计时字体缩放"
+L["TimeFontScale"] = "时间字体缩放"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "BOSS战音效"

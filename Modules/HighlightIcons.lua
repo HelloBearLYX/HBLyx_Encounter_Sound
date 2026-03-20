@@ -47,6 +47,8 @@ local function CreateEventIcon(self)
         "OUTLINE"
     )
     frame.name:SetPoint("CENTER", frame.textFrame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
+    frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
+    frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
 
     frame.border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     frame.border:SetAllPoints()
@@ -176,6 +178,8 @@ function HighlightIcons:UpdateStyle()
             "OUTLINE"
         )
         frame.name:SetPoint("CENTER", frame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
+        frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
+        frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
     end
 end
 
