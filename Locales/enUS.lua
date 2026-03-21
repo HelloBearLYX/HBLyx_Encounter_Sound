@@ -20,12 +20,11 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
-L["ChangeLogContent"] = -- TODO: update change log
+L["ChangeLogContent"] =
+"v3.17\n" .. "-Added Timeline Skins module which provides customizable timeline\n" ..
 "v3.16\n" .. "-Add Highlight Icons module which displays highlighted(<= 5s) events in icons\n" ..
 "v3.15\n" .. "-Implemented Templates, Spell Tags, and High-Performance-Sound-Select-Widget\n" ..
-"v3.14\n" .. "-Apply Blizzard 03/02/26 private aura data update, and continuously correct data\n" ..
-"v3.13\n" .. "-Significantly improve UIUX\n" ..
-"v3.12\n" .. "-Totally dispatch the Encounter Sound module from |cff8788eeHBLyx_Tools|r, and put it as a standalone module |cff8788eeHBLyx_Encounter_Sound|r\n"
+"v3.14\n" .. "-Apply Blizzard 03/02/26 private aura data update, and continuously correct data\n"
 
 --MARK: Issues
 L["Issues"] = "Issues"
