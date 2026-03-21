@@ -236,6 +236,13 @@ end
 
 -- MARK: Load Event
 local function LoadEvent(self, eventInfo)
+    -- Blizzard left many always paused events
+    -- never load them, as they are always paused and will always be cancelled
+    local state = C_EncounterTimeline.GetEventState(eventInfo.id)
+    if state == Enum.EncounterTimelineEventState.Paused then
+        return
+    end
+
     local frame
     if self.spareIcons[#self.spareIcons] then
         frame = table.remove(self.spareIcons, #self.spareIcons)
