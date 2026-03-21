@@ -222,6 +222,22 @@ function HighlightIcons:UpdateStyle()
             addon.db[self.modName]["FontSize"],
             "OUTLINE"
         )
+        frame.name:ClearAllPoints()
+        frame.name:SetPoint("CENTER", frame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
+        frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
+        frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
+    end
+
+    for _, frame in pairs(self.activeFrames) do
+        frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
+        frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
+        frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
+        frame.name:SetFont(
+            addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+            addon.db[self.modName]["FontSize"],
+            "OUTLINE"
+        )
+        frame.name:ClearAllPoints()
         frame.name:SetPoint("CENTER", frame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
         frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
         frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
