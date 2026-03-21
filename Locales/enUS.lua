@@ -196,6 +196,10 @@ L["TemplateDesc"] = "The templates are used to rapidly apply to events with simi
 
 -- MARK: Contributors
 L["Contributors"] = "Contributors"
+L["data correction"] = "Data Correction"
+L["testing"] = "Testing"
+L["feedbacks"] = "Feedbacks"
+L["configuration sharing"] = "Configuration Sharing"
 L["ThanksTo"] = "Thanks for the contributons from the following:"
 L["AnonymousContributors"] = "\nAlso thanks many others who submitted data correction, bug reports, and suggestions."
 L["ContributeData"] = "If you want to Contribute data or any issues, please use the GitHub or Discord channel! You can find the links in the Contact section, the Pull Request(PR) is recommended if possible.\n" ..

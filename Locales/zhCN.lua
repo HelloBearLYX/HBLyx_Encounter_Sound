@@ -198,6 +198,10 @@ L["TemplateDesc"] = "模板用于快速应用于具有相似条件的事件\n\n"
 
 -- MARK: Contributors
 L["Contributors"] = "贡献者"
+L["data correction"] = "数据修正"
+L["testing"] = "测试"
+L["feedbacks"] = "反馈"
+L["configuration sharing"] = "配置共享"
 L["ThanksTo"] = "感谢以下的贡献:"
 L["AnonymousContributors"] = "\n也感谢其他许多提交数据修正, bug报告和建议的贡献者."
 L["ContributeData"] = "如果你想贡献数据或有任何问题, 请使用GitHub或Discord频道! 你可以在联系方式部分找到链接, 如果可以的话, 推荐使用Pull Request(PR)的方式提交.\n" ..
