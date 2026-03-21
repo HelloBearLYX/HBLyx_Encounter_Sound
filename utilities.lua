@@ -183,7 +183,8 @@ function addon.Utilities:MakeFrameDragPosition(frame, mod, xKey, yKey, updateFun
 		x, y = addon.Utilities:ScreenPositionToUIPosition(x, y)
 		x, y = math.floor(x + 0.5), math.floor(y + 0.5) -- round the position to integers
 
-		frame:SetPoint("CENTER", UIParent, "CENTER", x, y)
+		local anchorFrom, _, anchorTo, _, _  = frame:GetPoint()
+		frame:SetPoint(anchorFrom, UIParent, anchorTo, x, y)
 		return x, y
 	end
 
