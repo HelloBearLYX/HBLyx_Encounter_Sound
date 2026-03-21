@@ -6,6 +6,10 @@ local EncounterSound = {
     modName = "EncounterSound",
 }
 
+-- MARK: Constants
+local COUNTDOWN_ICON = 132349
+local COUNTDOWN_SPELLID = 386164
+
 -- MARK: Data Migration
 
 --- used to make data migration, may change due to different patch changes
@@ -73,6 +77,7 @@ function EncounterSound:Initialize()
     self.privateAuras = {}
     self.role = nil
     self.lastEncounterID = nil
+    self.eventFrame = CreateFrame("Frame", self.modName .. "EventFrame", UIParent)
 
     -- force enable encounter timeline to make sure the events can be triggered correctly
     SetCVar("encounterTimelineEnabled", "1")
@@ -292,6 +297,33 @@ function EncounterSound:RegisterEvents()
         LoadEventSounds(self, currentEncounter)
         LoadPrivateAuraSounds(self, currentEncounter)
         PlayStartSound()
+    end)
+
+    addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
+    addon.core:RegisterEvent("CANCEL_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
+
+    self.eventFrame:SetScript("OnEvent", function(_, event, ...)
+        if event == "START_PLAYER_COUNTDOWN" then
+            local totalTime = select(3, ...)
+            if not self.countdownEvents then
+                self.countdownEvents = {}
+            end
+            local newCoundDownEvent = C_EncounterTimeline.AddScriptEvent({
+                spellID = COUNTDOWN_SPELLID,
+                duration = totalTime,
+                severity = 2,
+                iconFileID = COUNTDOWN_ICON,
+                overrideName = L["CountDown"],
+            })
+            table.insert(self.countdownEvents, newCoundDownEvent)
+        elseif event == "CANCEL_PLAYER_COUNTDOWN" then
+            if self.countdownEvents then
+                for _, countdownEvent in ipairs(self.countdownEvents) do
+                    C_EncounterTimeline.CancelScriptEvent(countdownEvent)
+                end
+                self.countdownEvents = nil
+            end
+        end
     end)
 end
 

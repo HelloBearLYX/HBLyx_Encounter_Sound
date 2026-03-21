@@ -125,6 +125,7 @@ L["PrivateAuras"] = "private auras"
 L["New"] = "new"
 L["Overwritten"] = "overwritten"
 L["MergeDesc"] = "|cffff5c00Merge|r\nMerge profile with current profile, the duplicated entries will be overwritten by the input profile. The merge action will only merge the events' settings and private auras' settings, and other settings will not be merged(victory sound, start sound, and templates etc.).\n\n"
+L["CountDown"] = "Countdown"
 
 -- MARK: Style
 L["ColorSettings"] = "Color Settings"

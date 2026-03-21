@@ -127,6 +127,7 @@ L["PrivateAuras"] = "私有光环"
 L["New"] = "新增"
 L["Overwritten"] = "覆盖"
 L["MergeDesc"] = "|cffff5c00合并(Merge)|r\n将输入的配置文件与当前配置文件合并, 重复的条目将被输入的配置文件覆盖. 合并操作只会合并事件设置和私有光环设置, 其他设置(胜利音效, 开始音效, 模板等)将不会被合并\n\n"
+L["CountDown"] = "倒计时"
 
 -- MARK: Style
 L["ColorSettings"] = "颜色设置"
