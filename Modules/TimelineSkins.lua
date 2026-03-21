@@ -1,0 +1,331 @@
+local ADDON_NAME, addon = ...
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+
+---@class TimelineSkins
+local TimelineSkins = {
+    modName = "TimelineSkins",
+}
+
+-- MARK: Constants
+local UNKNOWN_SPELL_TEXTURE = 134400
+local TIMELINE_LENGTH_SECONDS = 12
+local TICK_POSITION_SECONDS = 5
+local TICK_POSITION = TICK_POSITION_SECONDS / TIMELINE_LENGTH_SECONDS
+
+-- MARK: Initialize
+
+---Initialize (Constructor)
+---@return TimelineSkins TimelineSkins a TimelineSkins object
+function TimelineSkins:Initialize()
+    -- force enable encounter timeline
+    SetCVar("encounterTimelineEnabled", "1")
+
+    -- hide original timeline but keep it to fetch data from it
+    EncounterTimeline:Hide()
+    EncounterTimeline:HookScript("OnShow", function() EncounterTimeline:Hide() end)
+
+    self.frame = CreateFrame("Frame", ADDON_NAME .. "_" .. self.modName, UIParent, "BackdropTemplate")
+
+    self.tickLine = self.frame:CreateTexture(nil, "ARTWORK")
+
+    self.frame.background = self.frame:CreateTexture(nil, "BACKGROUND")
+    self.frame.background:SetAllPoints()
+
+    if addon.db[self.modName]["ShowOnlyActive"] then
+        self.frame:Hide()
+    else
+        self.frame:Show()
+    end
+
+    self.spareIcons = {}
+    self.queueIcons = {}
+    self.activeIcons = {}
+
+    return self
+end
+
+-- MARK: Update Style Icon
+
+local function UpdateIconStyle(self, frame)
+    frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
+    frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
+    frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
+    frame.text:SetFont(
+        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+        addon.db[self.modName]["FontSize"],
+        "OUTLINE"
+    )
+    frame.text:ClearAllPoints()
+    frame.text:SetPoint(self.textAnchorFrom, frame.textFrame, self.textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
+    frame.text:SetWidth(addon.db[self.modName]["IconSize"] * 2)
+    frame.text:SetHeight(addon.db[self.modName]["FontSize"] * 3)
+end
+
+-- MARK: Create Timeline Icon
+
+local function CreateTimelineIcon(self)
+    local frame = CreateFrame("Frame", nil, UIParent)
+
+    frame.cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
+    frame.cooldown:SetAllPoints()
+    frame.cooldown:SetDrawSwipe(false)
+    frame.cooldown:SetDrawEdge(false)
+    frame.cooldown:SetReverse(true)
+
+    frame.icon = frame:CreateTexture(nil, "ARTWORK")
+    frame.icon:SetAllPoints()
+    
+    frame.textFrame = CreateFrame("Frame", nil, frame)
+    frame.textFrame:SetAllPoints()
+    frame.text = frame.textFrame:CreateFontString(nil, "OVERLAY")
+
+    UpdateIconStyle(self, frame)
+
+    frame.border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+    frame.border:SetAllPoints()
+    frame.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
+    frame.border:SetBackdropBorderColor(0, 0, 0, 1)
+
+    frame.active = false
+    frame.timer = nil
+
+    return frame
+end
+
+-- MARK: DeactivateIcon
+
+local function DeactivateIcon(self, frame)
+    if frame.timer then
+        frame.timer:Cancel()
+        frame.timer = nil
+    end
+    frame:Hide()
+    frame.active = false
+    frame.cooldown:SetCooldownDuration(0)
+    frame.icon:SetTexture(UNKNOWN_SPELL_TEXTURE)
+    frame.text:SetText("")
+    frame:SetScript("OnUpdate", nil) -- clear OnUpdate script to stop updating position
+
+    self.activeIcons[frame.eventID] = nil
+    table.insert(self.spareIcons, frame)
+end
+
+-- MARK: MoveToQueue
+
+local function MoveToQueue(self, frame)
+    frame.active = false
+    frame:ClearAllPoints()
+    local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
+    if frame.timer then
+        frame.timer:Cancel()
+        frame.timer = C_Timer.NewTimer(math.max(remaining - TIMELINE_LENGTH_SECONDS, 0), function()
+            self:ActivateIcon(frame)
+        end)
+    end
+    self.activeIcons[frame.eventID] = nil
+    self.queueIcons[frame.eventID] = frame
+    frame:SetScript("OnUpdate", nil)
+end
+
+-- MARK: ON_UPDATE
+
+local function OnUpdateIcon(self, frame)
+    if frame.active then
+        local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
+        if remaining <= 0 then
+            DeactivateIcon(self, frame)
+        elseif remaining >= TIMELINE_LENGTH_SECONDS then
+            MoveToQueue(self, frame)
+        else
+            local position = math.min(remaining, TIMELINE_LENGTH_SECONDS) / TIMELINE_LENGTH_SECONDS * addon.db[self.modName]["Length"]
+            frame:ClearAllPoints()
+            if addon.db[self.modName]["isVertical"] then
+                if self.anchorFrom == "BOTTOM" then -- UP
+                    frame:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, 0, position)
+                else -- DOWN
+                    frame:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, 0, -position)
+                end
+            else
+                if self.anchorFrom == "LEFT" then -- RIGHT
+                    frame:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, position, 0)
+                else -- LEFT
+                    frame:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, -position, 0)
+                end
+            end
+        end
+    end
+end
+
+-- MARK: ActivateIcon
+
+function TimelineSkins:ActivateIcon(frame)
+    frame:Show()
+    frame.active = true
+
+    -- move from queue to active
+    self.queueIcons[frame.eventID] = nil
+    self.activeIcons[frame.eventID] = frame
+
+    frame:SetScript("OnUpdate", function()
+        OnUpdateIcon(self, frame)
+    end)
+end
+
+-- MARK: Load Event
+local function LoadEvent(self, eventInfo)
+    local frame
+    if self.spareIcons[#self.spareIcons] then
+        frame = table.remove(self.spareIcons, #self.spareIcons)
+    else
+        frame = CreateTimelineIcon(self)
+    end
+
+    local text = eventInfo.spellName or ""
+    frame.eventID = eventInfo.id
+    local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
+    frame.cooldown:SetCooldownDuration(remaining)
+    frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
+    frame.text:SetText(text)
+    self.queueIcons[frame.eventID] = frame
+    frame.timer = C_Timer.NewTimer(math.max(remaining - TIMELINE_LENGTH_SECONDS, 0), function()
+        self:ActivateIcon(frame)
+    end)
+end
+
+-- MARK: ON_EVENT
+
+local function ON_ENCOUNTER_TIMELINE_EVENT_ADDED(self, eventInfo)
+    LoadEvent(self, eventInfo)
+end
+
+local function ON_ENCOUNTER_TIMELINE_EVENT_REMOVED(self, eventID)
+    local frame = self.activeIcons[eventID] or self.queueIcons[eventID]
+    if frame then
+        DeactivateIcon(self, frame)
+    end
+end
+
+local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
+    local frame = self.activeIcons[eventID] or self.queueIcons[eventID]
+    local state = C_EncounterTimeline.GetEventState(eventID)
+
+    if frame then
+        if state == Enum.EncounterTimelineEventState.Finished or state == Enum.EncounterTimelineEventState.Canceled then
+            DeactivateIcon(self, frame)
+        elseif state == Enum.EncounterTimelineEventState.Paused or C_EncounterTimeline.IsEventBlocked(eventID) then -- paused or blocked
+            frame.cooldown:Pause()
+            if frame.timer then
+                frame.timer:Cancel()
+                frame.timer = nil
+            end
+        elseif state == Enum.EncounterTimelineEventState.Active then
+            if frame.cooldown:IsPaused() then
+                frame.cooldown:Resume()
+            end
+            if frame.timer then
+                frame.timer:Cancel()
+                frame.timer = C_Timer.NewTimer(math.max(C_EncounterTimeline.GetEventTimeRemaining(eventID) - TIMELINE_LENGTH_SECONDS, 0), function()
+                    self:ActivateIcon(frame)
+                end)
+            end
+        end
+    end
+end
+
+-- MARK: Update Tick
+
+local function UpdateTickStyle(self)
+    -- tick
+    self.tickLine:SetColorTexture(1, 1, 1, addon.db[self.modName]["TickAlpha"] or 0.5)
+    if addon.db[self.modName]["isVertical"] then
+        self.tickLine:SetSize(addon.db[self.modName]["IconSize"], 2)
+        self.tickLine:ClearAllPoints()
+        if self.anchorFrom == "BOTTOM" then -- UP
+            self.tickLine:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, 0, addon.db[self.modName]["Length"] * TICK_POSITION)
+        else -- DOWN
+            self.tickLine:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, 0, -addon.db[self.modName]["Length"] * TICK_POSITION)
+        end
+    else
+        self.tickLine:SetSize(2, addon.db[self.modName]["IconSize"])
+        self.tickLine:ClearAllPoints()
+        if self.anchorFrom == "LEFT" then -- RIGHT
+            self.tickLine:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, addon.db[self.modName]["Length"] * TICK_POSITION, 0)
+        else -- LEFT
+            self.tickLine:SetPoint(self.anchorFrom, self.frame, self.anchorFrom, -addon.db[self.modName]["Length"] * TICK_POSITION, 0)
+        end
+    end
+end
+
+-- MARK: UpdateStyle
+
+---Update style settings and render them in-game for CustomTracker
+function TimelineSkins:UpdateStyle()
+    self.anchorFrom, self.anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
+    self.textAnchorFrom, self.textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
+    
+    self.frame:SetFrameStrata(addon.db[self.modName]["FrameStrata"] or "BACKGROUND")
+
+    self.frame:ClearAllPoints()
+    self.frame:SetPoint(self.anchorFrom, UIParent, "CENTER", addon.db[self.modName]["X"], addon.db[self.modName]["Y"])
+    if addon.db[self.modName]["isVertical"] then
+        self.frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["Length"])
+    else
+        self.frame:SetSize(addon.db[self.modName]["Length"], addon.db[self.modName]["IconSize"])
+    end
+
+    UpdateTickStyle(self)
+
+    self.frame.background:SetColorTexture(0, 0, 0, addon.db[self.modName]["BackgroundAlpha"] or 0.5)
+
+    for _, frame in pairs(self.spareIcons) do
+        UpdateIconStyle(self, frame)
+    end
+    for _, frame in pairs(self.activeIcons) do
+        UpdateIconStyle(self, frame)
+    end
+    for _, frame in pairs(self.queueIcons) do
+        UpdateIconStyle(self, frame)
+    end
+end
+
+-- MARK: Test
+
+---Test Mode
+---@param on boolean turn the Test mode on or off
+function TimelineSkins:Test(on)
+    if not addon.db[self.modName]["Enabled"] then -- if the module is not enabled, do not allow test mode
+        return
+    end
+
+    if on then
+        addon.Utilities:ShowDragRegion(self.frame, L["TimelineSkinsSettings"])
+        addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
+    else
+        addon.Utilities:HideDragRegion(self.frame)
+    end
+end
+
+-- MARK: RegisterEvents
+
+---Register events
+function TimelineSkins:RegisterEvents()
+    addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_ADDED", self.frame, self.modName)
+    addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_REMOVED", self.frame, self.modName)
+    addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED", self.frame, self.modName)
+
+    self.frame:SetScript("OnEvent", function(_, event, ...)
+        if event == "ENCOUNTER_TIMELINE_EVENT_ADDED" then
+            local eventInfo = select(1, ...)
+            ON_ENCOUNTER_TIMELINE_EVENT_ADDED(self, eventInfo)
+        elseif event == "ENCOUNTER_TIMELINE_EVENT_REMOVED" then
+            local eventID = select(1, ...)
+            ON_ENCOUNTER_TIMELINE_EVENT_REMOVED(self, eventID)
+        elseif event == "ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED" then
+            local eventID = select(1, ...)
+            ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
+        end
+    end)
+end
+
+-- MARK: Register Module
+addon.core:RegisterModule(TimelineSkins.modName, function() return TimelineSkins:Initialize() end)

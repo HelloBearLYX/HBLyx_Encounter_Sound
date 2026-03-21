@@ -23,11 +23,13 @@ data.lua
 # modules
 Modules\EncounterSound.lua
 Modules\HighlightIcons.lua
+Modules\TimelineSkins.lua
 
 # handle configuration and options
 GUI.lua
 Configs\EncounterSound.lua
 Configs\HighlightIcons.lua
+Configs\TimelineSkins.lua
 
 Configs\Profile.lua
 

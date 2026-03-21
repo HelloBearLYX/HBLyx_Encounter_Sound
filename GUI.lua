@@ -15,6 +15,7 @@ local TABS = {
     {text = L["General"], value = "General"},
     {text = L["EncounterSoundEffects"], value = "EncounterGeneral"},
     {text = L["HighlightIconsSettings"], value = "HighlightIcons"},
+    {text = L["TimelineSkinsSettings"], value = "TimelineSkins"},
     {text = L["Raid"], value = "Raid"},
     {text = L["Dungeon"], value = "Dungeon"},
     {text = L["TemplateSettings"], value = "Template"},
@@ -191,6 +192,9 @@ function addon.GUI:Render()
             panel:DoLayout()
         elseif tab == "HighlightIcons" then
             local panel = addon.GUI.TagPanels.HighlightIcons:CreateTabPanel(container)
+            panel:DoLayout()
+        elseif tab == "TimelineSkins" then
+            local panel = addon.GUI.TagPanels.TimelineSkins:CreateTabPanel(container)
             panel:DoLayout()
         elseif tab == "Raid" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true)

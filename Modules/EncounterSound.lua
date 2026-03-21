@@ -74,6 +74,9 @@ function EncounterSound:Initialize()
     self.role = nil
     self.lastEncounterID = nil
 
+    -- force enable encounter timeline to make sure the events can be triggered correctly
+    SetCVar("encounterTimelineEnabled", "1")
+
     -- 3.14.1 data change migration
     DataMigration()
 
@@ -234,6 +237,7 @@ local function TestHelper(encounterID, eventID, timeOffset)
         iconFileID = info.iconFileID,
         overrideName = "|c" .. color .. C_Spell.GetSpellInfo(info.spellID).name .. "|r(Test)",
     })
+    
 
     for trigger, data in pairs(addon.db.EncounterSound.data[encounterID][eventID]) do
         if trigger ~= "color" then

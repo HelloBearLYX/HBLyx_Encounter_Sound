@@ -178,6 +178,23 @@ local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
         local state = C_EncounterTimeline.GetEventState(eventID)
         if state == Enum.EncounterTimelineEventState.Finished or state == Enum.EncounterTimelineEventState.Canceled then
             UnloadEvent(self, frame)
+        elseif  state == Enum.EncounterTimelineEventState.Paused or C_EncounterTimeline.IsEventBlocked(eventID) then -- paused or blocked
+            frame.cooldown:Pause()
+            if frame.timer then
+                frame.timer:Cancel()
+                frame.timer = nil
+            end
+        elseif state == Enum.EncounterTimelineEventState.Active then
+            if frame.cooldown:IsPaused() then
+                frame.cooldown:Resume()
+            end
+            if frame.timer then
+                frame.timer:Cancel()
+                frame.timer = C_Timer.NewTimer(math.max(C_EncounterTimeline.GetEventTimeRemaining(eventID) - 5.0, 0), function()
+                    self:ActivateIcon(frame)
+                end)
+            end
+        else
         end
     end
 end
