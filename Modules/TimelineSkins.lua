@@ -21,8 +21,8 @@ function TimelineSkins:Initialize()
     SetCVar("encounterTimelineEnabled", "1")
 
     -- hide original timeline but keep it to fetch data from it
-    -- EncounterTimeline:Hide()
-    -- EncounterTimeline:HookScript("OnShow", function() EncounterTimeline:Hide() end)
+    EncounterTimeline:Hide()
+    EncounterTimeline:HookScript("OnShow", function() EncounterTimeline:Hide() end)
 
     self.frame = CreateFrame("Frame", ADDON_NAME .. "_" .. self.modName, UIParent, "BackdropTemplate")
 
@@ -44,6 +44,8 @@ end
 
 -- MARK: Frame Visibility
 
+---Update timeline frame visibility based on current settings and icon state.
+---@param self TimelineSkins self
 function TimelineSkins:UpdateFrameVisibility()
     if addon.db[self.modName]["ShowOnlyActive"] then
         if next(self.activeIcons) or next(self.queueIcons) then
@@ -58,6 +60,9 @@ end
 
 -- MARK: Update Style Icon
 
+---Apply current style settings to an icon frame.
+---@param self TimelineSkins self
+---@param frame Frame icon frame to update
 local function UpdateIconStyle(self, frame)
     frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
     frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
@@ -75,6 +80,9 @@ end
 
 -- MARK: Create Timeline Icon
 
+---Create a reusable timeline icon frame.
+---@param self TimelineSkins self
+---@return Frame frame timeline icon frame
 local function CreateTimelineIcon(self)
     local frame = CreateFrame("Frame", nil, UIParent)
 
@@ -106,6 +114,9 @@ end
 
 -- MARK: Queue Helpers
 
+---Insert an icon at the end of the queue list.
+---@param self TimelineSkins self
+---@param frame Frame icon frame to queue
 local function QueueInsert(self, frame)
     if not self.queueTail then -- if the queue is empty, insert after the head
         frame:ClearAllPoints()
@@ -120,6 +131,9 @@ local function QueueInsert(self, frame)
     self.queueTail = frame
 end
 
+---Remove an icon from the queue list.
+---@param self TimelineSkins self
+---@param frame Frame icon frame to remove
 local function QueueRemove(self, frame)
     if frame.prev == self.queueHead then
         if frame.next then
@@ -146,6 +160,9 @@ end
 
 -- MARK: DeactivateIcon
 
+---Deactivate an icon and recycle it back to spare pool.
+---@param self TimelineSkins self
+---@param frame Frame icon frame to deactivate
 local function DeactivateIcon(self, frame)
     if frame.timer then
         frame.timer:Cancel()
@@ -169,6 +186,9 @@ end
 
 -- MARK: MoveToQueue
 
+---Move an active icon back to queue state.
+---@param self TimelineSkins self
+---@param frame Frame icon frame to move
 local function MoveToQueue(self, frame)
     frame.active = false
     frame:SetScript("OnUpdate", nil)
@@ -189,6 +209,9 @@ end
 
 -- MARK: ON_UPDATE
 
+---Update icon position each frame while active.
+---@param self TimelineSkins self
+---@param frame Frame active icon frame
 local function OnUpdateIcon(self, frame)
     if frame.active then
         local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
@@ -218,6 +241,8 @@ end
 
 -- MARK: ActivateIcon
 
+---Activate a queued icon and start position updates.
+---@param frame Frame icon frame to activate
 function TimelineSkins:ActivateIcon(frame)
     frame:Show()
     frame.active = true
@@ -235,6 +260,9 @@ function TimelineSkins:ActivateIcon(frame)
 end
 
 -- MARK: Load Event
+---Create or reuse an icon for a timeline event and queue it.
+---@param self TimelineSkins self
+---@param eventInfo table encounter timeline event payload
 local function LoadEvent(self, eventInfo)
     -- Blizzard left many always paused events
     -- never load them, as they are always paused and will always be cancelled
@@ -274,10 +302,16 @@ end
 
 -- MARK: ON_EVENT
 
+---Handle newly added encounter timeline event.
+---@param self TimelineSkins self
+---@param eventInfo table encounter timeline event payload
 local function ON_ENCOUNTER_TIMELINE_EVENT_ADDED(self, eventInfo)
     LoadEvent(self, eventInfo)
 end
 
+---Handle removed encounter timeline event.
+---@param self TimelineSkins self
+---@param eventID number encounter timeline event id
 local function ON_ENCOUNTER_TIMELINE_EVENT_REMOVED(self, eventID)
     local frame = self.activeIcons[eventID] or self.queueIcons[eventID]
     if frame then
@@ -285,6 +319,9 @@ local function ON_ENCOUNTER_TIMELINE_EVENT_REMOVED(self, eventID)
     end
 end
 
+---Handle encounter timeline event state updates.
+---@param self TimelineSkins self
+---@param eventID number encounter timeline event id
 local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
     local frame = self.activeIcons[eventID] or self.queueIcons[eventID]
     local state = C_EncounterTimeline.GetEventState(eventID)
@@ -314,6 +351,8 @@ end
 
 -- MARK: Update Tick Style
 
+---Update tick marker size, position, and alpha.
+---@param self TimelineSkins self
 local function UpdateTickStyle(self)
     -- tick
     self.tickLine:SetColorTexture(1, 1, 1, addon.db[self.modName]["TickAlpha"] or 0.5)
@@ -338,6 +377,8 @@ end
 
 -- MARK: Update Queue Style
 
+---Update queue head anchor according to growth direction and icon size.
+---@param self TimelineSkins self
 local function UpdateQueueStyle(self)
     self.queueHead:ClearAllPoints()
     if addon.db[self.modName]["isVertical"] then
@@ -359,6 +400,7 @@ end
 -- MARK: UpdateStyle
 
 ---Update style settings and render them in-game for CustomTracker
+---@param self TimelineSkins self
 function TimelineSkins:UpdateStyle()
     self.anchorFrom, self.anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
     self.textAnchorFrom, self.textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
@@ -411,6 +453,7 @@ end
 -- MARK: RegisterEvents
 
 ---Register events
+---@param self TimelineSkins self
 function TimelineSkins:RegisterEvents()
     addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_ADDED", self.frame, self.modName)
     addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_REMOVED", self.frame, self.modName)
