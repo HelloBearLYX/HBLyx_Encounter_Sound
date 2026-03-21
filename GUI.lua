@@ -116,6 +116,7 @@ local function CreateContributorPanel(container)
     RUI:SetCallback("OnLeave", function() RUI:SetText("|cFF0070DDRUI|r - data correction, testing, feedbacks, and configuration sharing") end)
     contributorsGroup:AddChild(RUI)
     addon.GUI:CreateInformationTag(contributorsGroup, L["AnonymousContributors"], "LEFT")
+    -- TODO: add XR
 
     addon.GUI:CreateInformationTag(panel, L["ContributeData"], "LEFT")
 

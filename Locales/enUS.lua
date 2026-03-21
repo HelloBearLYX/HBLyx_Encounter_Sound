@@ -20,7 +20,7 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
-L["ChangeLogContent"] =
+L["ChangeLogContent"] = -- TODO: update change log
 "v3.16\n" .. "-Add Highlight Icons module which displays highlighted(<= 5s) events in icons\n" ..
 "v3.15\n" .. "-Implemented Templates, Spell Tags, and High-Performance-Sound-Select-Widget\n" ..
 "v3.14\n" .. "-Apply Blizzard 03/02/26 private aura data update, and continuously correct data\n" ..
@@ -136,7 +136,7 @@ L["FontSettings"] = "Font Settings"
 L["HighlightIconsSettings"] = "Highlight Icons"
 L["HighlightIconsSettingsDesc"] = "Show highlighted encounter timeline events as icons.\n\nYou can adjust icon size, grow direction, font placement, and anchor position here.\n\n"
 L["TimelineSkinsSettings"] = "Timeline Skins"
-L["TimelineSkinsSettingsDesc"] = "Customize the built-in encounter timeline presentation.\n\nYou can adjust size, length, growth direction, orientation, font, and opacity here.\n\n"
+L["TimelineSkinsSettingsDesc"] = "Make a copy of original Blizzard Encounter Timeline and hide the original timeline\nAllow customization of the timeline.\n"
 L["IconSize"] = "Icon Size"
 L["IconZoom"] = "Icon Zoom"
 L["Length"] = "Length"
@@ -152,6 +152,8 @@ L["TextGrowDirection"] = "Text Grow"
 L["VerticalLayout"] = "Vertical Layout"
 L["FontAnchor"] = "Font Anchor"
 L["TimeFontScale"] = "Time Font Scale"
+L["ShowOnlyActive"] = "Show When Active"
+L["ShowQueuedIcons"] = "Show Queued Icons"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"

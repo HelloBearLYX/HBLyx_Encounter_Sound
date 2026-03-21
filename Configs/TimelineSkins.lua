@@ -5,8 +5,9 @@ local MOD_KEY = "TimelineSkins"
 
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
-	Enabled = true,
-    ShowOnlyActive = false,
+	Enabled = false,
+    ShowOnlyActive = true,
+    ShowQueuedIcons = true,
     IconSize = 35,
     TimeFontScale = 1,
     X = -30,
@@ -40,16 +41,14 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
 	GUI:CreateInformationTag(frame, L["TimelineSkinsSettingsDesc"], "LEFT")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["TimelineSkinsSettings"] .. "|r", addon.db.TimelineSkins.Enabled, function(value)
 		addon.db.TimelineSkins.Enabled = value
-		if addon.core:HasModuleLoaded(MOD_KEY) then -- if module is loaded
-            if not value then -- user try to disable the module
-                addon:ShowDialog(ADDON_NAME.."RLNeeded")
-            end
-        else -- if the module is not loaded yet
-            if value then -- user try to enable the module, just load it without asking for reload, since it will be loaded immediately
-                addon.core:LoadModule(MOD_KEY)
-                addon.core:TestModule(MOD_KEY) -- the test mode will be on if the addon is in test mode
-            end
-        end
+		addon:ShowDialog(ADDON_NAME.."RLNeeded")
+	end)
+    GUI:CreateToggleCheckBox(frame, L["ShowOnlyActive"], addon.db.TimelineSkins.ShowOnlyActive, function(value)
+		addon.db.TimelineSkins.ShowOnlyActive = value
+        addon.core:GetModule(MOD_KEY):UpdateFrameVisibility()
+	end)
+	GUI:CreateToggleCheckBox(frame, L["ShowQueuedIcons"], addon.db.TimelineSkins.ShowQueuedIcons, function(value)
+		addon.db.TimelineSkins.ShowQueuedIcons = value
 	end)
 	GUI:CreateButton(frame, L["ResetMod"], function ()
 		addon.Utilities:SetPopupDialog(
@@ -125,6 +124,10 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
 	end)
 	GUI:CreateSlider(fontGroup, L["FontSize"], 6, 40, 1, addon.db.TimelineSkins.FontSize, function(value)
 		addon.db.TimelineSkins.FontSize = value
+		update()
+	end)
+	GUI:CreateSlider(fontGroup, L["TimeFontScale"], 0.1, 5, 0.01, addon.db.TimelineSkins.TimeFontScale, function(value)
+		addon.db.TimelineSkins.TimeFontScale = value
 		update()
 	end)
 

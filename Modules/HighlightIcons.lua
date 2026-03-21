@@ -151,8 +151,9 @@ local function LoadHighlightEvent(self, frame, eventTimelineID)
 
     frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
     frame.name:SetText(eventInfo.spellName or "")
-    frame.cooldown:SetCooldownDuration(5.0)
-    frame.timer = C_Timer.NewTimer(5.0, function()
+    local duration = C_EncounterTimeline.GetEventTimeRemaining(eventTimelineID)
+    frame.cooldown:SetCooldownDuration(duration)
+    frame.timer = C_Timer.NewTimer(duration, function()
         UnloadEvent(self, frame)
     end)
     frame:Show()
@@ -192,12 +193,13 @@ local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
             if frame.cooldown:IsPaused() then
                 frame.cooldown:Resume()
             end
+            
             if frame.timer then
                 frame.timer:Cancel()
-                frame.timer = C_Timer.NewTimer(math.max(C_EncounterTimeline.GetEventTimeRemaining(eventID) - 5.0, 0), function()
-                    self:ActivateIcon(frame)
-                end)
             end
+            frame.timer = C_Timer.NewTimer(math.max(C_EncounterTimeline.GetEventTimeRemaining(eventID), 0), function()
+                UnloadEvent(self, frame)
+            end)
         else
         end
     end

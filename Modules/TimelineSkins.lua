@@ -31,19 +31,29 @@ function TimelineSkins:Initialize()
     self.frame.background = self.frame:CreateTexture(nil, "BACKGROUND")
     self.frame.background:SetAllPoints()
 
-    if addon.db[self.modName]["ShowOnlyActive"] then
-        self.frame:Hide()
-    else
-        self.frame:Show()
-    end
-
     self.spareIcons = {}
     self.queueIcons = {}
     self.activeIcons = {}
     self.queueHead = CreateFrame("Frame", nil, self.frame) -- a dummy frame to attach the queue icons
     self.queueTail = nil
 
+    self:UpdateFrameVisibility()
+
     return self
+end
+
+-- MARK: Frame Visibility
+
+function TimelineSkins:UpdateFrameVisibility()
+    if addon.db[self.modName]["ShowOnlyActive"] then
+        if next(self.activeIcons) or next(self.queueIcons) then
+            self.frame:Show()
+        else
+            self.frame:Hide()
+        end
+    else
+        self.frame:Show()
+    end
 end
 
 -- MARK: Update Style Icon
@@ -58,7 +68,7 @@ local function UpdateIconStyle(self, frame)
         "OUTLINE"
     )
     frame.text:ClearAllPoints()
-    frame.text:SetPoint(self.textAnchorFrom, frame.textFrame, self.textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
+    frame.text:SetPoint(self.textAnchorFrom, frame.textFrame, self.textAnchorTo, 0, 0)
     frame.text:SetWidth(addon.db[self.modName]["IconSize"] * 2)
     frame.text:SetHeight(addon.db[self.modName]["FontSize"] * 3)
 end
@@ -153,6 +163,8 @@ local function DeactivateIcon(self, frame)
     self.activeIcons[frame.eventID] = nil
     self.queueIcons[frame.eventID] = nil
     table.insert(self.spareIcons, frame)
+
+    self:UpdateFrameVisibility()
 end
 
 -- MARK: MoveToQueue
@@ -240,10 +252,17 @@ local function LoadEvent(self, eventInfo)
 
     QueueInsert(self, frame)
     self.queueIcons[frame.eventID] = frame
-    frame:Show()
+
     frame.timer = C_Timer.NewTimer(math.max(remaining - TIMELINE_LENGTH_SECONDS, 0), function()
         self:ActivateIcon(frame)
     end)
+
+    self:UpdateFrameVisibility()
+    if addon.db[self.modName]["ShowQueuedIcons"] then
+        frame:Show()
+    else
+        frame:Hide()
+    end
 end
 
 -- MARK: ON_EVENT
@@ -335,7 +354,6 @@ end
 ---Update style settings and render them in-game for CustomTracker
 function TimelineSkins:UpdateStyle()
     self.anchorFrom, self.anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
-    addon:debug(string.format("TimelineSkins: anchorFrom: %s, anchorTo: %s", self.anchorFrom, self.anchorTo))
     self.textAnchorFrom, self.textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
 
     self.frame:SetFrameStrata(addon.db[self.modName]["FrameStrata"] or "BACKGROUND")
@@ -374,9 +392,11 @@ function TimelineSkins:Test(on)
     end
 
     if on then
+        self.frame:Show()
         addon.Utilities:ShowDragRegion(self.frame, L["TimelineSkinsSettings"])
         addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
     else
+        self:UpdateFrameVisibility()
         addon.Utilities:HideDragRegion(self.frame)
     end
 end
