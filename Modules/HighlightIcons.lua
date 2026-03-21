@@ -65,6 +65,48 @@ local function CreateEventIcon(self)
     return frame
 end
 
+-- MARK: List Helpers
+
+local function ListInsert(self, frame)
+    local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
+    if not self.tail then
+        frame:ClearAllPoints()
+        frame:SetPoint(anchorFrom, self.head, anchorFrom, 0, 0)
+        frame.prev = self.head
+    else
+        frame:ClearAllPoints()
+        frame:SetPoint(anchorFrom, self.tail, anchorTo, 0, 0)
+        frame.prev = self.tail
+        frame.prev.next = frame
+    end
+    self.tail = frame
+end
+
+local function ListRemove(self, frame)
+    local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
+    if frame.prev == self.head then
+        if frame.next then
+            frame.next:ClearAllPoints()
+            frame.next:SetPoint(anchorFrom, self.head, anchorFrom, 0, 0)
+            frame.next.prev = self.head
+        else
+            self.tail = nil
+        end
+    else
+        if frame.next then
+            frame.next:ClearAllPoints()
+            frame.next:SetPoint(anchorFrom, frame.prev, anchorTo, 0, 0)
+            frame.next.prev = frame.prev
+            frame.prev.next = frame.next
+        else
+            frame.prev.next = nil
+            self.tail = frame.prev
+        end
+    end
+    frame.prev = nil
+    frame.next = nil
+end
+
 -- MARK: Unload Event
 
 ---Unload an event and hide its frame
@@ -76,31 +118,7 @@ local function UnloadEvent(self, frame)
         frame.timer = nil
     end
 
-    -- linked list removal logic
-    local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
-
-    if frame.prev == self.head then -- if the first showing aura
-        if frame.next then -- if there is another showing aura after this one, set it to first position
-            frame.next:ClearAllPoints()
-            frame.next:SetPoint(anchorFrom, self.head, anchorFrom, 0, 0)
-            frame.next.prev = self.head
-        else -- if there is no other showing aura, set tail to head
-            self.tail = nil
-        end
-    else -- if this is not the first showing aura
-        if frame.next then -- if there is another showing aura after this one, set it to the previous position
-            frame.next:ClearAllPoints()
-            frame.next:SetPoint(anchorFrom, frame.prev, anchorTo, 0, 0)
-            frame.next.prev = frame.prev
-            frame.prev.next = frame.next
-        else -- if there is no other showing aura, set tail to the previous position
-            frame.prev.next = nil
-            self.tail = frame.prev
-        end
-    end
-
-    frame.prev = nil
-    frame.next = nil
+    ListRemove(self, frame)
 
     -- reset frame properties and hide it
     frame.active = false
@@ -123,21 +141,7 @@ end
 --- @param frame frame the frame to load
 --- @param eventTimelineID number the event timeline ID to load
 local function LoadHighlightEvent(self, frame, eventTimelineID)
-    -- linked list insertion logic
-    local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
-
-    if not self.tail then -- if tail is head, return the first position
-        frame:ClearAllPoints()
-        frame:SetPoint(anchorFrom, self.head, anchorFrom, 0, 0)
-        frame.prev = self.head
-    else
-        frame:ClearAllPoints()
-        frame:SetPoint(anchorFrom, self.tail, anchorTo, 0, 0)
-        frame.prev = self.tail
-        frame.prev.next = frame
-    end
-
-    self.tail = frame
+    ListInsert(self, frame)
 
     -- set the frame properties and show it
     frame.eventID = eventTimelineID

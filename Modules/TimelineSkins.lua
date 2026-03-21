@@ -21,8 +21,8 @@ function TimelineSkins:Initialize()
     SetCVar("encounterTimelineEnabled", "1")
 
     -- hide original timeline but keep it to fetch data from it
-    EncounterTimeline:Hide()
-    EncounterTimeline:HookScript("OnShow", function() EncounterTimeline:Hide() end)
+    -- EncounterTimeline:Hide()
+    -- EncounterTimeline:HookScript("OnShow", function() EncounterTimeline:Hide() end)
 
     self.frame = CreateFrame("Frame", ADDON_NAME .. "_" .. self.modName, UIParent, "BackdropTemplate")
 
@@ -40,6 +40,8 @@ function TimelineSkins:Initialize()
     self.spareIcons = {}
     self.queueIcons = {}
     self.activeIcons = {}
+    self.queueHead = CreateFrame("Frame", nil, self.frame) -- a dummy frame to attach the queue icons
+    self.queueTail = nil
 
     return self
 end
@@ -92,6 +94,46 @@ local function CreateTimelineIcon(self)
     return frame
 end
 
+-- MARK: Queue Helpers
+
+local function QueueInsert(self, frame)
+    if not self.queueTail then -- if the queue is empty, insert after the head
+        frame:ClearAllPoints()
+        frame:SetPoint(self.anchorFrom, self.queueHead, self.anchorFrom, 0, 0)
+        frame.prev = self.queueHead
+    else -- insert after the tail 
+        frame:ClearAllPoints()
+        frame:SetPoint(self.anchorFrom, self.queueTail, self.anchorTo, 0, 0)
+        frame.prev = self.queueTail
+        frame.prev.next = frame
+    end
+    self.queueTail = frame
+end
+
+local function QueueRemove(self, frame)
+    if frame.prev == self.queueHead then
+        if frame.next then
+            frame.next:ClearAllPoints()
+            frame.next:SetPoint(self.anchorFrom, self.queueHead, self.anchorFrom, 0, 0)
+            frame.next.prev = self.queueHead
+        else
+            self.queueTail = nil
+        end
+    elseif frame.prev then
+        if frame.next then
+            frame.next:ClearAllPoints()
+            frame.next:SetPoint(self.anchorFrom, frame.prev, self.anchorTo, 0, 0)
+            frame.next.prev = frame.prev
+            frame.prev.next = frame.next
+        else
+            frame.prev.next = nil
+            self.queueTail = frame.prev
+        end
+    end
+    frame.prev = nil
+    frame.next = nil
+end
+
 -- MARK: DeactivateIcon
 
 local function DeactivateIcon(self, frame)
@@ -106,7 +148,10 @@ local function DeactivateIcon(self, frame)
     frame.text:SetText("")
     frame:SetScript("OnUpdate", nil) -- clear OnUpdate script to stop updating position
 
+    QueueRemove(self, frame)
+
     self.activeIcons[frame.eventID] = nil
+    self.queueIcons[frame.eventID] = nil
     table.insert(self.spareIcons, frame)
 end
 
@@ -114,7 +159,11 @@ end
 
 local function MoveToQueue(self, frame)
     frame.active = false
-    frame:ClearAllPoints()
+    frame:SetScript("OnUpdate", nil)
+
+    QueueInsert(self, frame)
+
+    -- set up timer for activation
     local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
     if frame.timer then
         frame.timer:Cancel()
@@ -124,7 +173,6 @@ local function MoveToQueue(self, frame)
     end
     self.activeIcons[frame.eventID] = nil
     self.queueIcons[frame.eventID] = frame
-    frame:SetScript("OnUpdate", nil)
 end
 
 -- MARK: ON_UPDATE
@@ -162,6 +210,9 @@ function TimelineSkins:ActivateIcon(frame)
     frame:Show()
     frame.active = true
 
+    QueueRemove(self, frame)
+    frame:ClearAllPoints()
+
     -- move from queue to active
     self.queueIcons[frame.eventID] = nil
     self.activeIcons[frame.eventID] = frame
@@ -186,7 +237,10 @@ local function LoadEvent(self, eventInfo)
     frame.cooldown:SetCooldownDuration(remaining)
     frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
     frame.text:SetText(text)
+
+    QueueInsert(self, frame)
     self.queueIcons[frame.eventID] = frame
+    frame:Show()
     frame.timer = C_Timer.NewTimer(math.max(remaining - TIMELINE_LENGTH_SECONDS, 0), function()
         self:ActivateIcon(frame)
     end)
@@ -232,7 +286,7 @@ local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
     end
 end
 
--- MARK: Update Tick
+-- MARK: Update Tick Style
 
 local function UpdateTickStyle(self)
     -- tick
@@ -256,13 +310,34 @@ local function UpdateTickStyle(self)
     end
 end
 
+-- MARK: Update Queue Style
+
+local function UpdateQueueStyle(self)
+    self.queueHead:ClearAllPoints()
+    if addon.db[self.modName]["isVertical"] then
+        if self.anchorFrom == "BOTTOM" then -- UP
+            self.queueHead:SetPoint(self.anchorFrom, self.frame, self.anchorTo, 0, addon.db[self.modName]["IconSize"])
+        else -- DOWN
+            self.queueHead:SetPoint(self.anchorFrom, self.frame, self.anchorTo, 0, -addon.db[self.modName]["IconSize"])
+        end
+    else
+        if self.anchorFrom == "LEFT" then -- RIGHT
+            self.queueHead:SetPoint(self.anchorFrom, self.frame, self.anchorTo, addon.db[self.modName]["IconSize"], 0)
+        else -- LEFT
+            self.queueHead:SetPoint(self.anchorFrom, self.frame, self.anchorTo, -addon.db[self.modName]["IconSize"], 0)
+        end
+    end
+    self.queueHead:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
+end
+
 -- MARK: UpdateStyle
 
 ---Update style settings and render them in-game for CustomTracker
 function TimelineSkins:UpdateStyle()
     self.anchorFrom, self.anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
+    addon:debug(string.format("TimelineSkins: anchorFrom: %s, anchorTo: %s", self.anchorFrom, self.anchorTo))
     self.textAnchorFrom, self.textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
-    
+
     self.frame:SetFrameStrata(addon.db[self.modName]["FrameStrata"] or "BACKGROUND")
 
     self.frame:ClearAllPoints()
@@ -273,6 +348,7 @@ function TimelineSkins:UpdateStyle()
         self.frame:SetSize(addon.db[self.modName]["Length"], addon.db[self.modName]["IconSize"])
     end
 
+    UpdateQueueStyle(self)
     UpdateTickStyle(self)
 
     self.frame.background:SetColorTexture(0, 0, 0, addon.db[self.modName]["BackgroundAlpha"] or 0.5)
