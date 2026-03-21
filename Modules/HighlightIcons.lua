@@ -7,7 +7,7 @@ local HighlightIcons = {
 }
 
 -- MARK: Constants
-UNKNOWN_SPELL_TEXTURE = 134400
+local UNKNOWN_SPELL_TEXTURE = 134400
 
 -- MARK: Initialize
 
@@ -16,6 +16,7 @@ UNKNOWN_SPELL_TEXTURE = 134400
 function HighlightIcons:Initialize()
     self.head = CreateFrame("Frame", ADDON_NAME .. "_" .. self.modName, UIParent) -- create a frame for your module, you can use it to register events or as a parent for other frames
     self.tail = nil
+    self.activeFrames = {} -- table to store active icons, key is eventID, value is the frame
     self.spareFrames = {} -- table to store spare frames for reuse
     self.head:Show()
 
@@ -70,6 +71,11 @@ end
 ---@param self HighlightIcons self reference
 ---@param frame frame the frame to unload
 local function UnloadEvent(self, frame)
+    if frame.timer then
+        frame.timer:Cancel()
+        frame.timer = nil
+    end
+
     -- linked list removal logic
     local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
 
@@ -106,6 +112,7 @@ local function UnloadEvent(self, frame)
         frame.timer:Cancel()
         frame.timer = nil
     end
+    self.activeFrames[frame.eventID] = nil -- remove the frame from active icons
     table.insert(self.spareFrames, frame) -- add the frame back to the spare frames for reuse
 end
 
@@ -133,13 +140,14 @@ local function LoadHighlightEvent(self, frame, eventTimelineID)
     self.tail = frame
 
     -- set the frame properties and show it
+    frame.eventID = eventTimelineID
     frame.active = true
     frame.eventTimelineID = eventTimelineID
     local eventInfo = C_EncounterTimeline.GetEventInfo(eventTimelineID)
 
     frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
     frame.name:SetText(eventInfo.spellName or "")
-    frame.cooldown:SetCooldown(GetTime(), 5.0)
+    frame.cooldown:SetCooldownDuration(5.0)
     frame.timer = C_Timer.NewTimer(5.0, function()
         UnloadEvent(self, frame)
     end)
@@ -158,6 +166,20 @@ local function LoadEvent(self, eventTimelineID)
     end
 
     LoadHighlightEvent(self, frame, eventTimelineID)
+    self.activeFrames[frame.eventID] = frame -- add the frame to active icons
+end
+
+-- MARK: ON_STATE_CHANGED
+
+local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
+    local frame = self.activeFrames[eventID]
+
+    if frame then
+        local state = C_EncounterTimeline.GetEventState(eventID)
+        if state == Enum.EncounterTimelineEventState.Finished or state == Enum.EncounterTimelineEventState.Canceled then
+            UnloadEvent(self, frame)
+        end
+    end
 end
 
 -- MARK: UpdateStyle
@@ -208,10 +230,14 @@ function HighlightIcons:RegisterEvents()
         if event == "ENCOUNTER_TIMELINE_EVENT_HIGHLIGHT" then
             local eventTimelineID = select(1, ...)
             LoadEvent(self, eventTimelineID)
+        elseif event == "ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED" then
+            local eventID = select(1, ...)
+            ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
         end
     end
 
     addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_HIGHLIGHT", self.head, self.modName)
+    addon.core:RegisterEvent("ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED", self.head, self.modName)
 
     self.head:SetScript("OnEvent", OnEvent)
 end
