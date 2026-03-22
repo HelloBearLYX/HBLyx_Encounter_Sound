@@ -16,7 +16,8 @@ addon.configurationList[MOD_KEY] = {
     FontSize = 12,
     Font = "",
     FontYOffset = 0,
-    FontAnchor = "TOP",
+	FontXOffset = 0,
+    TextGrow = "RIGHT",
 }
 
 -- MARK: Safe update
@@ -98,8 +99,8 @@ function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
 		addon.db.HighlightIcons.Font = value
 		update()
 	end)
-	GUI:CreateDropdown(fontGroup, L["FontAnchor"], {TOP = "TOP", BOTTOM = "BOTTOM"}, nil, addon.db.HighlightIcons.FontAnchor, function(key)
-		addon.db.HighlightIcons.FontAnchor = key
+	GUI:CreateDropdown(fontGroup, L["TextGrow"], addon.Utilities.Grows, nil, addon.db.HighlightIcons.TextGrow, function(key)
+		addon.db.HighlightIcons.TextGrow = key
 		update()
 	end)
 	GUI:CreateSlider(fontGroup, L["FontSize"], 6, 40, 1, addon.db.HighlightIcons.FontSize, function(value)
@@ -110,6 +111,11 @@ function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
 		addon.db.HighlightIcons.FontYOffset = value
 		update()
 	end)
+	GUI:CreateSlider(fontGroup, L["FontXOffset"], -100, 100, 1, addon.db.HighlightIcons.FontXOffset, function(value)
+		addon.db.HighlightIcons.FontXOffset = value
+		update()
+	end)
+
 	GUI:CreateSlider(fontGroup, L["TimeFontScale"], 0.1, 5, 0.01, addon.db.HighlightIcons.TimeFontScale, function(value)
 		addon.db.HighlightIcons.TimeFontScale = value
 		update()

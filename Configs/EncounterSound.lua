@@ -490,7 +490,7 @@ end
 local function GetFlagText(spellID)
 	local output = ""
 	for flag, _ in pairs(addon.data.SPELL_INFO[spellID] or {}) do
-		if flag == 3 or flag == 12 then
+		if flag == 3 or flag == 12 or flag == 14 then
 			output = output .. addon.data.SPELL_FLAGS[flag].text .. ", "
 		else
 			output = output .. addon.data.SPELL_FLAGS[flag].flag .. addon.data.SPELL_FLAGS[flag].text .. ", "

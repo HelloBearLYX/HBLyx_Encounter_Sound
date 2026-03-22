@@ -47,7 +47,8 @@ local function CreateEventIcon(self)
         addon.db[self.modName]["FontSize"],
         "OUTLINE"
     )
-    frame.name:SetPoint("CENTER", frame.textFrame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
+    local textAnchorFrom, textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
+    frame.name:SetPoint(textAnchorFrom, frame.textFrame, textAnchorTo, addon.db[self.modName]["FontXOffset"], addon.db[self.modName]["FontYOffset"])
     frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
     frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
 
@@ -213,6 +214,7 @@ function HighlightIcons:UpdateStyle()
     self.head:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
     self.head:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["X"], addon.db[self.modName]["Y"])
 
+    local textAnchorFrom, textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
     for _, frame in pairs(self.spareFrames) do
         frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
         frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
@@ -223,7 +225,7 @@ function HighlightIcons:UpdateStyle()
             "OUTLINE"
         )
         frame.name:ClearAllPoints()
-        frame.name:SetPoint("CENTER", frame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
+        frame.name:SetPoint(textAnchorFrom, frame, textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
         frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
         frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
     end
@@ -238,7 +240,7 @@ function HighlightIcons:UpdateStyle()
             "OUTLINE"
         )
         frame.name:ClearAllPoints()
-        frame.name:SetPoint("CENTER", frame, addon.db[self.modName]["FontAnchor"], 0, addon.db[self.modName]["FontYOffset"])
+        frame.name:SetPoint(textAnchorFrom, frame, textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
         frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
         frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
     end
