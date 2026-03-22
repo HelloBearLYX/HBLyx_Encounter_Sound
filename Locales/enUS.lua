@@ -28,9 +28,10 @@ L["ChangeLogContent"] =
 
 --MARK: Issues
 L["Issues"] = "Issues"
-L["AnyIssues"] =
-"Q: There are some missing/incorrect events/private auras in Encounter Sound module, will them be corrected?\nA: Yes, as this module is highly dependent on data mining toward the game and Blizzard is constantly changing the Boss fight, it takes some time to fetch new data\n\n" ..
-"Thanks for your understanding and support!"
+L["AnyIssues"] = "If any issues, please contact."
+L["IssuesContent"] =
+"Q: In the Boss Encounter Sound module, some events or private auras are missing or incorrect. Will they be fixed?\nA: Yes, as this module heavily relies on data mining from the game, and Blizzard constantly updates boss encounters, it takes some time to fetch new data.\n\n" ..
+"Thank you for your understanding and support!"
 
 -- MARK: Contact
 L["Contact"] = "Contact"
@@ -68,6 +69,7 @@ L["SpellFlagDisease"] = "Disease"
 L["SpellFlagEnrage"] = "Enrage"
 L["SpellFlagMythic"] = "|cffbf42f5M|rythic"
 L["SpellFlagBleed"] = "Bleed"
+L["SpellFlagTextWarning"] = "|cffffffffT|rext Warning"
 
 -- MARK: Config
 L["ConfigPanel"] = "Open Configurations Panel"

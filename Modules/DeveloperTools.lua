@@ -149,14 +149,14 @@ local function FetchEncounterEventInfo(encounterEventID)
     local encounterEventInfo = C_EncounterEvents.GetEventInfo(encounterEventID)
     local data = {
         encounterEventID = encounterEventID,
-        severity = nil,
+        enabled = nil,
         spellID = nil,
         spellName = nil,
     }
 
     if encounterEventInfo then
         data.spellID = encounterEventInfo.spellID or nil
-        data.severity = encounterEventInfo.severity or nil
+        data.enabled = encounterEventInfo.enabled
         data.spellName = encounterEventInfo.spellID and C_Spell.GetSpellInfo(encounterEventInfo.spellID).name or nil
     else
         data.encounterEventID = nil
@@ -166,7 +166,7 @@ local function FetchEncounterEventInfo(encounterEventID)
 end
 
 local function AttemptsFetchAllEEInfo()
-    local output = "EncounterEventID,Severity,SpellID,SpellName\n"
+    local output = "EncounterEventID,Enabled,SpellID,SpellName\n"
     local allEventIDs = C_EncounterEvents.GetEventList()
 
     for _, eventID in ipairs(allEventIDs) do
@@ -174,7 +174,7 @@ local function AttemptsFetchAllEEInfo()
         if data.encounterEventID then
             output = output .. string.format("%d,%s,%s,%s\n",
                 data.encounterEventID,
-                data.severity or "nil",
+                tostring(data.enabled),
                 tostring(data.spellID),
                 data.spellName or "nil"
             )

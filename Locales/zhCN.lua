@@ -70,6 +70,7 @@ L["SpellFlagDisease"] = "疾病"
 L["SpellFlagEnrage"] = "激怒"
 L["SpellFlagMythic"] = "|cffbf42f5M|r史诗"
 L["SpellFlagBleed"] = "流血"
+L["SpellFlagTextWarning"] = "|cffffffffT|r文本警告"
 
 -- MARK: Config
 L["ConfigPanel"] = "打开配置面板"
