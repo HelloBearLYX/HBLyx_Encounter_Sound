@@ -68,7 +68,7 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
 		addon.db.TimelineSkins.FrameStrata = value
 		update()
 	end)
-	GUI:CreateDropdown(styleGroup, L["GrowDirection"], addon.Utilities.Grows, nil, addon.db.TimelineSkins.Grow, function(key)
+	GUI:CreateDropdown(styleGroup, L["Grow"], addon.Utilities.Grows, nil, addon.db.TimelineSkins.Grow, function(key)
 		addon.db.TimelineSkins.Grow = key
         if key == "UP" or key == "DOWN" then
             addon.db.TimelineSkins.isVertical = true
@@ -77,7 +77,7 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
         end
 		update()
 	end)
-	GUI:CreateDropdown(styleGroup, L["TextGrowDirection"], addon.Utilities.Grows, nil, addon.db.TimelineSkins.TextGrow, function(key)
+	GUI:CreateDropdown(styleGroup, L["TextGrow"], addon.Utilities.Grows, nil, addon.db.TimelineSkins.TextGrow, function(key)
 		addon.db.TimelineSkins.TextGrow = key
 		update()
 	end)

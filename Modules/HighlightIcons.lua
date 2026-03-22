@@ -23,6 +23,39 @@ function HighlightIcons:Initialize()
     return self
 end
 
+-- MARK: Update Icon Style
+
+local function UpdateIconStyle(self, frame)
+    local textAnchorFrom, textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
+
+    frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
+    frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
+    frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
+    frame.name:SetFont(
+        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+        addon.db[self.modName]["FontSize"],
+        "OUTLINE"
+    )
+    frame.name:ClearAllPoints()
+    frame.name:SetPoint(textAnchorFrom, frame, textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
+    frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
+    frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
+
+    if addon.db[self.modName]["TextGrow"] == "UP" then
+        frame.name:SetJustifyH("CENTER")
+        frame.name:SetJustifyV("BOTTOM")
+    elseif addon.db[self.modName]["TextGrow"] == "DOWN" then
+        frame.name:SetJustifyH("CENTER")
+        frame.name:SetJustifyV("TOP")
+    elseif addon.db[self.modName]["TextGrow"] == "LEFT" then
+        frame.name:SetJustifyH("RIGHT")
+        frame.name:SetJustifyV("MIDDLE")
+    elseif addon.db[self.modName]["TextGrow"] == "RIGHT" then
+        frame.name:SetJustifyH("LEFT")
+        frame.name:SetJustifyV("MIDDLE")
+    end
+end
+
 -- MARK: Create Event Icon
 
 --- Create a frame for an event
@@ -37,28 +70,17 @@ local function CreateEventIcon(self)
 
     frame.icon = frame:CreateTexture(nil, "ARTWORK")
     frame.icon:SetAllPoints()
-    frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
 
     frame.textFrame = CreateFrame("Frame", nil, frame)
     frame.textFrame:SetAllPoints()
     frame.name = frame.textFrame:CreateFontString(nil, "OVERLAY")
-    frame.name:SetFont(
-        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
-        addon.db[self.modName]["FontSize"],
-        "OUTLINE"
-    )
-    local textAnchorFrom, textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
-    frame.name:SetPoint(textAnchorFrom, frame.textFrame, textAnchorTo, addon.db[self.modName]["FontXOffset"], addon.db[self.modName]["FontYOffset"])
-    frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
-    frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
 
     frame.border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     frame.border:SetAllPoints()
     frame.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
     frame.border:SetBackdropBorderColor(0, 0, 0, 1)
 
-    frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
-    frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
+    UpdateIconStyle(self, frame)
 
     frame.active = false -- custom property to track if the frame is active or not
     frame.timer = nil
@@ -214,35 +236,12 @@ function HighlightIcons:UpdateStyle()
     self.head:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
     self.head:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["X"], addon.db[self.modName]["Y"])
 
-    local textAnchorFrom, textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
     for _, frame in pairs(self.spareFrames) do
-        frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
-        frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
-        frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
-        frame.name:SetFont(
-            addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
-            addon.db[self.modName]["FontSize"],
-            "OUTLINE"
-        )
-        frame.name:ClearAllPoints()
-        frame.name:SetPoint(textAnchorFrom, frame, textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
-        frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
-        frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
+        UpdateIconStyle(self, frame)
     end
 
     for _, frame in pairs(self.activeFrames) do
-        frame:SetSize(addon.db[self.modName]["IconSize"], addon.db[self.modName]["IconSize"])
-        frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
-        frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
-        frame.name:SetFont(
-            addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
-            addon.db[self.modName]["FontSize"],
-            "OUTLINE"
-        )
-        frame.name:ClearAllPoints()
-        frame.name:SetPoint(textAnchorFrom, frame, textAnchorTo, 0, addon.db[self.modName]["FontYOffset"])
-        frame.name:SetWidth(addon.db[self.modName]["IconSize"] * 2)
-        frame.name:SetHeight(addon.db[self.modName]["FontSize"] * 3)
+        UpdateIconStyle(self, frame)
     end
 end
 

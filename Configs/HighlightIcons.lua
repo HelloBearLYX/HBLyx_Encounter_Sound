@@ -66,7 +66,7 @@ function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
 		addon.db.HighlightIcons.FrameStrata = value
 		update()
 	end)
-	GUI:CreateDropdown(styleGroup, L["GrowDirection"], addon.Utilities.Grows, nil, addon.db.HighlightIcons.Grow, function(key)
+	GUI:CreateDropdown(styleGroup, L["Grow"], addon.Utilities.Grows, nil, addon.db.HighlightIcons.Grow, function(key)
 		addon.db.HighlightIcons.Grow = key
 		update()
 	end)
