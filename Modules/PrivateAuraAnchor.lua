@@ -107,13 +107,6 @@ local function GetPAAnchorArgs(self, unit, index, isCoTank)
             iconWidth = iconSize,
             iconHeight = iconSize,
         },
-        durationAnchor = {
-            point = "CENTER",
-            relativeTo = isCoTank and self.coTankAuras[index] or self.playerAuras[index],
-            relativePoint = "CENTER",
-            offsetX = 0,
-            offsetY = 0,
-        },
     }
 
     return PAAnchorArgs
@@ -166,7 +159,7 @@ function PrivateAuraAnchor:CreatePrivateAnchors(unit)
             self.playerAuras[i].anchorID = C_UnitAuras.AddPrivateAuraAnchor(AddPrivateAuraAnchorArgs)
         end
     elseif unit == "co-tank" and addon.db[self.modName]["ShowCoTankAuras"] and self.coTankHead then
-        if self.coTankToken then -- and UnitGroupRolesAssigned("player") == "TANK"
+        if self.coTankToken and UnitGroupRolesAssigned("player") == "TANK" then
             for i = 1, self.maxAuras do
                 local frame = self.coTankAuras[i]
                 if not frame then

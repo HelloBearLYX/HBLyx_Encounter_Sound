@@ -19,6 +19,12 @@ function GUI.TagPanels.Profile:CreateTabPanel(parent)
         addon.db["EncounterSound"].ProfileName = value
         exportBox:SetText(addon:ExportProfile() or "")
     end)
+    GUI:CreateButton(generalProfileGroup, L["DataMigration"], function()
+        local mod = addon.core:GetModule("EncounterSound")
+        if mod then
+            mod:DataMigration(true)
+        end
+    end)
     generalProfileGroup:AddChild(exportBox)
     GUI:CreateMultiLineEditBox(generalProfileGroup, L["Import"], "", function(value)
         addon:ImportProfile(value)

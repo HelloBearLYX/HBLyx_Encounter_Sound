@@ -5,7 +5,7 @@ local MOD_KEY = "PrivateAuraAnchor"
 
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
-	Enabled = true,
+	Enabled = false,
 	MaxAuras = 3,
 	X = 220,
 	Y = -80,
@@ -82,7 +82,8 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 		addon.db.PrivateAuraAnchor.MaxAuras = value
 		update()
 	end)
-	GUI:CreateSlider(iconGroup, L["BorderScale"], 0, 5, 0.01, addon.db.PrivateAuraAnchor.BorderScale, function(value)
+	-- Temporarily follow ElvUI's border scale range setting
+	GUI:CreateSlider(iconGroup, L["BorderScale"], -5, 10, 0.01, addon.db.PrivateAuraAnchor.BorderScale, function(value)
 		addon.db.PrivateAuraAnchor.BorderScale = value
 		update()
 	end)
