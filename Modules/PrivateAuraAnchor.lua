@@ -6,6 +6,9 @@ local PrivateAuraAnchor = {
     modName = "PrivateAuraAnchor",
 }
 
+-- MARK: Constants
+local TEST_ICON_TEXTURE = 134400
+
 -- MARK: Initialize
 
 ---Initialize (Constructor)
@@ -19,12 +22,14 @@ function PrivateAuraAnchor:Initialize()
     if addon.db[self.modName]["ShowCoTankAuras"] then
         self.coTankHead = CreateFrame("Frame", nil, UIParent)
         self.coTankHead:SetFrameStrata("HIGH")
-        self.coTankMaxAuras = addon.db[self.modName]["CoTankMaxAuras"]
         self.coTankAuras = {}
     end
 
     self.head:Show()
-    self:CreatePrivateAnchors("player")
+    self:CreatePrivateAnchors()
+
+     -- Register events
+     self:RegisterEvents()
 
     return self
 end
@@ -103,7 +108,7 @@ local function GetPAAnchorArgs(self, unit, index, isCoTank)
                 offsetX = 0,
                 offsetY = 0,
             },
-            borderScale = addon.db[self.modName]["BorderScale"],
+            borderScale = addon.db[self.modName]["HideBorder"] and -100 or iconSize / 16,
             iconWidth = iconSize,
             iconHeight = iconSize,
         },
@@ -135,56 +140,134 @@ local function UpdateAuraStyle(self, frame, index, isCoTank)
 
     return iconSize
 end
+-- MARK: Test Auras
+
+local function CreateTestAuras(self, frame, index)
+    if not frame.testFrame then
+        frame.testFrame = CreateFrame("Frame", nil, frame)
+        frame.testFrame:SetAllPoints(frame)
+        frame.testFrame.icon = frame.testFrame:CreateTexture(nil, "BACKGROUND")
+        frame.testFrame.icon:SetAllPoints()
+        frame.testFrame.icon:SetTexture(TEST_ICON_TEXTURE)
+        
+        frame.testFrame.text = frame.testFrame:CreateFontString(nil, "OVERLAY")
+        frame.testFrame.text:SetPoint("CENTER", frame.testFrame, "CENTER", 0, 0)
+        frame.testFrame.text:SetFont(addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF", 20, "OUTLINE")
+        frame.testFrame.text:SetText(tostring(index))
+    end
+end
+
+local function CreateTestAnchorText(self, head, isCoTank)
+    if not head.testTextFrame then
+        head.testTextFrame = CreateFrame("Frame", nil, head)
+        head.testTextFrame:SetAllPoints()
+        head.testTextFrame:SetFrameStrata("DIALOG")
+        head.testTextFrame.text = head.testTextFrame:CreateFontString(nil, "OVERLAY")
+        head.testTextFrame.text:SetPoint("CENTER", head.testTextFrame, "TOP", 0, 0)
+        head.testTextFrame.text:SetFont(addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+        head.testTextFrame.text:SetText(isCoTank and L["CoTankAuras"] or L["PrivateAuraAnchorSettings"])
+    end
+end
+
+local function TestAuras(self, onTest)
+    if self.head then
+        CreateTestAnchorText(self, self.head, false)
+
+        if onTest then
+            self.head.testTextFrame:Show()
+        else
+            self.head.testTextFrame:Hide()
+        end
+    end
+
+    if self.coTankHead then
+        CreateTestAnchorText(self, self.coTankHead, true)
+
+        if onTest then
+            self.coTankHead.testTextFrame:Show()
+        else
+            self.coTankHead.testTextFrame:Hide()
+        end
+    end
+
+    for i = 1, self.maxAuras do
+        local frame = self.playerAuras[i]
+        if frame then
+            CreateTestAuras(self, frame, i)
+
+            if onTest then
+                frame.testFrame:Show()
+            else
+                frame.testFrame:Hide()
+            end
+        end
+
+        local coTankFrame = self.coTankAuras[i]
+        if coTankFrame then
+            CreateTestAuras(self, coTankFrame, i)
+
+            if onTest then
+                coTankFrame.testFrame:Show()
+            else
+                coTankFrame.testFrame:Hide()
+            end
+        end
+    end
+end
+
+-- MARK: Load Anchor
+local function LoadAnchor(self, frame, index, isCoTank)
+    local args = GetPAAnchorArgs(self, isCoTank and self.coTankToken or "player", index, isCoTank)
+
+    if frame.anchorID then
+        C_UnitAuras.RemovePrivateAuraAnchor(frame.anchorID)
+    end
+    frame.anchorID = C_UnitAuras.AddPrivateAuraAnchor(args)
+end
+
+local function LoadAllAnchor(self, isCoTank)
+    for i = 1, self.maxAuras do
+        local frame = isCoTank and self.coTankAuras[i] or self.playerAuras[i]
+        if frame then
+            LoadAnchor(self, frame, i, isCoTank)
+        end
+    end
+end
 
 -- MARK: Create Anchors
 
-function PrivateAuraAnchor:CreatePrivateAnchors(unit)
-    if unit == "player" then
-        for i = 1, self.maxAuras do
-            local frame = self.playerAuras[i]
-            if not frame then
-                frame = CreateFrame("Frame", nil, self.head)
-                frame:Show()
-                self.playerAuras[i] = frame
-            end
-
-            UpdateAuraStyle(self, frame, i)
-
-            local AddPrivateAuraAnchorArgs = GetPAAnchorArgs(self, "player", i)
-
-            -- remove existing anchor if exists before creating new one to avoid memory leak
-            if self.playerAuras[i].anchorID then
-                C_UnitAuras.RemovePrivateAuraAnchor(self.playerAuras[i].anchorID)
-            end
-            self.playerAuras[i].anchorID = C_UnitAuras.AddPrivateAuraAnchor(AddPrivateAuraAnchorArgs)
+function PrivateAuraAnchor:CreatePrivateAnchors()
+    for i = 1, self.maxAuras do
+        local frame = self.playerAuras[i]
+        if not frame then
+            frame = CreateFrame("Frame", nil, self.head)
+            frame:Show()
+            self.playerAuras[i] = frame
         end
-    elseif unit == "co-tank" and addon.db[self.modName]["ShowCoTankAuras"] and self.coTankHead then
-        if self.coTankToken and UnitGroupRolesAssigned("player") == "TANK" then
-            for i = 1, self.maxAuras do
-                local frame = self.coTankAuras[i]
-                if not frame then
-                    frame = CreateFrame("Frame", nil, self.coTankHead)
-                    frame:Show()
-                    self.coTankAuras[i] = frame
-                end
 
-                UpdateAuraStyle(self, frame, i, true)
+        UpdateAuraStyle(self, frame, i)
+        LoadAnchor(self, frame, i, false)
 
-                -- remove existing anchor if exists before creating new one to avoid memory leak
-                if self.coTankAuras[i].anchorID then
-                    C_UnitAuras.RemovePrivateAuraAnchor(self.coTankAuras[i].anchorID)
-                end
-                local AddPrivateAuraAnchorArgs = GetPAAnchorArgs(self, self.coTankToken, i, true)
-
-                self.coTankAuras[i].anchorID = C_UnitAuras.AddPrivateAuraAnchor(AddPrivateAuraAnchorArgs)
-                frame:Show()
+        if addon.db[self.modName]["ShowCoTankAuras"] and self.coTankHead then
+            local cotankFrame = self.coTankAuras[i]
+            if not cotankFrame then
+                cotankFrame = CreateFrame("Frame", nil, self.coTankHead)
+                cotankFrame:Show()
+                self.coTankAuras[i] = cotankFrame
             end
-        else
-            -- if co-tank is not found, hide the co-tank head and show a message in chat
-            for _, frame in pairs(self.coTankAuras) do
-                C_UnitAuras.RemovePrivateAuraAnchor(frame.anchorID)
-                frame.anchorID = nil
-                frame:Hide()
+            
+            UpdateAuraStyle(self, cotankFrame, i, true)
+
+            if self.coTankToken and UnitGroupRolesAssigned("player") == "TANK" then
+                LoadAnchor(self, cotankFrame, i, true)
+            else
+                -- if co-tank is not found/player is not a tank
+                for _, emptyFrame in ipairs(self.coTankAuras) do
+                    if emptyFrame.anchorID then -- remove existing anchors if any
+                        C_UnitAuras.RemovePrivateAuraAnchor(emptyFrame.anchorID)
+                        emptyFrame.anchorID = nil
+                    end
+                end
             end
         end
     end
@@ -200,18 +283,17 @@ function PrivateAuraAnchor:UpdateStyle()
     self.maxAuras = addon.db[self.modName]["MaxAuras"]
     self.head:ClearAllPoints()
     self.head:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["X"], addon.db[self.modName]["Y"])
-    self.head:SetSize(iconSize + (self.maxAuras - 1) * iconSize * math.abs(offsetX), iconSize + (self.maxAuras - 1) * iconSize * math.abs(offsetY))
+    self.head:SetSize(iconSize, iconSize)
     for i, frame in pairs(self.playerAuras) do
         UpdateAuraStyle(self, frame, i)
     end
 
     if addon.db[self.modName]["ShowCoTankAuras"] and self.coTankHead then
         local coTankIconSize = addon.db[self.modName]["CoTankIconSize"]
-        local coTankOffsetX, coTankOffsetY = GetStyleArgs(self, coTankIconSize, addon.db[self.modName]["CoTankGrow"])
 
         self.coTankHead:ClearAllPoints()
         self.coTankHead:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["CoTankX"], addon.db[self.modName]["CoTankY"])
-        self.coTankHead:SetSize(coTankIconSize + (self.coTankMaxAuras - 1) * coTankIconSize * math.abs(coTankOffsetX), coTankIconSize + (self.coTankMaxAuras - 1) * coTankIconSize * math.abs(coTankOffsetY))
+        self.coTankHead:SetSize(coTankIconSize, coTankIconSize)
         for i, frame in pairs(self.coTankAuras) do
             UpdateAuraStyle(self, frame, i, true)
         end
@@ -228,14 +310,11 @@ function PrivateAuraAnchor:Test(on)
     end
 
     if on then
-        addon.Utilities:ShowDragRegion(self.head, L["PrivateAuraAnchorSettings"])
+        TestAuras(self, true)
         addon.Utilities:MakeFrameDragPosition(self.head, self.modName, "X", "Y")
-
-        addon.Utilities:ShowDragRegion(self.coTankHead, L["CoTankAuras"])
         addon.Utilities:MakeFrameDragPosition(self.coTankHead, self.modName, "CoTankX", "CoTankY")
     else
-        addon.Utilities:HideDragRegion(self.head)
-        addon.Utilities:HideDragRegion(self.coTankHead)
+        TestAuras(self, false)
     end
 end
 
@@ -249,7 +328,7 @@ function PrivateAuraAnchor:RegisterEvents()
         self.coTankHead:SetScript("OnEvent", function(_, event)
             if event == "GROUP_ROSTER_UPDATE" then
                 self.coTankToken = SearchCoTank()
-                self:CreatePrivateAnchors("co-tank")
+                LoadAllAnchor(self, true)
             end
         end)
     end

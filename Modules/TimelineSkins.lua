@@ -443,8 +443,10 @@ function TimelineSkins:Test(on)
     if on then
         self.frame:Show()
         addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
+        C_EncounterTimeline.AddEditModeEvents()
     else
         self:UpdateFrameVisibility()
+        C_EncounterTimeline.CancelEditModeEvents()
     end
 end
 

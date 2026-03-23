@@ -170,6 +170,7 @@ L["BorderScale"] = "Border Scale"
 L["ShowCountdownNumbers"] = "Show Countdown Numbers"
 L["CoTankAuras"] = "Co-Tank Auras"
 L["ShowCoTankAuras"] = "Show Co-Tank Auras"
+L["HideBorder"] = "Hide Border"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"

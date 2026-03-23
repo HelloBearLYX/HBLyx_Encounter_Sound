@@ -171,6 +171,7 @@ L["BorderScale"] = "边框缩放"
 L["ShowCountdownNumbers"] = "显示倒计时数字"
 L["CoTankAuras"] = "副坦克光环"
 L["ShowCoTankAuras"] = "显示副坦克光环"
+L["HideBorder"] = "隐藏边框"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "BOSS战音效"

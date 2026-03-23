@@ -148,6 +148,31 @@ local function LoadWarning(self, info)
     end
 end
 
+-- MARK: Test Private Warning
+
+local function TestPrivateWarning(self, onTest)
+    if self.privateWarningFrame and not self.privateWarningFrame.testWarning then
+        local testWarning = CreateFrame("Frame", nil, self.privateWarningFrame)
+        testWarning:SetAllPoints()
+        testWarning.text = testWarning:CreateFontString(nil, "OVERLAY")
+        testWarning.text:SetAllPoints()
+        testWarning.text:SetFont(
+            "Fonts\\FRIZQT__.TTF",
+            12,
+            "OUTLINE"
+        )
+        testWarning.text:SetText("Test Private Warning |T134400:16:16|t[Private Aura]")
+
+        self.privateWarningFrame.testWarning = testWarning
+    end
+
+    if onTest then
+        self.privateWarningFrame.testWarning:Show()
+    else
+        self.privateWarningFrame.testWarning:Hide()
+    end
+end
+
 -- MARK: UpdateStyle
 
 ---Update style settings and render them in-game for CustomTracker
@@ -189,6 +214,8 @@ function TextWarningSkins:Test(on)
         }
         LoadWarning(self, testInfo)
 
+        TestPrivateWarning(self, true)
+
         addon.Utilities:ShowDragRegion(self.head, L["TextWarningSkinsSettings"])
         addon.Utilities:MakeFrameDragPosition(self.head, self.modName, "X", "Y")
 
@@ -199,6 +226,8 @@ function TextWarningSkins:Test(on)
             UnloadWarning(self, self.testWarningFrame)
             self.testWarningFrame = nil
         end
+
+        TestPrivateWarning(self, false)
 
         addon.Utilities:HideDragRegion(self.head)
         addon.Utilities:HideDragRegion(self.privateWarningFrame)

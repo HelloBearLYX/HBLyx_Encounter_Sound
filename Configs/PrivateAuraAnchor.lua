@@ -7,17 +7,16 @@ local MOD_KEY = "PrivateAuraAnchor"
 addon.configurationList[MOD_KEY] = {
 	Enabled = false,
 	MaxAuras = 3,
-	X = 220,
-	Y = -80,
+	X = 175,
+	Y = -85,
 	IconSize = 45,
 	Grow = "RIGHT",
-    BorderScale = 1,
+	HideBorder = true,
 	ShowCountdownNumbers = true,
 
     ShowCoTankAuras = true,
-    CoTankMaxAuras = 3,
-    CoTankX = 0,
-    CoTankY = 0,
+    CoTankX = 175,
+    CoTankY = -25,
     CoTankIconSize = 45,
     CoTankGrow = "RIGHT",
 }
@@ -80,12 +79,12 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	end)
 	GUI:CreateSlider(iconGroup, L["MaxAuras"], 1, 5, 1, addon.db.PrivateAuraAnchor.MaxAuras, function(value)
 		addon.db.PrivateAuraAnchor.MaxAuras = value
-		update()
+		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
 	end)
-	-- Temporarily follow ElvUI's border scale range setting
-	GUI:CreateSlider(iconGroup, L["BorderScale"], -5, 10, 0.01, addon.db.PrivateAuraAnchor.BorderScale, function(value)
-		addon.db.PrivateAuraAnchor.BorderScale = value
-		update()
+	GUI:CreateToggleCheckBox(iconGroup, L["HideBorder"], addon.db.PrivateAuraAnchor.HideBorder, function(value)
+		addon.db.PrivateAuraAnchor.HideBorder = value
+		addon.core:GetModule(MOD_KEY):CreatePrivateAnchors("player")
+		addon.core:GetModule(MOD_KEY):CreatePrivateAnchors("co-tank")
 	end)
 
 	-- MARK: Position
@@ -114,10 +113,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	local coTankIconGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["IconSettings"])
 	GUI:CreateSlider(coTankIconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.CoTankIconSize, function(value)
 		addon.db.PrivateAuraAnchor.CoTankIconSize = value
-		update()
-	end)
-	GUI:CreateSlider(coTankIconGroup, L["MaxAuras"], 1, 5, 1, addon.db.PrivateAuraAnchor.CoTankMaxAuras, function(value)
-		addon.db.PrivateAuraAnchor.CoTankMaxAuras = value
 		update()
 	end)
 
