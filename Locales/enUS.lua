@@ -125,7 +125,7 @@ L["Events"] = "events"
 L["PrivateAuras"] = "private auras"
 L["New"] = "new"
 L["Overwritten"] = "overwritten"
-L["MergeDesc"] = "|cffff5c00Merge|r\nMerge profile with current profile, the duplicated entries will be overwritten by the input profile. The merge action will only merge the events' settings and private auras' settings, and other settings will not be merged(victory sound, start sound, and templates etc.).\n\n"
+L["MergeDesc"] = "|cffff5c00Merge Encounter Configuration|r\nMerge the encounter configuration file with the current configuration, duplicated entries will be overwritten by the profile.\nThe merge action will only merge the event settings and private aura settings, other module settings will not be affected.\n\n"
 L["CountDown"] = "Countdown"
 
 -- MARK: Style

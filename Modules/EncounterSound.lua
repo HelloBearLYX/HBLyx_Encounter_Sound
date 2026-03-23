@@ -29,18 +29,14 @@ local function DataMigrationHelper()
     
     -- private auras
     for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
-        addon:debug("Migrating encounterID " .. encounterID)
         for privateAuraID, change in pairs(privateAuraChange) do
-            addon:debug("Migrating privateAuraID " .. privateAuraID)
             if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
-                addon:debug("Found data")
                 if type(change) == "number" then -- replace
                     local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
                     addon.db.EncounterSound.dataPA[encounterID][change] = data
                     addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
                 elseif type(change) == "boolean" and not change then -- remove
                     addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
-                    addon:debug("Removed private aura sound")
                 elseif type(change) == "table" then -- compress
                     local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
                     for _, newID in ipairs(change) do

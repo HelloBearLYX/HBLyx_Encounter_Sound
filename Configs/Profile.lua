@@ -43,13 +43,13 @@ end
 ---Export all profiles
 ---@return string|nil export profile string or nil if no profile data
 function addon:ExportProfile()
-    local profile = addon.db["EncounterSound"]
+    local profile = addon.db
     if not profile then
         addon.Utilities:print("No profile data to export.")
         return nil
     end
 
-    local profileData = { ["EncounterSound"] = profile, }
+    local profileData = { profile = profile, }
 
     local serializedData = Serialize:Serialize(profileData)
     local compressedData = Compress:CompressDeflate(serializedData)
@@ -72,7 +72,7 @@ function addon:ImportProfile(data)
         return false
     end
 
-    addon.db["EncounterSound"] = profileData["EncounterSound"]
+    addon.db = profileData.profile
     addon.Utilities:print(L["ImportSuccess"])
 
     addon.Utilities:SetPopupDialog(
@@ -118,7 +118,7 @@ function addon:MergeProfile(data)
     end
 
     local currentProfile = addon.db["EncounterSound"] or {}
-    local newProfile = profileData["EncounterSound"] or {}
+    local newProfile = profileData.profile["EncounterSound"] or {}
 
     -- Merge the new profile into the current profile
     local countEvents, countPA = 0, 0
@@ -159,7 +159,7 @@ function addon:MergeProfile(data)
 
     addon.Utilities:SetPopupDialog(
         "HB_Import_Success",
-        "|cffff0d01" .. (newProfile.ProfileName or "Default") .. "|r " .. L["MergedInto"] .. " |cffff0d01" .. (currentProfile.ProfileName or "Default") .. "|r",
+        "|cffff0d01" .. (newProfile.ProfileName or "Default") .. "|r " .. L["MergedInto"] .. " |cffff0d01" .. (currentProfile.ProfileName or "nil") .. "|r",
         true
     )
 
