@@ -24,12 +24,14 @@ data.lua
 Modules\EncounterSound.lua
 Modules\HighlightIcons.lua
 Modules\TimelineSkins.lua
+Modules\TextWarningSkins.lua
 
 # handle configuration and options
 GUI.lua
 Configs\EncounterSound.lua
 Configs\HighlightIcons.lua
 Configs\TimelineSkins.lua
+Configs\TextWarningSkins.lua
 
 Configs\Profile.lua
 
