@@ -17,6 +17,7 @@ local TABS = {
     {text = L["HighlightIconsSettings"], value = "HighlightIcons"},
     {text = L["TimelineSkinsSettings"], value = "TimelineSkins"},
     {text = L["TextWarningSkinsSettings"], value = "TextWarningSkins"},
+    {text = L["PrivateAuraAnchorSettings"], value = "PrivateAuraAnchor"},
     {text = L["Raid"], value = "Raid"},
     {text = L["Dungeon"], value = "Dungeon"},
     {text = L["TemplateSettings"], value = "Template"},
@@ -207,6 +208,9 @@ function addon.GUI:Render()
             panel:DoLayout()
         elseif tab == "TextWarningSkins" then
             local panel = addon.GUI.TagPanels.TextWarningSkins:CreateTabPanel(container)
+            panel:DoLayout()
+        elseif tab == "PrivateAuraAnchor" then
+            local panel = addon.GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(container)
             panel:DoLayout()
         elseif tab == "Raid" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true)

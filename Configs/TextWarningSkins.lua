@@ -6,14 +6,14 @@ local MOD_KEY = "TextWarningSkins"
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
 	Enabled = true,
-    Width = 300,
-    Height = 35,
+    Width = 500,
+    Height = 40,
     X = 0,
     Y = 200,
     PrivateWarningX = 0,
     PrivateWarningY = 240,
     Grow = "DOWN",
-    FontSize = 16,
+    FontSize = 20,
     Font = "",
 }
 

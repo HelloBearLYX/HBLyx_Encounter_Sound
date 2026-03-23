@@ -282,7 +282,7 @@ local function LoadEvent(self, eventInfo)
     frame.eventID = eventInfo.id
     local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
     frame.cooldown:SetCooldownDuration(remaining)
-    frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
+    frame.icon:SetTexture(eventInfo.iconFileID or C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
     frame.text:SetText(text)
 
     QueueInsert(self, frame)
@@ -442,11 +442,9 @@ function TimelineSkins:Test(on)
 
     if on then
         self.frame:Show()
-        addon.Utilities:ShowDragRegion(self.frame, L["TimelineSkinsSettings"])
         addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
     else
         self:UpdateFrameVisibility()
-        addon.Utilities:HideDragRegion(self.frame)
     end
 end
 
