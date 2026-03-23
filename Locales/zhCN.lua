@@ -199,8 +199,7 @@ L["EncounterEventsInstruction"] =
 "|cffff0000注意|r: 你必须|cffffff00启用暴雪的首领预警(包括文本警告和时间轴)|r, 才能让相应的事件触发器激活\n\n" ..
 "|cffffff00测试时间轴|r: 会模拟本Boss所有的时间轴事件(非实际Boss时间轴), 并以6秒为间隔, 以便测试设置的正确性和效果, 但是实际时间轴时间表现可能会不同\n\n" ..
 "|cffff0000注意|r: 测试时间轴仅适用于已设置的事件, 因此, |cffFF7C0A如果该BOSS战没有设置任何事件, 测试时间轴将无法工作|r\n\n"
-L["PrivateAuraInstruction"] = "为私有光环应用一个声音警报, 当私有光环被施加在\"玩家\"身上时播放声音警报\n\n" ..
-"为了防止不必要的冲突或冗余, 私有光环的锚点在这个模块中没有提供, 因为有许多UI插件提供了私有光环的自定义位置\n\n"
+L["PrivateAuraInstruction"] = "为私有光环应用一个声音警报, 当私有光环被施加在\"玩家\"身上时播放声音警报\n\n"
 
 -- MARK: Templates
 L["TemplateSettings"] = "模板"

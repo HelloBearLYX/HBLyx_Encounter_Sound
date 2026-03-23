@@ -198,8 +198,7 @@ L["EncounterEventsInstruction"] =
 "|cffff0000NOTE|r: Must |cffffff00enable Blizzard's Boss Warnings(including Boss Text Warning and Boss Ability Timeline)|r to make the corresponding event triggers active\n\n" ..
 "|cffffff00Test Timeline|r: simulate the timeline for all events of this Boss with 6 seconds intervals(not actual timeline), to test the correctness and effect of the settings, but the actual timeline trigger perform differently\n\n" ..
 "|cffff0000NOTE|r: Test Timeline only works with the events which has been set already, and, therefore, |cffFF7C0Aif there is no event has been set for this encounter, Test Timeline will not work|r.\n\n"
-L["PrivateAuraInstruction"] = "Apply a sound alert for private auras, and the sound alert is played when the private aura is applied on \"player\".\n\n" ..
-"To prevent unneccessary conflicts or redundancy, private auras' anchor are not provided in this module, since there are many UI addons offer the customized position of private auras.\n\n"
+L["PrivateAuraInstruction"] = "Apply a sound alert for private auras, and the sound alert is played when the private aura is applied on \"player\".\n\n"
 
 -- MARK: Templates
 L["TemplateSettings"] = "Template"
