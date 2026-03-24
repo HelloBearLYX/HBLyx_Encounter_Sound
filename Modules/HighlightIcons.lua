@@ -173,7 +173,7 @@ local function LoadHighlightEvent(self, frame, eventTimelineID)
     local eventInfo = C_EncounterTimeline.GetEventInfo(eventTimelineID)
 
     frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
-    frame.name:SetText(eventInfo.spellName or "")
+    frame.name:SetText("|c".. (eventInfo.color:GenerateHexColor() or "ffffffff") .. (eventInfo.spellName or "") .. "|r")
     local duration = C_EncounterTimeline.GetEventTimeRemaining(eventTimelineID)
     frame.cooldown:SetCooldownDuration(duration)
     frame.timer = C_Timer.NewTimer(duration, function()

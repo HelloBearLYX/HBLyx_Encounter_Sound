@@ -187,6 +187,14 @@ local function LoadPrivateAuraSounds(self, encounterID)
     end
 end
 
+-- MARK: Load Map Private Sounds
+
+local function LoadMapPrivateAuraSounds(self, mapID)
+    for encounterID, _ in pairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters or {}) do
+        LoadPrivateAuraSounds(self, encounterID)
+    end
+end
+
 -- MARK: Clear PA Sounds
 
 ---Clear private aura sounds loaded
@@ -297,6 +305,7 @@ function EncounterSound:RegisterEvents()
 
         self.lastEncounterID = currentEncounter
         self.role = UnitGroupRolesAssigned("player") or nil -- update current role
+        addon:debug("Current Role: " .. (self.role or "None") .. ", EncounterID: " .. currentEncounter)
         LoadEventSounds(self, currentEncounter)
         LoadPrivateAuraSounds(self, currentEncounter)
         PlayStartSound()

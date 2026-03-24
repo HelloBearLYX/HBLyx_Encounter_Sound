@@ -217,6 +217,10 @@ end
 
 -- MARK: Load Anchor
 local function LoadAnchor(self, frame, index, isCoTank)
+    if isCoTank and (not self.coTankToken or UnitGroupRolesAssigned("player") ~= "TANK" or not IsInRaid()) then
+        return
+    end
+
     local args = GetPAAnchorArgs(self, isCoTank and self.coTankToken or "player", index, isCoTank)
 
     if frame.anchorID then

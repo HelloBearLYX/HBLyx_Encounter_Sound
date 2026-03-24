@@ -283,7 +283,7 @@ local function LoadEvent(self, eventInfo)
     local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
     frame.cooldown:SetCooldownDuration(remaining)
     frame.icon:SetTexture(eventInfo.iconFileID or C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
-    frame.text:SetText(text)
+    frame.text:SetText("|c".. (eventInfo.color:GenerateHexColor() or "ffffffff") .. text .. "|r")
 
     QueueInsert(self, frame)
     self.queueIcons[frame.eventID] = frame
