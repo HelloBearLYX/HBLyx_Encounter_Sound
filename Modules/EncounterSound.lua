@@ -183,7 +183,7 @@ local function LoadPrivateAuraSounds(self, encounterID)
         end
 
         if not addon.db.EncounterSound.HideEncounterPrint then
-            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. addon.states["instanceInfo"].instanceID .. "|r")
+            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. encounterID .. "|r")
         end
     end
 end
