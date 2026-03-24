@@ -602,7 +602,8 @@ addon.data.INSTANCE_GOSSIP = {
 		[107088] = true, -- red
 	},
 	[2874] = {
-		[137387] = true, -- wok
+		[137387] = true, -- right
+		[137428] = true, -- left
 	},
 }
 

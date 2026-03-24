@@ -132,7 +132,6 @@ local function LoadWarning(self, info)
     local targetName = info.targetName
     local targetGUID = info.targetGUID
     local icon = info.iconFileID
-    -- local color = info.color
     local duration = info.duration
     if targetGUID then
         local className = select(2, GetPlayerInfoByGUID(targetGUID))
@@ -146,6 +145,9 @@ local function LoadWarning(self, info)
 
     if info.isTest or (duration and duration > 0) then
         text = string.format(text, casterName, targetName)
+        -- if info.color then
+        --     text = info.color:WrapTextInColorCode(text)
+        -- end
         frame.text:SetText(string.format("|T%d:%d:%d|t%s", icon, addon.db[self.modName]["FontSize"], addon.db[self.modName]["FontSize"], text))
         frame:Show()
         frame.active = true
@@ -163,6 +165,11 @@ local function LoadWarning(self, info)
             self.testWarningFrame = frame
         end
     end
+
+    -- if info.shouldShowChatMessage then
+    --     local chatMessage = string.format(info.text, info.casterName, info.targetName)
+    --     addon.Utilities:print(chatMessage)
+    -- end
 end
 
 -- MARK: Test Private Warning
