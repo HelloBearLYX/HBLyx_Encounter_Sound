@@ -808,6 +808,10 @@ function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 		addon.db.EncounterSound.StartSound = value
 	end):SetRelativeWidth(0.45)
 	GUI:CreateInformationTag(frame, "\n")
+	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["AutoGossip"] .. "|r", addon.db.AutoGossip.Enabled, function(value)
+		addon.db.AutoGossip.Enabled = value
+		addon:ShowDialog(ADDON_NAME.."RLNeeded")
+	end):SetRelativeWidth(0.45)
 	GUI:CreateToggleCheckBox(frame, L["HideEncounterPrint"], addon.db.EncounterSound.HideEncounterPrint, function(value)
 		addon.db.EncounterSound.HideEncounterPrint = value
 	end):SetRelativeWidth(0.9)

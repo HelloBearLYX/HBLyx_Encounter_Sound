@@ -353,6 +353,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 	},
 }
 
+-- MARK: Instance Journal
 addon.data.INSTANCE_JOURNAL = {
 	[2526] = 1201,
 	[1753] = 945,
@@ -583,8 +584,26 @@ addon.data.SPELL_INFO = {
     [1284980] = {[12] = true},
 }
 
-addon.data.GOSSIP_INFO = {
-	[136624] = {mapID = 278},
+-- MARK: Gossips
+addon.data.INSTANCE_GOSSIP = {
+	[658] = {
+		[136624] = true,
+		[136271] = true,
+		[136316] = true,
+		[136280] = true,
+		[136301] = true,
+		[138618] = true,
+	},
+	[2526] = {
+		[107065] = true, -- black
+		[107081] = true, -- bronze
+		[107082] = true, -- blue
+		[107083] = true, -- green
+		[107088] = true, -- red
+	},
+	[2874] = {
+		[137387] = true, -- wok
+	},
 }
 
 -- MARK: Data Changes

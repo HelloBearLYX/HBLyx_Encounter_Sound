@@ -21,6 +21,7 @@ core.lua
 data.lua
 
 # modules
+Modules\AutoGossip.lua
 Modules\EncounterSound.lua
 Modules\HighlightIcons.lua
 Modules\TimelineSkins.lua
@@ -29,6 +30,7 @@ Modules\PrivateAuraAnchor.lua
 
 # handle configuration and options
 GUI.lua
+Configs\AutoGossip.lua
 Configs\EncounterSound.lua
 Configs\HighlightIcons.lua
 Configs\TimelineSkins.lua

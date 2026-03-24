@@ -13,41 +13,31 @@ local AutoGossip = {
 ---Initialize (Constructor)
 ---@return AutoGossip AutoGossip a AutoGossip object
 function AutoGossip:Initialize()
-    -- TODO: Initialize your module here
+    self.eventFrame = CreateFrame("Frame", ADDON_NAME .. self.modName, UIParent)
 
     return self
-end
-
--- MARK: UpdateStyle
-
----Update style settings and render them in-game for CustomTracker
-function AutoGossip:UpdateStyle()
-    -- TODO: Update style settings and render them in-game when the user changes custom options
-end
-
--- MARK: Test
-
----Test Mode
----@param on boolean turn the Test mode on or off
-function AutoGossip:Test(on)
-    if not addon.db[self.modName]["Enabled"] then -- if the module is not enabled, do not allow test mode
-        return
-    end
-
-    if on then
-        -- TODO: Implement test mode for your module
-    else
-        -- TODO: Disable test mode for your module
-    end
 end
 
 -- MARK: RegisterEvents
 
 ---Register events
 function AutoGossip:RegisterEvents()
-    -- TODO: Register events needed by your module here, for example:
-    -- local handle = function() Handler(self) end
-    -- addon.core:RegisterEvent("EVENT_NAME", handle)
+    addon.core:RegisterEvent("GOSSIP_SHOW", self.eventFrame, self.modName)
+
+    self.eventFrame:SetScript("OnEvent", function(_, event, ...)
+        if event == "GOSSIP_SHOW" then
+            local infos = C_GossipInfo.GetOptions()
+            for _, info in ipairs(infos) do
+                local gossipID = info.gossipOptionID or 0
+
+                if addon.data.INSTANCE_GOSSIP[addon.states["instanceInfo"].instanceID or 0] then
+                    if addon.data.INSTANCE_GOSSIP[addon.states["instanceInfo"].instanceID][gossipID] then
+                        C_GossipInfo.SelectOption(gossipID)
+                    end
+                end
+            end
+        end
+    end)
 end
 
 -- MARK: Register Module
