@@ -141,6 +141,16 @@ local function InitializeStates()
 	addon.core:RegisterState("ENCOUNTER_END", nil, "encounterInfo", function (...)
 		addon.states["encounterInfo"] = {encounterID = 0, encounterName = "", success = select(5, ...)}
 	end)
+
+	-- instance Info
+	local GetInstanceState = function()
+		-- if difficultyID = 0: not in instance; if instanceID = 0: not in instance or in world
+		local _, _, difficultyID, _, _, _, _, instanceID = GetInstanceInfo()
+
+		addon.states["instanceInfo"] = {difficultyID = difficultyID, instanceID = instanceID}
+	end
+	addon.core:RegisterState("PLAYER_ENTERING_WORLD", nil, "instanceInfo", GetInstanceState)
+	addon.core:RegisterState("ZONE_CHANGED_NEW_AREA", nil, "instanceInfo", GetInstanceState)
 end
 
 -- MARK: Initialize

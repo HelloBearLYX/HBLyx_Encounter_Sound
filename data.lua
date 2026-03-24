@@ -353,6 +353,24 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 	},
 }
 
+addon.data.INSTANCE_JOURNAL = {
+	[2526] = 1201,
+	[1753] = 945,
+	[2915] = 1316,
+	[2874] = 1315,
+	[1209] = 476,
+	[2805] = 1299,
+	[2811] = 1300,
+	[658] = 278,
+	[2859] = 1309,
+	[2813] = 1304,
+	[2825] = 1311,
+	[2923] = 1313,
+	[2939] = 1314,
+	[2912] = 1307,
+	[2913] = 1308,
+}
+
 -- MARK: Spell Data
 addon.data.SPELL_FLAGS = {
 	[0] = {flag = "|TInterface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Flags\\Tank.png:16:16|t", text = L["SpellFlagTank"]};
@@ -563,6 +581,10 @@ addon.data.SPELL_INFO = {
     [1284525] = {[12] = true, [3] = true},
     [1284931] = {[12] = true},
     [1284980] = {[12] = true},
+}
+
+addon.data.GOSSIP_INFO = {
+	[136624] = {mapID = 278},
 }
 
 -- MARK: Data Changes

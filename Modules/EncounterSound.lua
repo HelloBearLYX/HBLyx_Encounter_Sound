@@ -182,15 +182,16 @@ local function LoadPrivateAuraSounds(self, encounterID)
         end
 
         if not addon.db.EncounterSound.HideEncounterPrint then
-            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. addon.states["encounterInfo"].encounterName .. "|r")
+            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. addon.states["instanceInfo"].instanceID .. "|r")
         end
     end
 end
 
--- MARK: Load Map Private Sounds
+-- MARK: Load Instance PA
 
-local function LoadMapPrivateAuraSounds(self, mapID)
-    for encounterID, _ in pairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters or {}) do
+local function LoadInstancePrivateAuraSounds(self, instanceID)
+    local journalID = addon.data.INSTANCE_JOURNAL[instanceID]
+    for encounterID, _ in pairs(addon.data.MAP_ENCOUNTER_EVENTS[journalID].encounters or {}) do
         LoadPrivateAuraSounds(self, encounterID)
     end
 end
@@ -207,7 +208,7 @@ local function ClearPrivateAuraSounds(self)
         self.privateAuras = {}
 
         if not addon.db.EncounterSound.HideEncounterPrint then
-            addon.Utilities:print(L["ClearPrivateAurasData"] .. "|cffffff00" .. self.lastEncounterID .. "|r")
+            addon.Utilities:print(L["ClearPrivateAurasData"])
         end
     end
 end
@@ -292,8 +293,6 @@ function EncounterSound:RegisterEvents()
         if not currentEncounter then -- not an encounter error
             return
         elseif currentEncounter == 0 then -- encounter ended
-            -- only clear private aura sounds
-            ClearPrivateAuraSounds(self)
             ClearEventSounds(self, self.lastEncounterID)
 
             if addon.states["encounterInfo"].success == 1 then
@@ -305,10 +304,17 @@ function EncounterSound:RegisterEvents()
 
         self.lastEncounterID = currentEncounter
         self.role = UnitGroupRolesAssigned("player") or nil -- update current role
-        addon:debug("Current Role: " .. (self.role or "None") .. ", EncounterID: " .. currentEncounter)
         LoadEventSounds(self, currentEncounter)
-        LoadPrivateAuraSounds(self, currentEncounter)
         PlayStartSound()
+    end)
+
+    addon.core:RegisterStateMonitor("instanceInfo", self.modName, function ()
+        local instanceID = addon.states["instanceInfo"].instanceID
+        if instanceID and addon.data.INSTANCE_JOURNAL[instanceID] then
+            LoadInstancePrivateAuraSounds(self, instanceID)
+        elseif instanceID == 0 then
+            ClearPrivateAuraSounds(self)
+        end
     end)
 
     addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
