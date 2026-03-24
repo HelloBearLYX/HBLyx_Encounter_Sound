@@ -75,6 +75,7 @@ function EncounterSound:Initialize()
     self.privateAuras = {}
     self.role = nil
     self.lastEncounterID = nil
+    self.lastInstanceID = nil
     self.eventFrame = CreateFrame("Frame", self.modName .. "EventFrame", UIParent)
 
     -- force enable encounter timeline to make sure the events can be triggered correctly
@@ -312,8 +313,10 @@ function EncounterSound:RegisterEvents()
         local instanceID = addon.states["instanceInfo"].instanceID
         if instanceID and addon.data.INSTANCE_JOURNAL[instanceID] then
             LoadInstancePrivateAuraSounds(self, instanceID)
-        elseif instanceID == 0 then
+            self.lastInstanceID = instanceID
+        elseif instanceID == 0 or (self.lastInstanceID and instanceID ~= self.lastInstanceID) then
             ClearPrivateAuraSounds(self)
+            self.lastInstanceID = nil
         end
     end)
 
