@@ -72,7 +72,8 @@ function addon:ImportProfile(data)
         return false
     end
 
-    addon.db = profileData.profile
+    HBLyx_Encounter_Sound_DB = profileData.profile
+    addon.db = HBLyx_Encounter_Sound_DB
     addon.Utilities:print(L["ImportSuccess"])
 
     addon.Utilities:SetPopupDialog(
