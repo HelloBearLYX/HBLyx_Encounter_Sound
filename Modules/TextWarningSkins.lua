@@ -183,7 +183,9 @@ function TextWarningSkins:UpdateStyle()
     self.privateWarningFrame:SetSize(addon.db[self.modName]["Width"], addon.db[self.modName]["Height"])
     self.privateWarningFrame:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["PrivateWarningX"], addon.db[self.modName]["PrivateWarningY"])
     local anchorBinding = {point = "CENTER", relativeTo = self.privateWarningFrame, relativePoint = "CENTER", offsetX = 0, offsetY = 0}
-    C_UnitAuras.SetPrivateWarningTextAnchor(self.privateWarningFrame, anchorBinding)
+    if not InCombatLockdown() then
+        C_UnitAuras.SetPrivateWarningTextAnchor(self.privateWarningFrame, anchorBinding)
+    end
 
     local currentFrame = self.head.next
     while currentFrame do

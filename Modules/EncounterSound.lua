@@ -73,6 +73,7 @@ end
 ---@return EncounterSound EncounterSound a EncounterSound object
 function EncounterSound:Initialize()
     self.privateAuras = {}
+    self.pendingPrivateAuraClear = false
     self.role = nil
     self.lastEncounterID = nil
     self.lastInstanceID = nil
@@ -171,7 +172,7 @@ local function LoadPrivateAuraSounds(self, encounterID)
         local privateAuraData = addon.db.EncounterSound.dataPA[encounterID]
         for spellID, soundName in pairs(privateAuraData) do
             local sound = addon.LSM:Fetch("sound", soundName)
-            if sound then
+            if sound and not InCombatLockdown() then
                 local pa = C_UnitAuras.AddPrivateAuraAppliedSound({
                     spellID = spellID,
                     unitToken = "player",
@@ -203,10 +204,16 @@ end
 ---@param self EncounterSound self
 local function ClearPrivateAuraSounds(self)
     if self.privateAuras and #self.privateAuras > 0 then
+        if InCombatLockdown() then
+            self.pendingPrivateAuraClear = true
+            return
+        end
+
         for _, pa in ipairs(self.privateAuras) do
             C_UnitAuras.RemovePrivateAuraAppliedSound(pa)
         end
         self.privateAuras = {}
+        self.pendingPrivateAuraClear = false
 
         if not addon.db.EncounterSound.HideEncounterPrint then
             addon.Utilities:print(L["ClearPrivateAurasData"])
@@ -315,6 +322,7 @@ function EncounterSound:RegisterEvents()
             LoadInstancePrivateAuraSounds(self, instanceID)
             self.lastInstanceID = instanceID
         elseif instanceID == 0 or (self.lastInstanceID and instanceID ~= self.lastInstanceID) then
+            -- if not in instance or switched instance, clear private aura sounds loaded
             ClearPrivateAuraSounds(self)
             self.lastInstanceID = nil
         end
@@ -322,6 +330,7 @@ function EncounterSound:RegisterEvents()
 
     addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
     addon.core:RegisterEvent("CANCEL_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
+    addon.core:RegisterEvent("PLAYER_REGEN_ENABLED", self.eventFrame, self.modName)
 
     self.eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "START_PLAYER_COUNTDOWN" then
@@ -343,6 +352,10 @@ function EncounterSound:RegisterEvents()
                     C_EncounterTimeline.CancelScriptEvent(countdownEvent)
                 end
                 self.countdownEvents = nil
+            end
+        elseif event == "PLAYER_REGEN_ENABLED" then
+            if self.pendingPrivateAuraClear then
+                ClearPrivateAuraSounds(self)
             end
         end
     end)
