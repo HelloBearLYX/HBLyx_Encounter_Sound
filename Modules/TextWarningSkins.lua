@@ -127,9 +127,26 @@ local function LoadWarning(self, info)
         frame = CreateWarning(self)
     end
 
-    local text, icon, duration, color = info.text, info.iconFileID, info.duration, info.color
+    local text = info.text
+    local casterName = info.casterName
+    local targetName = info.targetName
+    local targetGUID = info.targetGUID
+    local icon = info.iconFileID
+    -- local color = info.color
+    local duration = info.duration
+    if targetGUID then
+        local className = select(2, GetPlayerInfoByGUID(targetGUID))
+        if className then
+            local classColor = C_ClassColor.GetClassColor(className)
+            if classColor then
+                targetName = classColor:WrapTextInColorCode(targetName)
+            end
+        end
+    end
+
     if info.isTest or (duration and duration > 0) then
-        frame.text:SetText(string.format("|T%d:%d:%d|t |c%s%s|r", icon, addon.db[self.modName]["FontSize"], addon.db[self.modName]["FontSize"], color:GenerateHexColor(), text))
+        text = string.format(text, casterName, targetName)
+        frame.text:SetText(string.format("|T%d:%d:%d|t%s", icon, addon.db[self.modName]["FontSize"], addon.db[self.modName]["FontSize"], text))
         frame:Show()
         frame.active = true
 
