@@ -337,6 +337,7 @@ local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
             end
         elseif state == Enum.EncounterTimelineEventState.Active then
             if frame.cooldown:IsPaused() then
+                frame.cooldown:SetCooldownDuration(C_EncounterTimeline.GetEventTimeRemaining(eventID))
                 frame.cooldown:Resume()
             end
             if frame.timer then
