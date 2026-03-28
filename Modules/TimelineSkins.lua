@@ -280,7 +280,7 @@ local function LoadEvent(self, eventInfo)
 
     local text = eventInfo.spellName or ""
     frame.eventID = eventInfo.id
-    local remaining = C_EncounterTimeline.GetEventTimeRemaining(frame.eventID)
+    local remaining = eventInfo.duration or 0
     frame.cooldown:SetCooldownDuration(remaining)
     frame.icon:SetTexture(eventInfo.iconFileID or C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
     frame.text:SetText("|c".. (eventInfo.color:GenerateHexColor() or "ffffffff") .. text .. "|r")
