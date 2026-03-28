@@ -170,6 +170,9 @@ local function DeactivateIcon(self, frame)
     end
     frame:Hide()
     frame.active = false
+    if frame.cooldown:IsPaused() then
+        frame.cooldown:Resume()
+    end
     frame.cooldown:SetCooldownDuration(0)
     frame.icon:SetTexture(UNKNOWN_SPELL_TEXTURE)
     frame.text:SetText("")
