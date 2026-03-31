@@ -25,6 +25,9 @@ end
 
 -- MARK: Update Icon Style
 
+---Apply current style settings to an icon frame
+---@param self HighlightIcons self
+---@param frame Frame the icon frame to update
 local function UpdateIconStyle(self, frame)
     local textAnchorFrom, textAnchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["TextGrow"])
 
@@ -58,8 +61,9 @@ end
 
 -- MARK: Create Event Icon
 
---- Create a frame for an event
---- @returns frame the created frame
+---Create a new highlight icon frame
+---@param self HighlightIcons self
+---@return Frame frame the created icon frame
 local function CreateEventIcon(self)
     local frame = CreateFrame("Frame", nil, UIParent)
 
@@ -90,6 +94,9 @@ end
 
 -- MARK: List Helpers
 
+---Insert an icon frame at the end of the active display list
+---@param self HighlightIcons self
+---@param frame Frame the icon frame to insert
 local function ListInsert(self, frame)
     local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
     if not self.tail then
@@ -105,6 +112,9 @@ local function ListInsert(self, frame)
     self.tail = frame
 end
 
+---Remove an icon frame from the active display list
+---@param self HighlightIcons self
+---@param frame Frame the icon frame to remove
 local function ListRemove(self, frame)
     local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
     if frame.prev == self.head then
@@ -199,6 +209,9 @@ end
 
 -- MARK: ON_STATE_CHANGED
 
+---Handle encounter timeline event state changes
+---@param self HighlightIcons self
+---@param eventID number the encounter timeline event ID
 local function ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
     local frame = self.activeFrames[eventID]
 

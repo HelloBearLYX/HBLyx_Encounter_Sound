@@ -30,6 +30,9 @@ end
 
 -- MARK: Queue Helpers
 
+---Insert a warning frame at the end of the active display queue
+---@param self TextWarningSkins self
+---@param frame Frame the warning frame to insert
 local function QueueInsert(self, frame)
     local anchorFrom, anchorTo = addon.Utilities:GetGrowAnchors(addon.db[self.modName]["Grow"])
     if not self.tail then
@@ -74,6 +77,9 @@ end
 
 -- MARK: UpdateWarningStyle
 
+---Apply current style settings to a warning frame
+---@param self TextWarningSkins self
+---@param frame Frame the warning frame to update
 local function UpdateWarningStyle(self, frame)
     frame:SetSize(addon.db[self.modName]["Width"], addon.db[self.modName]["Height"])
     frame.text:SetWidth(addon.db[self.modName]["Width"])
@@ -87,6 +93,9 @@ end
 
 -- MARK: CreateWarning
 
+---Create a new warning display frame
+---@param self TextWarningSkins self
+---@return Frame frame the created warning frame
 local function CreateWarning(self)
     local frame = CreateFrame("Frame", nil, UIParent)
     frame.text = frame:CreateFontString(nil, "OVERLAY")
@@ -101,6 +110,9 @@ end
 
 -- MARK: UnloadWarning
 
+---Unload a warning frame, cancelling its timer and returning it to the spare pool
+---@param self TextWarningSkins self
+---@param frame Frame the warning frame to unload
 local function UnloadWarning(self, frame)
     if frame.timer then
         frame.timer:Cancel()
@@ -119,6 +131,9 @@ end
 
 -- MARK: LoadWarning
 
+---Load and display a new warning from the given encounter warning info
+---@param self TextWarningSkins self
+---@param info table the encounter warning info payload
 local function LoadWarning(self, info)
     local frame
     if self.spareFrames[#self.spareFrames] then
@@ -174,6 +189,9 @@ end
 
 -- MARK: Test Private Warning
 
+---Show or hide the test overlay for the private warning frame
+---@param self TextWarningSkins self
+---@param onTest boolean whether to show or hide the test overlay
 local function TestPrivateWarning(self, onTest)
     if self.privateWarningFrame and not self.privateWarningFrame.testWarning then
         local testWarning = CreateFrame("Frame", nil, self.privateWarningFrame)

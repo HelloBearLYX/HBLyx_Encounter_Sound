@@ -36,6 +36,8 @@ end
 
 -- MARK: GetGroupMembers
 
+---Get an array of all raid member unit tokens
+---@return table|nil output an array of raid unit tokens, or nil if not in raid
 local function GetRaidIterator()
     if IsInRaid() then -- only search co-tank in raid
         local numMembers = GetNumGroupMembers()
@@ -54,6 +56,8 @@ end
 
 -- MARK: Search Co-Tank
 
+---Search for a co-tank in the current raid group
+---@return string|nil unit the unit token of the co-tank, or nil if not found
 local function SearchCoTank()
     local raidIterator = GetRaidIterator()
     if raidIterator then
@@ -69,6 +73,13 @@ end
 
 -- MARK: GetStyleArgs
 
+---Get the X/Y offset multipliers for the given grow direction
+---@param self PrivateAuraAnchor self
+---@param iconSize number the icon size
+---@param grow string the grow direction ("UP", "DOWN", "LEFT", "RIGHT")
+---@return number offsetX the X offset multiplier
+---@return number offsetY the Y offset multiplier
+---@return number iconSize the icon size (passed through)
 local function GetStyleArgs(self, iconSize, grow)
     local offsetX, offsetY
     if grow == "UP" then
@@ -86,6 +97,12 @@ end
 
 -- MARK: Get PAAnchorArgs
 
+---Build the argument table for C_UnitAuras.AddPrivateAuraAnchor
+---@param self PrivateAuraAnchor self
+---@param unit string the unit token
+---@param index integer the aura slot index
+---@param isCoTank boolean whether this anchor is for the co-tank
+---@return table PAAnchorArgs the argument table for AddPrivateAuraAnchor
 local function GetPAAnchorArgs(self, unit, index, isCoTank)
     local iconSize
     if isCoTank then
@@ -119,6 +136,12 @@ end
 
 -- MARK: UpdateAuraStyle
 
+---Update the size and position of an aura frame
+---@param self PrivateAuraAnchor self
+---@param frame Frame the aura frame to update
+---@param index integer the aura slot index
+---@param isCoTank boolean|nil whether this frame is for the co-tank
+---@return number iconSize the icon size applied
 local function UpdateAuraStyle(self, frame, index, isCoTank)
     local iconSize
     local offsetX, offsetY
@@ -142,6 +165,10 @@ local function UpdateAuraStyle(self, frame, index, isCoTank)
 end
 -- MARK: Test Auras
 
+---Create a test overlay frame with an icon and index label on the given aura frame
+---@param self PrivateAuraAnchor self
+---@param frame Frame the aura frame to attach the test overlay to
+---@param index integer the aura slot index to display
 local function CreateTestAuras(self, frame, index)
     if not frame.testFrame then
         frame.testFrame = CreateFrame("Frame", nil, frame)
@@ -157,6 +184,10 @@ local function CreateTestAuras(self, frame, index)
     end
 end
 
+---Create a label text frame on the anchor head frame for test mode
+---@param self PrivateAuraAnchor self
+---@param head Frame the head frame to attach the label to
+---@param isCoTank boolean whether this label is for the co-tank anchor
 local function CreateTestAnchorText(self, head, isCoTank)
     if not head.testTextFrame then
         head.testTextFrame = CreateFrame("Frame", nil, head)
@@ -169,6 +200,9 @@ local function CreateTestAnchorText(self, head, isCoTank)
     end
 end
 
+---Show or hide the test overlay for all aura frames
+---@param self PrivateAuraAnchor self
+---@param onTest boolean whether to show or hide the test overlay
 local function TestAuras(self, onTest)
     if self.head then
         CreateTestAnchorText(self, self.head, false)
@@ -216,6 +250,12 @@ local function TestAuras(self, onTest)
 end
 
 -- MARK: Load Anchor
+
+---Register a private aura anchor for the given frame slot
+---@param self PrivateAuraAnchor self
+---@param frame Frame the aura frame to register the anchor on
+---@param index integer the aura slot index
+---@param isCoTank boolean whether this anchor is for the co-tank
 local function LoadAnchor(self, frame, index, isCoTank)
     if InCombatLockdown() or (isCoTank and (not self.coTankToken or UnitGroupRolesAssigned("player") ~= "TANK" or not IsInRaid())) then
         return
@@ -229,6 +269,9 @@ local function LoadAnchor(self, frame, index, isCoTank)
     frame.anchorID = C_UnitAuras.AddPrivateAuraAnchor(args)
 end
 
+---Register private aura anchors for all aura slots
+---@param self PrivateAuraAnchor self
+---@param isCoTank boolean whether to load anchors for co-tank frames
 local function LoadAllAnchor(self, isCoTank)
     for i = 1, self.maxAuras do
         local frame = isCoTank and self.coTankAuras[i] or self.playerAuras[i]
@@ -240,6 +283,7 @@ end
 
 -- MARK: Create Anchors
 
+---Create and initialize all private aura anchor frames
 function PrivateAuraAnchor:CreatePrivateAnchors()
     for i = 1, self.maxAuras do
         local frame = self.playerAuras[i]
