@@ -17,6 +17,7 @@ addon.configurationList[MOD_KEY] = {
     TwoSound = "",
     OneSound = "",
     SoundChannel = "Master",
+	StartSound = "HBES_Notification",
 }
 
 -- MARK: Safe update
@@ -92,6 +93,9 @@ function GUI.TagPanels.Countdown:CreateTabPanel(parent)
     local soundGroup = GUI:CreateInlineGroup(frame, L["CountdownSoundSettings"])
     GUI:CreateDropdown(soundGroup, L["SoundChannelSettings"], addon.Utilities.SoundChannels, nil, addon.db.Countdown.SoundChannel, function(key)
         addon.db.Countdown.SoundChannel = key
+    end)
+	GUI:CreateSoundSelect(soundGroup, L["StartSound"], addon.db.Countdown.StartSound, function(value)
+        addon.db.Countdown.StartSound = value
     end)
     GUI:CreateInformationTag(soundGroup, "\n")
     GUI:CreateSoundSelect(soundGroup, "5", addon.db.Countdown.FiveSound, function(value)

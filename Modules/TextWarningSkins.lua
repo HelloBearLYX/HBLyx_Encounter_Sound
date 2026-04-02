@@ -7,6 +7,8 @@ local TextWarningSkins = {
 }
 
 -- MARK: Constants
+local COUNTDOWN_ICON = 132349
+local COUNTDOWN_SPELLID = 386164
 
 -- MARK: Initialize
 
@@ -283,11 +285,26 @@ end
 ---Register events
 function TextWarningSkins:RegisterEvents()
     addon.core:RegisterEvent("ENCOUNTER_WARNING", self.head, self.modName)
+    addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.head, self.modName)
 
     self.head:SetScript("OnEvent", function(_, event, ...)
         if event == "ENCOUNTER_WARNING" then
             local encounterWarningInfo = ...
             LoadWarning(self, encounterWarningInfo)
+        elseif event == "START_PLAYER_COUNTDOWN" then
+            local initiatorGUID, _, duration, _, name = ...
+            if initiatorGUID then
+                local class = select(2, GetPlayerInfoByGUID(initiatorGUID)) or "PRIEST"
+                name = C_ClassColor.GetClassColor(class):WrapTextInColorCode(name) or name
+            end
+            duration = duration > 60 and string.format("%d:%02d", math.floor(duration / 60), duration % 60) or tostring(duration)
+            local countdownInfo = {
+                text = name .. L["CountdownTextWarning"] .. duration,
+                iconFileID = COUNTDOWN_ICON,
+                color = CreateColor(1, 1, 1),
+                duration = 3,
+            }
+            LoadWarning(self, countdownInfo)
         end
     end)
 end

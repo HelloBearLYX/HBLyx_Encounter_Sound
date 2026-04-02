@@ -2,6 +2,7 @@ local ADDON_NAME, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 addon.LSM = LibStub("LibSharedMedia-3.0")
+addon.LSM:Register("sound", "HBES_Notification", [[Interface\AddOns\HBLyx_Encounter_Sound\Media\noti.ogg]])
 
 ---Show the RLNeeded popup dialog
 ---@param dialogName string dialog name

@@ -42,27 +42,27 @@ local function PlayCountdownSound(duration)
     if duration == 5 then
         local sound = addon.LSM:Fetch("sound", addon.db.Countdown.FiveSound)
         if sound then
-            PlaySoundFile(sound, "Master")
+            PlaySoundFile(sound, addon.db.Countdown.SoundChannel or "Master")
         end
     elseif duration == 4 then
         local sound = addon.LSM:Fetch("sound", addon.db.Countdown.FourSound)
         if sound then
-            PlaySoundFile(sound, "Master")
+            PlaySoundFile(sound, addon.db.Countdown.SoundChannel or "Master")
         end
     elseif duration == 3 then
         local sound = addon.LSM:Fetch("sound", addon.db.Countdown.ThreeSound)
         if sound then
-            PlaySoundFile(sound, "Master")
+            PlaySoundFile(sound, addon.db.Countdown.SoundChannel or "Master")
         end
     elseif duration == 2 then
         local sound = addon.LSM:Fetch("sound", addon.db.Countdown.TwoSound)
         if sound then
-            PlaySoundFile(sound, "Master")
+            PlaySoundFile(sound, addon.db.Countdown.SoundChannel or "Master")
         end
     elseif duration == 1 then
         local sound = addon.LSM:Fetch("sound", addon.db.Countdown.OneSound)
         if sound then
-            PlaySoundFile(sound, "Master")
+            PlaySoundFile(sound, addon.db.Countdown.SoundChannel or "Master")
         end
     else
         return false
@@ -90,6 +90,11 @@ end
 local function SimpleCountdown(self, duration)
     self.frame:Show()
     self.frame.text:SetText(GetCountdownText(duration))
+    local sound = addon.LSM:Fetch("sound", addon.db.Countdown.StartSound)
+    if sound then
+        PlaySoundFile(sound, addon.db.Countdown.SoundChannel or "Master")
+    end
+
     self.timer = C_Timer.NewTicker(1, function()
         duration = duration - 1
         if duration <= 0 then
@@ -196,6 +201,7 @@ end
 function Countdown:RegisterEvents()
     addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.frame, self.modName)
     addon.core:RegisterEvent("CANCEL_PLAYER_COUNTDOWN", self.frame, self.modName)
+    addon.core:RegisterEvent("CHALLENGE_MODE_START", self.frame, self.modName)
 
     self.frame:SetScript("OnEvent", function(_, event, ...)
         if event == "START_PLAYER_COUNTDOWN" then
@@ -203,6 +209,8 @@ function Countdown:RegisterEvents()
             self:countdown(duration)
         elseif event == "CANCEL_PLAYER_COUNTDOWN" then
             self:countdown(0)
+        elseif event == "CHALLENGE_MODE_START" then
+            self:countdown(10) -- start a 10-second countdown when a Mythic+ dungeon starts
         end
     end)
 end

@@ -129,6 +129,7 @@ L["MergeDesc"] = "|cffff5c00Merge Encounter Configuration|r\nMerge the encounter
 L["Countdown"] = "Countdown"
 L["CountdownSound"] = "Countdown Sound"
 L["CountdownSoundSettings"] = "Countdown Sound Settings"
+L["StartSound"] = "Start Sound"
 
 -- MARK: Style
 L["Color"] = "Color"
@@ -175,6 +176,7 @@ L["CoTankAuras"] = "Co-Tank Auras"
 L["ShowCoTankAuras"] = "Show Co-Tank Auras"
 L["HideBorder"] = "Hide Border"
 L["AutoGossip"] = "Auto Gossip"
+L["CountdownTextWarning"] = " started a countdown: "
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"
