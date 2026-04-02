@@ -14,12 +14,13 @@ addon.GUI = {
 local TABS = {
     {text = L["General"], value = "General"},
     {text = L["EncounterSoundEffects"], value = "EncounterGeneral"},
+    {text = L["Raid"], value = "Raid"},
+    {text = L["Dungeon"], value = "Dungeon"},
     {text = L["HighlightIconsSettings"], value = "HighlightIcons"},
     {text = L["TimelineSkinsSettings"], value = "TimelineSkins"},
     {text = L["TextWarningSkinsSettings"], value = "TextWarningSkins"},
     {text = L["PrivateAuraAnchorSettings"], value = "PrivateAuraAnchor"},
-    {text = L["Raid"], value = "Raid"},
-    {text = L["Dungeon"], value = "Dungeon"},
+    {text = L["Countdown"], value = "Countdown"},
     {text = L["TemplateSettings"], value = "Template"},
     {text = L["Profile"], value = "Profile"},
     {text = L["Contributors"], value = "Contributors"},
@@ -211,6 +212,9 @@ function addon.GUI:Render()
             panel:DoLayout()
         elseif tab == "PrivateAuraAnchor" then
             local panel = addon.GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(container)
+            panel:DoLayout()
+        elseif tab == "Countdown" then
+            local panel = addon.GUI.TagPanels.Countdown:CreateTabPanel(container)
             panel:DoLayout()
         elseif tab == "Raid" then
             local panel = addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true)

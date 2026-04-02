@@ -127,9 +127,12 @@ L["PrivateAuras"] = "私有光环"
 L["New"] = "新增"
 L["Overwritten"] = "覆盖"
 L["MergeDesc"] = "|cffff5c00合并BOSS战配置|r\n将Boss战配置文件与当前配置合并, 重复的条目将被输入的配置文件覆盖\n合并只会合并事件设置和私有光环设置, 其他模块的设置将不会被影响\n\n"
-L["CountDown"] = "倒计时"
+L["Countdown"] = "倒计时"
+L["CountdownSound"] = "倒计时语音"
+L["CountdownSoundSettings"] = "倒计时语音设置"
 
 -- MARK: Style
+L["Color"] = "颜色"
 L["ColorSettings"] = "颜色设置"
 L["FrameStrata"] = "框架层级"
 L["StyleSettings"] = "样式设置"

@@ -335,23 +335,23 @@ function EncounterSound:RegisterEvents()
     self.eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "START_PLAYER_COUNTDOWN" then
             local totalTime = select(3, ...)
-            if not self.countdownEvents then
-                self.countdownEvents = {}
-            end
             local newCoundDownEvent = C_EncounterTimeline.AddScriptEvent({
                 spellID = COUNTDOWN_SPELLID,
                 duration = totalTime,
                 severity = 2,
                 iconFileID = COUNTDOWN_ICON,
-                overrideName = L["CountDown"],
+                overrideName = L["Countdown"],
             })
-            table.insert(self.countdownEvents, newCoundDownEvent)
+
+            if self.countdownEvent then
+                C_EncounterTimeline.CancelScriptEvent(self.countdownEvent)
+            end
+
+            self.countdownEvent = newCoundDownEvent
         elseif event == "CANCEL_PLAYER_COUNTDOWN" then
-            if self.countdownEvents then
-                for _, countdownEvent in ipairs(self.countdownEvents) do
-                    C_EncounterTimeline.CancelScriptEvent(countdownEvent)
-                end
-                self.countdownEvents = nil
+            if self.countdownEvent then
+                C_EncounterTimeline.CancelScriptEvent(self.countdownEvent)
+                self.countdownEvent = nil
             end
         elseif event == "PLAYER_REGEN_ENABLED" then
             if self.pendingPrivateAuraClear then

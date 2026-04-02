@@ -27,6 +27,7 @@ Modules\HighlightIcons.lua
 Modules\TimelineSkins.lua
 Modules\TextWarningSkins.lua
 Modules\PrivateAuraAnchor.lua
+Modules\Countdown.lua
 
 # handle configuration and options
 GUI.lua
@@ -36,6 +37,7 @@ Configs\HighlightIcons.lua
 Configs\TimelineSkins.lua
 Configs\TextWarningSkins.lua
 Configs\PrivateAuraAnchor.lua
+Configs\Countdown.lua
 
 Configs\Profile.lua
 
