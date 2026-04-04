@@ -210,7 +210,7 @@ function Countdown:RegisterEvents()
         elseif event == "CANCEL_PLAYER_COUNTDOWN" then
             self:countdown(0)
         elseif event == "CHALLENGE_MODE_START" then
-            self:countdown(10) -- start a 10-second countdown when a Mythic+ dungeon starts
+            self:countdown(9) -- start a 9-second countdown when a Mythic+ dungeon starts
         end
     end)
 end
