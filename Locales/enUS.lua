@@ -21,10 +21,10 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
 L["ChangeLogContent"] =
+"v3.19\n" .. "-Config UI re-factor, and added new countdown module (skin)\n" ..
 "v3.18\n" .. "-Added two new modules: Private Aura Anchor and Text Warning Skins\n" ..
 "v3.17\n" .. "-Added Timeline Skins module which provides customizable timeline\n" ..
-"v3.16\n" .. "-Add Highlight Icons module which displays highlighted(<= 5s) events in icons\n" ..
-"v3.15\n" .. "-Implemented Templates, Spell Tags, and High-Performance-Sound-Select-Widget\n"
+"v3.16\n" .. "-Add Highlight Icons module which displays highlighted(<= 5s) events in icons\n"
 
 --MARK: Issues
 L["Issues"] = "Issues"
