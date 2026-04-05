@@ -34,7 +34,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	frame:SetLayout("Flow")
 	frame:SetFullWidth(true)
 
-	GUI:CreateInformationTag(frame, L["PrivateAuraAnchorSettingsDesc"], "LEFT")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["PrivateAuraAnchorSettings"] .. "|r", addon.db.PrivateAuraAnchor.Enabled, function(value)
 		addon.db.PrivateAuraAnchor.Enabled = value
 		if addon.core:HasModuleLoaded(MOD_KEY) then

@@ -34,7 +34,6 @@ function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
 	frame:SetLayout("Flow")
 	frame:SetFullWidth(true)
 
-	GUI:CreateInformationTag(frame, L["HighlightIconsSettingsDesc"], "LEFT")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["HighlightIconsSettings"] .. "|r", addon.db.HighlightIcons.Enabled, function(value)
 		addon.db.HighlightIcons.Enabled = value
 		if addon.core:HasModuleLoaded(MOD_KEY) then -- if module is loaded

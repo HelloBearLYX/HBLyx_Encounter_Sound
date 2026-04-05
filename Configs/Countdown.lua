@@ -34,7 +34,6 @@ function GUI.TagPanels.Countdown:CreateTabPanel(parent)
 	frame:SetLayout("Flow")
 	frame:SetFullWidth(true)
 
-	GUI:CreateInformationTag(frame, "|cff0070DD" .. L["Countdown"] .. "|r", "LEFT")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["Countdown"] .. "|r", addon.db.Countdown.Enabled, function(value)
 		addon.db.Countdown.Enabled = value
 		if addon.core:HasModuleLoaded(MOD_KEY) then -- if module is loaded

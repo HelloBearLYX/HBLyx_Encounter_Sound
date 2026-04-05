@@ -31,7 +31,6 @@ function GUI.TagPanels.TextWarningSkins:CreateTabPanel(parent)
 	frame:SetLayout("Flow")
 	frame:SetFullWidth(true)
 
-	GUI:CreateInformationTag(frame, L["TextWarningSkinsSettingsDesc"], "LEFT")
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["TextWarningSkinsSettings"] .. "|r", addon.db.TextWarningSkins.Enabled, function(value)
 		addon.db.TextWarningSkins.Enabled = value
 		if addon.core:HasModuleLoaded(MOD_KEY) then

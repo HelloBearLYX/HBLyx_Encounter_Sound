@@ -37,8 +37,7 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
 	local frame = GUI:CreateScrollFrame(parent)
 	frame:SetLayout("Flow")
 	frame:SetFullWidth(true)
-
-	GUI:CreateInformationTag(frame, L["TimelineSkinsSettingsDesc"], "LEFT")
+	
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["TimelineSkinsSettings"] .. "|r", addon.db.TimelineSkins.Enabled, function(value)
 		addon.db.TimelineSkins.Enabled = value
 		addon:ShowDialog(ADDON_NAME.."RLNeeded")

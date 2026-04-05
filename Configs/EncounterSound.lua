@@ -693,7 +693,6 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 	self.inputEvent = nil
 	self.inputPA = nil
 	self.frame = GUI:CreateScrollFrame(parent)
-    GUI:CreateInformationTag(self.frame, L["EncounterSoundSettingsDesc"], "LEFT")
 	local togglePA = GUI:CreateToggleCheckBox(nil, L["Enable"] .. "|cffffff00" .. L["PrivateAuraSettings"] .. "|r", addon.db.EncounterSound.EnablePrivateAuras, function(value)
 		addon.db.EncounterSound.EnablePrivateAuras = value
 	end)
@@ -828,7 +827,6 @@ function GUI.TagPanels.EncounterSound:CreateTemplatePanel(parent)
 	self.inputPA = nil
 	self.inputTemplate = nil
 	local frame = GUI:CreateScrollFrame(parent)
-	GUI:CreateInformationTag(frame, L["TemplateDesc"], "LEFT")
 	local templateDropdown = GUI:CreateDropdown(nil, L["SelectTemplate"], GetTemplateList(), nil, nil, function(value)
 		self.inputTemplate = value
 
