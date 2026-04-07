@@ -53,6 +53,14 @@ addon.Utilities.GroupRoles = {
 	DAMAGER = L["GroupRole"]["DAMAGER"],
 }
 
+---@enum chatChannel chat channel
+addon.Utilities.ChatChannels = {
+	SAY = "SAY",
+	PARTY = "PARTY",
+	RAID = "RAID",
+	YELL = "YELL",
+}
+
 -- MARK: print
 
 ---Use addon's identifier to print

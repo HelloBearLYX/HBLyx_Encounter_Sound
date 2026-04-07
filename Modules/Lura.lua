@@ -45,6 +45,8 @@ local function AssignRune(self, rune)
     local icon = self.icons[BASE_ICON_ORDERS[self.index]]
     if icon then
         icon.texture:SetTexture(RUNE_PREFIX_PATH .. RUNES[rune])
+        icon.rune = rune
+
         self.assigned = self.assigned + 1
         self.index = self.reverse and self.index - 1 or self.index + 1
     end
@@ -58,7 +60,7 @@ local function RemoveRune(self, index)
     local icon = self.icons[BASE_ICON_ORDERS[index]]
     if icon then
         icon.texture:SetTexture(nil)
-
+        icon.rune = nil
         self.assigned = self.assigned - 1
         self.index = self.reverse and math.max(self.index, index) or math.min(self.index, index)
     end
@@ -88,14 +90,50 @@ local function Reverse(self)
 
             if index == "TOPRIGHT" then
                 local tempTexture = icon.texture:GetTexture()
+                local tempRune = icon.rune
                 icon.texture:SetTexture(self.icons["TOPLEFT"].texture:GetTexture())
+                icon.rune = self.icons["TOPLEFT"].rune
                 self.icons["TOPLEFT"].texture:SetTexture(tempTexture)
+                self.icons["TOPLEFT"].rune = tempRune
             elseif index == "BOTTOMRIGHT" then
                 local tempTexture = icon.texture:GetTexture()
+                local tempRune = icon.rune
                 icon.texture:SetTexture(self.icons["BOTTOMLEFT"].texture:GetTexture())
+                icon.rune = self.icons["BOTTOMLEFT"].rune
                 self.icons["BOTTOMLEFT"].texture:SetTexture(tempTexture)
+                self.icons["BOTTOMLEFT"].rune = tempRune
             end
         end
+    end
+end
+
+-- MARK: Broadcast Runes
+local function BroadcastRunes(self)
+    local output = ""
+    local splitter = "-"
+    -- always broadcast from left to right, so reverse order
+    for i=#BASE_ICON_ORDERS, 1, -1 do
+        local key = BASE_ICON_ORDERS[i]
+        local icon = self.icons[key]
+        if icon and icon.rune then
+            if i == 1 then
+                splitter = ""
+            end
+
+            local runeText = addon.db[self.modName]["Rune_" .. icon.rune] or icon.rune
+            output = output .. runeText .. splitter
+        end
+    end
+
+    local chatChannel = addon.db[self.modName]["ChatChannel"] or addon.Utilities.ChatChannels["SAY"]
+    if chatChannel == "RAID" and not IsInRaid() then
+        return
+    elseif chatChannel == "PARTY" and not IsInGroup() then
+        return
+    elseif addon.db[self.modName]["AssisstantToBroadcast"] and not UnitIsGroupAssistant("player") then
+        return
+    else
+        C_ChatInfo.SendChatMessage(output, chatChannel)
     end
 end
 
@@ -164,7 +202,7 @@ local function CreateIcons(self)
         icon.text = icon:CreateFontString(nil, "OVERLAY")
         icon.text:SetPoint("CENTER", icon, "CENTER", 0, 0)
         icon.text:SetFont(
-            addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+            "Fonts\\FRIZQT__.TTF",
             14,
             "OUTLINE"
         )
@@ -172,6 +210,7 @@ local function CreateIcons(self)
         icon.text:SetText(tostring(i))
         local textAnchorFrom, textAnchorTo = GetTextAnchors(self, key)
         icon.text:SetPoint(textAnchorFrom, icon, textAnchorTo, 0, 0)
+        icon.rune = nil
 
         self.icons[key] = icon
     end
@@ -200,7 +239,7 @@ local function CreateHideButton(self, parent)
     self.hideButton.text = self.hideButton:CreateFontString(nil, "OVERLAY")
     self.hideButton.text:SetPoint("CENTER", self.hideButton, "CENTER", 0, 0)
     self.hideButton.text:SetFont(
-        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+        "Fonts\\FRIZQT__.TTF",
         10,
         "OUTLINE"
     )
@@ -224,6 +263,9 @@ local function CreateRuneButton(self, parent)
         runeButton:SetScript("OnMouseDown", function(_, button)
             if button == "LeftButton" then
                 AssignRune(self, runeKey)
+                if self.assigned >= #BASE_ICON_ORDERS then
+                    BroadcastRunes(self)
+                end
             elseif button == "RightButton" then
                 local lastIndex = self.reverse and math.min(self.index + 1, #BASE_ICON_ORDERS) or math.max(self.index - 1, 1)
                 RemoveRune(self, lastIndex)
@@ -249,13 +291,13 @@ local function CreateRuneButton(self, parent)
     clearButton.text = clearButton:CreateFontString(nil, "OVERLAY")
     clearButton.text:SetPoint("CENTER", clearButton, "CENTER", 0, 0)
     clearButton.text:SetFont(
-        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+        "Fonts\\FRIZQT__.TTF",
         10,
         "OUTLINE"
     )
     clearButton.text:SetTextColor(1, 1, 1, 1)
     clearButton.text:SetText("Clear")
-    clearButton:SetScript("OnClick", function(_, button)
+    clearButton:SetScript("OnClick", function(_, _)
         ClearRunes(self)
     end)
     clearButton:SetScript("OnEnter", function()
@@ -276,7 +318,7 @@ local function CreateRuneButton(self, parent)
     reverseButton.text = reverseButton:CreateFontString(nil, "OVERLAY")
     reverseButton.text:SetPoint("CENTER", reverseButton, "CENTER", 0, 0)
     reverseButton.text:SetFont(
-        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+        "Fonts\\FRIZQT__.TTF",
         10,
         "OUTLINE"
     )
@@ -284,6 +326,14 @@ local function CreateRuneButton(self, parent)
     reverseButton.text:SetText("Rev")
     reverseButton:SetScript("OnClick", function()
         Reverse(self)
+    end)
+    reverseButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(reverseButton, "ANCHOR_RIGHT")
+        GameTooltip:SetText("Reverse order", nil, nil, nil, nil, true)
+        GameTooltip:Show()
+    end)
+    reverseButton:SetScript("OnLeave", function()
+        GameTooltip:Hide()
     end)
 
     table.insert(self.runeButtons, reverseButton)
@@ -311,16 +361,6 @@ local function CreateHelper(self)
     CreateRuneButton(self, self.sideBar)
 end
 
--- MARK: Assign Icon Texture
-local function AssignIconTexture(self, iconKey, rune)
-    if iconKey == "TOP" then return end -- the TOP icon is reserved
-
-    local icon = self.icons[iconKey]
-    if icon then
-        icon.texture:SetTexture("Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Lura\\" .. RUNES[rune])
-    end
-end
-
 -- MARK: Assign Icon Position
 local function AssignIconPosition(self, iconKey)
     local icon = self.icons[iconKey]
@@ -337,7 +377,7 @@ end
 function LuraHelper:UpdateStyle()
     if self.frame then
         local scale = addon.db[self.modName]["Scale"] or 1
-        self.frame:SetFrameStrata(addon.db[self.modName]["FrameStrata"] or "MEDIUM")
+        self.frame:SetFrameStrata(addon.db[self.modName]["FrameStrata"] or "LOW")
         local size = scale * BASE_CANVAS_SIZE
         self.frame:SetSize(size, size) -- keep rectangle shape and use scale to adjust
         self.frame:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
@@ -401,9 +441,24 @@ end
 
 ---Register events
 function LuraHelper:RegisterEvents()
-    -- TODO: Register events needed by your module here, for example:
-    -- local handle = function() Handler(self) end
-    -- addon.core:RegisterEvent("EVENT_NAME", handle)
+    addon.core:RegisterStateMonitor("encounterInfo", self.modName, function()
+        local currentEncounterID = addon.states["encounterInfo"].encounterID
+        if not currentEncounterID then
+            return
+        elseif currentEncounterID == 0 then -- encounter ended
+            if self.frame then
+                self.frame:Hide()
+                self.hideButton:Hide()
+            end
+        elseif currentEncounterID == 3183 then
+            if self.frame then
+                self.frame:Show()
+                self.hideButton:Show()
+            else
+                CreateHelper(self)
+            end
+        end
+    end)
 end
 
 -- MARK: Register Module

@@ -123,7 +123,7 @@ local TABS = {
     {text = L["Universal"], type = "Text"},
     {text = L["General"], type = "Button", panelFunction = function(container) return CreateGeneralPanel(container) end},
     {text = L["UniversalSettings"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.EncounterSound:CreateGeneralPanel(container) end},
-    {text = "LuraHelper", type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.LuraHelper:CreateTabPanel(container) end},
+    {text = L["LuraHelperSettings"], type = "Button", tooltip = L["LuraHelperSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.LuraHelper:CreateTabPanel(container) end},
     {text = L["EncounterSoundEffects"], type = "Text"},
     {text = L["Raid"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true) end},
     {text = L["Dungeon"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, false) end},
