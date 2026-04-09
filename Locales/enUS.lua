@@ -186,6 +186,11 @@ L["CoTankAuras"] = "Co-Tank Auras"
 L["ShowCoTankAuras"] = "Show Co-Tank Auras"
 L["HideBorder"] = "Hide Border"
 L["AutoGossip"] = "Auto Gossip"
+L["Clear"] = "Clear"
+L["ClearAllRunes"] = "Clear all runes"
+L["Reverse"] = "Reverse"
+L["ReverseOrder"] = "Reverse order"
+L["Activate"] = "Open/Close"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"
@@ -234,8 +239,8 @@ L["AssisstantToBroadcast"] = "Authorized Only"
 L["AssisstantToBroadcastDesc"] = "Only Raid Leader and Assisstants are authorized to breadcast."
 L["LuraHelperSettings"] = "L'ura Helper"
 L["LuraHelperSettingsDesc"] = "A broadcast helper module for L'ura encounter(3183)"
-L["LuraHelperInstruction"] = "Broadcast only valid through chat channels currently, AddOne communication is explicitly restricted by Blizzard. However, some tricky way to use AddOne communication is working in progress.\n\n" .. 
-"Broadcast always show the runes from left to right(counter-clockwise), no matter the actual order of the runes."
+L["LuraHelperInstruction"] = "The communication between users is highly delendent on the chat channels(/say, /raid, etc) due to the explicit restrictions from Blizzard on addon communication.\n" ..
+"In order to prevent incorrect messages, please keep clear and no any other message on all following chat channel: say/|cffFF4040yell|r/|cffFF7F00raid|r/|cffFF4800raid warning|r/and/|cff82C5FFping|r\n\n"
 
 -- MARK: Contributors
 L["Contributors"] = "Contributors"

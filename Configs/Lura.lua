@@ -16,11 +16,10 @@ local RUNES = {
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
 	Enabled = true,
-	X = 255,
-	Y = 115,
+	X = 400,
+	Y = 0,
 	Scale = 1,
 	FrameStrata = "LOW",
-    ChatChannel = "SAY",
     AssisstantToBroadcast = true,
 
     -- Runes
@@ -57,6 +56,14 @@ function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
             end
         end
 	end)
+    GUI:CreateButton(frame, L["Activate"], function ()
+        if not addon.core:HasModuleLoaded(MOD_KEY) or InCombatLockdown() then
+            return
+        end
+
+        local isActive = addon.core:GetModule(MOD_KEY):IsActivate()
+        addon.core:GetModule(MOD_KEY):Activate(not isActive)
+    end)
     GUI:CreateButton(frame, L["ResetMod"], function ()
 		addon.Utilities:SetPopupDialog(
 			ADDON_NAME .. "ResetMod",
@@ -71,20 +78,6 @@ function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
 
     local coreSettingsGroup = GUI:CreateInlineGroup(frame, L["CoreSettings"])
     GUI:CreateInformationTag(coreSettingsGroup, L["LuraHelperInstruction"], "LEFT")
-    GUI:CreateDropdown(coreSettingsGroup, L["BroadcastChannel"], addon.Utilities.ChatChannels, nil, addon.db.LuraHelper.ChatChannel, function(value)
-        addon.db.LuraHelper.ChatChannel = value
-    end)
-    local authorizedBroadcastCheckBox = GUI:CreateToggleCheckBox(coreSettingsGroup, L["AssisstantToBroadcast"], addon.db.LuraHelper.AssisstantToBroadcast, function(value)
-        addon.db.LuraHelper.AssisstantToBroadcast = value
-    end)
-    authorizedBroadcastCheckBox:SetCallback("OnEnter", function()
-        GameTooltip:SetOwner(authorizedBroadcastCheckBox.frame, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["AssisstantToBroadcastDesc"], nil, nil, nil, nil, true)
-        GameTooltip:Show()
-    end)
-    authorizedBroadcastCheckBox:SetCallback("OnLeave", function()
-        GameTooltip:Hide()
-    end)
     GUI:CreateInformationTag(coreSettingsGroup, "\n")
     local selectedRune = nil
     local runeNameEditBox = GUI:CreateEditBox(nil, L["RuneName"], nil, function(value)

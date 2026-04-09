@@ -4,6 +4,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 ---@class LuraHelper
 local LuraHelper = {
     modName = "LuraHelper",
+    timer = nil,
+    lastMsg = 0,
 }
 
 -- MARK: Constants
@@ -11,7 +13,9 @@ local BASE_CANVAS_SIZE = 210
 local BASE_ICON_SIZE = 50
 local BASE_CENTER_SIZE = {50, 75} -- width, height
 local BASE_BUTTON_HEIGHT = 20
-local BASE_BUTTON_RUNE = 30
+local BASE_BUTTON_RUNE = 42 -- 30
+local FADE_TIME = 15
+local MESSAGE_INTERVAL = 1.0
 local BASE_ICON_ORDERS = {"TOPRIGHT", "BOTTOMRIGHT", "BOTTOM", "BOTTOMLEFT", "TOPLEFT"}
 local RUNE_PREFIX_PATH = "Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Lura\\"
 ---@enum RUNES
@@ -22,6 +26,23 @@ local RUNES = {
         T = "rune_t.png",
         X = "rune_x.png",
     }
+---@enum MESSAGE_PARSE
+local MESSAGE_PARSE = {
+    CHAT_MSG_SAY = "CIRCLE",
+    CHAT_MSG_RAID = "DIAMOND",
+    CHAT_MSG_RAID_LEADER = "DIAMOND",
+    CHAT_MSG_YELL = "TRIANGLE",
+    CHAT_MSG_RAID_WARNING = "T",
+    CHAT_MSG_PING = "X",
+}
+
+local MACROS = {
+    CIRCLE = "/s Lura Circle",
+    DIAMOND = "/ra Lura Diamond",
+    TRIANGLE = "/yell Lura Triangle",
+    T = "/rw Lura T",
+    X = "/ping assist",
+}
 
 -- MARK: Initialize
 
@@ -31,26 +52,36 @@ function LuraHelper:Initialize()
     self.reverse = false -- whether the order of icons is reversed
     self.index = 1
     self.assigned = 0 -- number of assigned runes
+    self.macros = {}
+
+    SetCVar("showPingsInChat", 1) -- force showPingsInChat
+
+    self.eventFrame = CreateFrame("Frame", ADDON_NAME.. "_" .. self.modName, UIParent)
 
     return self
 end
 
--- MARK: Rune I/O
+-- MARK: Toggle Combat Events
 
-local function AssignRune(self, rune)
-    if self.assigned >= #BASE_ICON_ORDERS then
-        return
-    end
-
-    local icon = self.icons[BASE_ICON_ORDERS[self.index]]
-    if icon then
-        icon.texture:SetTexture(RUNE_PREFIX_PATH .. RUNES[rune])
-        icon.rune = rune
-
-        self.assigned = self.assigned + 1
-        self.index = self.reverse and self.index - 1 or self.index + 1
+local function ToggleCombatEvents(self, on)
+    if on then
+        self.eventFrame:RegisterEvent("CHAT_MSG_SAY")
+        self.eventFrame:RegisterEvent("CHAT_MSG_YELL")
+        self.eventFrame:RegisterEvent("CHAT_MSG_PING")
+        self.eventFrame:RegisterEvent("CHAT_MSG_RAID")
+        self.eventFrame:RegisterEvent("CHAT_MSG_RAID_LEADER")
+        self.eventFrame:RegisterEvent("CHAT_MSG_RAID_WARNING")
+    else
+        self.eventFrame:UnregisterEvent("CHAT_MSG_SAY")
+        self.eventFrame:UnregisterEvent("CHAT_MSG_YELL")
+        self.eventFrame:UnregisterEvent("CHAT_MSG_PING")
+        self.eventFrame:UnregisterEvent("CHAT_MSG_RAID")
+        self.eventFrame:UnregisterEvent("CHAT_MSG_RAID_LEADER")
+        self.eventFrame:UnregisterEvent("CHAT_MSG_RAID_WARNING")
     end
 end
+
+-- MARK: Rune I/O
 
 local function RemoveRune(self, index)
     if self.assigned <= 0 then
@@ -71,6 +102,46 @@ local function ClearRunes(self)
     for i, _ in pairs(BASE_ICON_ORDERS) do
         RemoveRune(self, i)
     end
+end
+
+local function AssignRune(self, rune)
+    if self.assigned >= #BASE_ICON_ORDERS or not rune then
+        return
+    end
+
+    local icon = self.icons[BASE_ICON_ORDERS[self.index]]
+    if icon then
+        icon.texture:SetTexture(RUNE_PREFIX_PATH .. RUNES[rune])
+        icon.rune = rune
+
+        self.assigned = self.assigned + 1
+        self.index = self.reverse and self.index - 1 or self.index + 1
+
+        if self.timer then
+            self.timer:Cancel()
+            self.timer = nil
+        end
+        self.timer = C_Timer.NewTimer(FADE_TIME, function()
+            ClearRunes(self)
+        end)
+    end
+end
+
+-- MARK: Parse Message
+
+---Parse event type for runes
+local function ParseEvent(self,event)
+    local rune = MESSAGE_PARSE[event]
+    
+    -- to prevent spamming messages
+    -- local now = GetTime()
+    -- if self.lastMsg + MESSAGE_INTERVAL > now then
+    --     -- RemoveRune(self, self.reverse and self.index + 1 or self.index - 1) -- remove the last assigned rune
+    --     return nil
+    -- end
+    -- self.lastMsg = now
+
+    return rune
 end
 
 local function Reverse(self)
@@ -104,36 +175,6 @@ local function Reverse(self)
                 self.icons["BOTTOMLEFT"].rune = tempRune
             end
         end
-    end
-end
-
--- MARK: Broadcast Runes
-local function BroadcastRunes(self)
-    local output = ""
-    local splitter = "-"
-    -- always broadcast from left to right, so reverse order
-    for i=#BASE_ICON_ORDERS, 1, -1 do
-        local key = BASE_ICON_ORDERS[i]
-        local icon = self.icons[key]
-        if icon and icon.rune then
-            if i == 1 then
-                splitter = ""
-            end
-
-            local runeText = addon.db[self.modName]["Rune_" .. icon.rune] or icon.rune
-            output = output .. runeText .. splitter
-        end
-    end
-
-    local chatChannel = addon.db[self.modName]["ChatChannel"] or addon.Utilities.ChatChannels["SAY"]
-    if chatChannel == "RAID" and not IsInRaid() then
-        return
-    elseif chatChannel == "PARTY" and not IsInGroup() then
-        return
-    elseif addon.db[self.modName]["AssisstantToBroadcast"] and not UnitIsGroupAssistant("player") then
-        return
-    else
-        C_ChatInfo.SendChatMessage(output, chatChannel)
     end
 end
 
@@ -172,7 +213,7 @@ local function GetTextAnchors(self, anchor)
     end
 end
 
--- MARK: Create Helper
+-- MARK: Main Frame
 
 local function CreateMainFrame(self)
     self.frame = CreateFrame("Frame", ADDON_NAME.. "_" .. self.modName, UIParent)
@@ -183,6 +224,8 @@ local function CreateMainFrame(self)
     self.frame.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
     self.frame.border:SetBackdropBorderColor(0, 0, 0, 1)
 end
+
+-- MARK: Icons
 
 local function CreateIcons(self)
     self.centerIcon = self.frame:CreateTexture(nil, "ARTWORK")
@@ -216,9 +259,12 @@ local function CreateIcons(self)
     end
 end
 
-local function CreateHideButton(self, parent)
+-- MARK: General Button
+
+local function CreateGeneralButton(self)
+    -- hidden button
     self.hideButton = CreateFrame("Button", nil, UIParent)
-    self.hideButton:SetPoint("BOTTOM", parent, "TOP", 0, 0)
+    self.hideButton:SetPoint("BOTTOMLEFT", self.frame, "TOPLEFT", 0, 0)
     self.hideButton.background = self.hideButton:CreateTexture(nil, "BACKGROUND")
     self.hideButton.background:SetAllPoints()
     self.hideButton.border = CreateFrame("Frame", nil, self.hideButton, "BackdropTemplate")
@@ -245,45 +291,12 @@ local function CreateHideButton(self, parent)
     )
     self.hideButton.text:SetTextColor(1, 1, 1, 1)
     self.hideButton.text:SetText(L["Hide"])
-end
 
-local function CreateRuneButton(self, parent)
-    self.runeButtons = self.runeButtons or {}
-    for runeKey, runeFile in pairs(RUNES) do
-        local runeButton = CreateFrame("Button", nil, parent)
-        runeButton.border = CreateFrame("Frame", nil, runeButton, "BackdropTemplate")
-        runeButton.border:SetAllPoints()
-        runeButton.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
-        runeButton.border:SetBackdropBorderColor(0, 0, 0, 1)
-
-        runeButton.texture = runeButton:CreateTexture(nil, "ARTWORK")
-        runeButton.texture:SetAllPoints()
-        runeButton.texture:SetTexture("Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Lura\\" .. runeFile)
-        runeButton.name = runeKey
-        runeButton:SetScript("OnMouseDown", function(_, button)
-            if button == "LeftButton" then
-                AssignRune(self, runeKey)
-                if self.assigned >= #BASE_ICON_ORDERS then
-                    BroadcastRunes(self)
-                end
-            elseif button == "RightButton" then
-                local lastIndex = self.reverse and math.min(self.index + 1, #BASE_ICON_ORDERS) or math.max(self.index - 1, 1)
-                RemoveRune(self, lastIndex)
-            end
-        end)
-        runeButton:SetScript("OnEnter", function()
-            GameTooltip:SetOwner(runeButton, "ANCHOR_RIGHT")
-            GameTooltip:SetText("Left - Assign\nRight - Remove", nil, nil, nil, nil, true)
-            GameTooltip:Show()
-        end)
-        runeButton:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-        end)
-
-        table.insert(self.runeButtons, runeButton)
-    end
-
-    local clearButton = CreateFrame("Button", nil, parent)
+    -- clear button
+    local clearButton = CreateFrame("Button", nil, self.frame)
+    clearButton:SetPoint("LEFT", self.hideButton, "RIGHT", 0, 0)
+    clearButton.background = clearButton:CreateTexture(nil, "BACKGROUND")
+    clearButton.background:SetAllPoints()
     clearButton.border = CreateFrame("Frame", nil, clearButton, "BackdropTemplate")
     clearButton.border:SetAllPoints()
     clearButton.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
@@ -296,21 +309,25 @@ local function CreateRuneButton(self, parent)
         "OUTLINE"
     )
     clearButton.text:SetTextColor(1, 1, 1, 1)
-    clearButton.text:SetText("Clear")
+    clearButton.text:SetText(L["Clear"])
     clearButton:SetScript("OnClick", function(_, _)
         ClearRunes(self)
     end)
     clearButton:SetScript("OnEnter", function()
         GameTooltip:SetOwner(clearButton, "ANCHOR_RIGHT")
-        GameTooltip:SetText("Clear all runes", nil, nil, nil, nil, true)
+        GameTooltip:SetText(L["ClearAllRunes"], nil, nil, nil, nil, true)
         GameTooltip:Show()
     end)
     clearButton:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
-    table.insert(self.runeButtons, clearButton)
+    self.clearButton = clearButton
 
-    local reverseButton = CreateFrame("Button", nil, parent)
+    -- reverse button
+    local reverseButton = CreateFrame("Button", nil, self.frame)
+    reverseButton:SetPoint("LEFT", clearButton, "RIGHT", 0, 0)
+    reverseButton.background = reverseButton:CreateTexture(nil, "BACKGROUND")
+    reverseButton.background:SetAllPoints()
     reverseButton.border = CreateFrame("Frame", nil, reverseButton, "BackdropTemplate")
     reverseButton.border:SetAllPoints()
     reverseButton.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
@@ -323,21 +340,45 @@ local function CreateRuneButton(self, parent)
         "OUTLINE"
     )
     reverseButton.text:SetTextColor(1, 1, 1, 1)
-    reverseButton.text:SetText("Rev")
+    reverseButton.text:SetText(L["Reverse"])
     reverseButton:SetScript("OnClick", function()
         Reverse(self)
     end)
     reverseButton:SetScript("OnEnter", function()
         GameTooltip:SetOwner(reverseButton, "ANCHOR_RIGHT")
-        GameTooltip:SetText("Reverse order", nil, nil, nil, nil, true)
+        GameTooltip:SetText(L["ReverseOrder"], nil, nil, nil, nil, true)
         GameTooltip:Show()
     end)
     reverseButton:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
-
-    table.insert(self.runeButtons, reverseButton)
+    self.reverseButton = reverseButton
 end
+
+-- MARK: Rune Button
+
+local function CreateRuneButton(self, parent)
+    self.runeButtons = self.runeButtons or {}
+    for runeKey, runeFile in pairs(RUNES) do
+        local runeButton = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate")
+        runeButton.border = CreateFrame("Frame", nil, runeButton, "BackdropTemplate")
+        runeButton.border:SetAllPoints()
+        runeButton.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
+        runeButton.border:SetBackdropBorderColor(0, 0, 0, 1)
+
+        runeButton.texture = runeButton:CreateTexture(nil, "ARTWORK")
+        runeButton.texture:SetAllPoints()
+        runeButton.texture:SetTexture("Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Lura\\" .. runeFile)
+        runeButton.name = runeKey
+        runeButton:SetAttribute("type", "macro")
+        runeButton:SetAttribute("macrotext", MACROS[runeKey] or "")
+        runeButton:RegisterForClicks("AnyDown")
+
+        table.insert(self.runeButtons, runeButton)
+    end
+end
+
+-- MARK: Side Bar
 
 local function CreateSideBar(self)
     self.sideBar = CreateFrame("Frame", nil, self.frame)
@@ -348,17 +389,25 @@ local function CreateSideBar(self)
     self.sideBar.border:SetAllPoints()
     self.sideBar.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
     self.sideBar.border:SetBackdropBorderColor(0, 0, 0, 1)
-
-    CreateHideButton(self, self.sideBar)
-
-
 end
+
+-- MARK: Create Helpers
 
 local function CreateHelper(self)
     CreateMainFrame(self)
     CreateIcons(self)
     CreateSideBar(self)
+    CreateGeneralButton(self)
     CreateRuneButton(self, self.sideBar)
+
+    ToggleCombatEvents(self, true)
+    self.frame:HookScript("OnShow", function()
+        ToggleCombatEvents(self, true)
+        if self.hideButton then self.hideButton:Show() end
+    end)
+    self.frame:HookScript("OnHide", function()
+        ToggleCombatEvents(self, false)
+    end)
 end
 
 -- MARK: Assign Icon Position
@@ -396,17 +445,57 @@ function LuraHelper:UpdateStyle()
             AssignIconPosition(self, key)
         end
 
+        local sideIconSize = scale * BASE_BUTTON_RUNE
         if self.sideBar then
-            local sideIconSize = scale * BASE_BUTTON_RUNE
             self.sideBar:SetSize(sideIconSize, size)
             self.sideBar.background:SetColorTexture(0, 0, 0, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
         
-            self.hideButton:SetSize(sideIconSize, scale * BASE_BUTTON_HEIGHT)
-            self.hideButton.background:SetColorTexture(0, 0, 0, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
-            for i, runeButton in ipairs(self.runeButtons) do
+            for i, runeButton in ipairs(self.runeButtons or {}) do
                 runeButton:SetSize(sideIconSize, sideIconSize)
                 runeButton:SetPoint("TOPLEFT", self.sideBar, "TOPLEFT", 0, - (i-1) * sideIconSize)
             end
+        end
+
+        if self.hideButton then
+            self.hideButton:SetSize(sideIconSize, scale * BASE_BUTTON_HEIGHT)
+            self.clearButton:SetSize(sideIconSize, scale * BASE_BUTTON_HEIGHT)
+            self.reverseButton:SetSize(sideIconSize, scale * BASE_BUTTON_HEIGHT)
+            self.hideButton.background:SetColorTexture(0, 0, 0, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
+            self.clearButton.background:SetColorTexture(0, 1, 0, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
+            self.reverseButton.background:SetColorTexture(0, 0, 1, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
+        end
+    end
+
+    -- update macros contents
+    MACROS = {
+        CIRCLE = "/s " .. (addon.db[self.modName]["Rune_CIRCLE"] or "Lura Circle"),
+        DIAMOND = "/ra " .. (addon.db[self.modName]["Rune_DIAMOND"] or "Lura Diamond"),
+        TRIANGLE = "/yell " .. (addon.db[self.modName]["Rune_TRIANGLE"] or "Lura Triangle"),
+        T = "/rw " .. (addon.db[self.modName]["Rune_T"] or "Lura T"),
+        X = "/ping assist",
+    }
+end
+
+-- MARK: IsActivate
+
+function LuraHelper:IsActivate()
+    return self.frame and self.frame:IsShown()
+end
+
+-- MARK: Activate
+
+function LuraHelper:Activate(on)
+    if on then
+        if not self.frame then
+            CreateHelper(self)
+        else
+            self.frame:Show()
+        end
+        self:UpdateStyle()
+    else
+        if self.frame then
+            self.frame:Hide()
+            self.hideButton:Hide()
         end
     end
 end
@@ -420,20 +509,9 @@ function LuraHelper:Test(on)
         return
     end
 
+    self:Activate(on)
     if on then
-        if not self.frame then
-            CreateHelper(self)
-        else
-            self.frame:Show()
-            self.hideButton:Show()
-        end
-        self:UpdateStyle()
         addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
-    else
-        if self.frame then
-            self.frame:Hide()
-            self.hideButton:Hide()
-        end
     end
 end
 
@@ -441,23 +519,11 @@ end
 
 ---Register events
 function LuraHelper:RegisterEvents()
-    addon.core:RegisterStateMonitor("encounterInfo", self.modName, function()
-        local currentEncounterID = addon.states["encounterInfo"].encounterID
-        if not currentEncounterID then
-            return
-        elseif currentEncounterID == 0 then -- encounter ended
-            if self.frame then
-                self.frame:Hide()
-                self.hideButton:Hide()
-            end
-        elseif currentEncounterID == 3183 then
-            if self.frame then
-                self.frame:Show()
-                self.hideButton:Show()
-            else
-                CreateHelper(self)
-            end
-        end
+    -- combat events are registered independenly, to avoid unnecessary triggeres
+    self.eventFrame:SetScript("OnEvent", function(_, event, ...)
+        local rune = ParseEvent(self, event)
+
+        AssignRune(self, rune)
     end)
 end
 

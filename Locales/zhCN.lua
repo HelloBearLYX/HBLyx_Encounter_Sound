@@ -188,6 +188,11 @@ L["CoTankAuras"] = "副坦克光环"
 L["ShowCoTankAuras"] = "显示副坦克光环"
 L["HideBorder"] = "隐藏边框"
 L["AutoGossip"] = "自动对话"
+L["Clear"] = "清除"
+L["ClearAllRunes"] = "清除所有符文"
+L["Reverse"] = "反转"
+L["ReverseOrder"] = "反转顺序"
+L["Activate"] = "打开/关闭"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "BOSS战音效"
@@ -236,8 +241,8 @@ L["AssisstantToBroadcast"] = "通报权限"
 L["AssisstantToBroadcastDesc"] = "只有团队领袖和助理有权限通报"
 L["LuraHelperSettings"] = "鲁拉助手"
 L["LuraHelperSettingsDesc"] = "鲁拉首领战的广播助手模块(3183)"
-L["LuraHelperInstruction"] = "通报目前仅通过有效的聊天频道, 插件通信被暴雪明确限制。然而, 一些使用插件通信的巧妙方法正在开发中\n\n" ..
-"通报总是从左到右(逆时针)显示符文，无论符文的实际顺序如何"
+L["LuraHelperInstruction"] = "用户之间的通信高度依赖于聊天频道(/say, /raid等), 这是由于暴雪对插件通信的明确限制\n" ..
+"为了防止错误消息, 请保持以下所有聊天频道清晰, 并且不要发送任何其他消息: 说/|cffFF4040大喊|r/|cffFF7F00团队|r/|cffFF4800团队通知|r/和/|cff82C5FFping标记|r\n\n"
 
 -- MARK: Contributors
 L["Contributors"] = "贡献者"
