@@ -141,7 +141,7 @@ L["CountdownSound"] = "倒计时语音"
 L["CountdownSoundSettings"] = "倒计时语音设置"
 L["CountdownTextWarning"] = " 开始了一个倒计时: "
 L["CountdownDesc"] = "替换暴雪的倒计时, 提供可自定义的声音警报"
-
+L["FadeTime"] = "淡出时间"
 
 -- MARK: Style
 L["Color"] = "颜色"
@@ -242,7 +242,7 @@ L["AssisstantToBroadcastDesc"] = "只有团队领袖和助理有权限通报"
 L["LuraHelperSettings"] = "鲁拉助手"
 L["LuraHelperSettingsDesc"] = "鲁拉首领战的广播助手模块(3183)"
 L["LuraHelperInstruction"] = "用户之间的通信高度依赖于聊天频道(/say, /raid等), 这是由于暴雪对插件通信的明确限制\n" ..
-"为了防止错误消息, 请保持以下所有聊天频道清晰, 并且不要发送任何其他消息: 说/|cffFF4040大喊|r/|cffFF7F00团队|r/|cffFF4800团队通知|r/和/|cff82C5FFping标记|r\n\n"
+"为了防止错误消息, 请保持以下所有聊天频道清晰, 并且不要发送任何其他消息: 说/|cffFF4040大喊|r/|cffFF7F00团队|r/|cffFF4800团队通知|r/|cff82C5FFping标记|r\n\n"
 
 -- MARK: Contributors
 L["Contributors"] = "贡献者"

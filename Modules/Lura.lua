@@ -6,6 +6,7 @@ local LuraHelper = {
     modName = "LuraHelper",
     timer = nil,
     lastMsg = 0,
+    isTestMode = false,
 }
 
 -- MARK: Constants
@@ -57,6 +58,11 @@ function LuraHelper:Initialize()
     SetCVar("showPingsInChat", 1) -- force showPingsInChat
 
     self.eventFrame = CreateFrame("Frame", ADDON_NAME.. "_" .. self.modName, UIParent)
+
+    SLASH_HBES_LURA1 = "/lura"
+    SlashCmdList["HBES_LURA"] = function()
+        self:Activate(not self:IsActivate())
+    end
 
     return self
 end
@@ -121,7 +127,7 @@ local function AssignRune(self, rune)
             self.timer:Cancel()
             self.timer = nil
         end
-        self.timer = C_Timer.NewTimer(FADE_TIME, function()
+        self.timer = C_Timer.NewTimer(addon.db[self.modName]["FadeTime"] or FADE_TIME, function()
             ClearRunes(self)
         end)
     end
@@ -479,7 +485,7 @@ end
 -- MARK: IsActivate
 
 function LuraHelper:IsActivate()
-    return self.frame and self.frame:IsShown()
+    return self.frame and self.frame:IsShown() or false
 end
 
 -- MARK: Activate
@@ -509,9 +515,15 @@ function LuraHelper:Test(on)
         return
     end
 
-    self:Activate(on)
     if on then
+        self.isTestMode = true
+        self:Activate(on)
         addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
+    else
+        if self.isTestMode then
+            self:Activate(on)
+            self.isTestMode = false
+        end
     end
 end
 

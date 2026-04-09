@@ -140,6 +140,7 @@ L["CountdownSound"] = "Countdown Sound"
 L["CountdownSoundSettings"] = "Countdown Sound Settings"
 L["CountdownTextWarning"] = " started a countdown: "
 L["CountdownDesc"] = "Customizable replacement for Blizzard's countdown timer, with customizable sound alerts."
+L["FadeTime"] = "Fade Time"
 
 -- MARK: Style
 L["Color"] = "Color"
@@ -240,7 +241,7 @@ L["AssisstantToBroadcastDesc"] = "Only Raid Leader and Assisstants are authorize
 L["LuraHelperSettings"] = "L'ura Helper"
 L["LuraHelperSettingsDesc"] = "A broadcast helper module for L'ura encounter(3183)"
 L["LuraHelperInstruction"] = "The communication between users is highly delendent on the chat channels(/say, /raid, etc) due to the explicit restrictions from Blizzard on addon communication.\n" ..
-"In order to prevent incorrect messages, please keep clear and no any other message on all following chat channel: say/|cffFF4040yell|r/|cffFF7F00raid|r/|cffFF4800raid warning|r/and/|cff82C5FFping|r\n\n"
+"In order to prevent incorrect messages, please keep clear and no any other message on all following chat channel: say/|cffFF4040yell|r/|cffFF7F00raid|r/|cffFF4800raid warning|r/|cff82C5FFping|r\n\n"
 
 -- MARK: Contributors
 L["Contributors"] = "Contributors"

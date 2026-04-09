@@ -2,7 +2,6 @@ local ADDON_NAME, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 local GUI = addon.GUI
 local MOD_KEY = "LuraHelper"
-local MOD_LABEL = "LuraHelper"
 
 local RUNE_PREFIX_PATH = "Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Lura\\"
 local RUNES = {
@@ -20,7 +19,7 @@ addon.configurationList[MOD_KEY] = {
 	Y = 0,
 	Scale = 1,
 	FrameStrata = "LOW",
-    AssisstantToBroadcast = true,
+    FadeTime = 15,
 
     -- Runes
     Rune_CIRCLE = L["CIRCLE"],
@@ -78,6 +77,9 @@ function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
 
     local coreSettingsGroup = GUI:CreateInlineGroup(frame, L["CoreSettings"])
     GUI:CreateInformationTag(coreSettingsGroup, L["LuraHelperInstruction"], "LEFT")
+    GUI:CreateSlider(coreSettingsGroup, L["FadeTime"], 3, 30, 1, addon.db.LuraHelper.FadeTime, function(value)
+        addon.db.LuraHelper.FadeTime = value
+    end)
     GUI:CreateInformationTag(coreSettingsGroup, "\n")
     local selectedRune = nil
     local runeNameEditBox = GUI:CreateEditBox(nil, L["RuneName"], nil, function(value)
