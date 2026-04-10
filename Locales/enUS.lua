@@ -21,6 +21,7 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
 L["ChangeLogContent"] =
+"v3.20\n" .. "-L'ura Helper released\n" ..
 "v3.19\n" .. "-Config UI re-factor, and added new countdown module (skin)\n" ..
 "v3.18\n" .. "-Added two new modules: Private Aura Anchor and Text Warning Skins\n" ..
 "v3.17\n" .. "-Added Timeline Skins module which provides customizable timeline\n" ..
@@ -141,6 +142,7 @@ L["CountdownSoundSettings"] = "Countdown Sound Settings"
 L["CountdownTextWarning"] = " started a countdown: "
 L["CountdownDesc"] = "Customizable replacement for Blizzard's countdown timer, with customizable sound alerts."
 L["FadeTime"] = "Fade Time"
+L["Undo"] = "Undo"
 
 -- MARK: Style
 L["Color"] = "Color"
@@ -192,6 +194,7 @@ L["ClearAllRunes"] = "Clear all runes"
 L["Reverse"] = "Reverse"
 L["ReverseOrder"] = "Reverse order"
 L["Activate"] = "Open/Close"
+L["BackgroundOpacity"] = "Background Opacity"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"
@@ -229,19 +232,15 @@ L["ApplyTemplate"] = "Apply Template"
 L["TemplateDesc"] = "Quickly applying setting templates for encounter events."
 
 -- MARK: Lura Runes
-L["CIRCLE"] = "Circle"
-L["DIAMOND"] = "Diamond"
-L["TRIANGLE"] = "Triangle"
-L["T"] = "T"
-L["X"] = "X"
-L["SelectRune"] = "Select Rune"
-L["RuneName"] = "Rune Name"
 L["AssisstantToBroadcast"] = "Authorized Only"
 L["AssisstantToBroadcastDesc"] = "Only Raid Leader and Assisstants are authorized to breadcast."
 L["LuraHelperSettings"] = "L'ura Helper"
+L["UndoLastRune"] = "Undo last rune"
 L["LuraHelperSettingsDesc"] = "A broadcast helper module for L'ura encounter(3183)"
-L["LuraHelperInstruction"] = "The communication between users is highly delendent on the chat channels(/say, /raid, etc) due to the explicit restrictions from Blizzard on addon communication.\n" ..
-"In order to prevent incorrect messages, please keep clear and no any other message on all following chat channel: say/|cffFF4040yell|r/|cffFF7F00raid|r/|cffFF4800raid warning|r/|cff82C5FFping|r\n\n"
+L["LuraHelperInstruction"] = "The communication between users is highly delendent on the chat channels(/raid and /rw) due to the explicit restrictions from Blizzard on addon communication.\n" ..
+"This module will be loaded automatically when the boss encounter starts or can be enabled manually in the configuration panel.\n" ..
+"The rune buttons and undo button are only show for raid leader or raid assisstants\n" ..
+"In order to prevent incorrect messages, please keep clear and no any other message on all following chat channel: |cffFF7F00raid|r/|cffFF4800raid warning|r\n\n"
 
 -- MARK: Contributors
 L["Contributors"] = "Contributors"

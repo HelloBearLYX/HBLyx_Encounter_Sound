@@ -3,30 +3,15 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 local GUI = addon.GUI
 local MOD_KEY = "LuraHelper"
 
-local RUNE_PREFIX_PATH = "Interface\\AddOns\\HBLyx_Encounter_Sound\\Media\\Lura\\"
-local RUNES = {
-    CIRCLE = "|T" .. RUNE_PREFIX_PATH .. "rune_circle.png" .. ":20:20|t",
-    DIAMOND = "|T" .. RUNE_PREFIX_PATH .. "rune_diamond.png" .. ":20:20|t",
-    TRIANGLE = "|T" .. RUNE_PREFIX_PATH .. "rune_triangle.png" .. ":20:20|t",
-    T = "|T" .. RUNE_PREFIX_PATH .. "rune_t.png" .. ":20:20|t",
-    X = "|T" .. RUNE_PREFIX_PATH .. "rune_x.png" .. ":20:20|t",
-}
-
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
 	Enabled = true,
 	X = 400,
 	Y = 0,
 	Scale = 1,
+	BackgroundOpacity = 0.5,
 	FrameStrata = "LOW",
     FadeTime = 15,
-
-    -- Runes
-    Rune_CIRCLE = L["CIRCLE"],
-    Rune_DIAMOND = L["DIAMOND"],
-    Rune_TRIANGLE = L["TRIANGLE"],
-    Rune_T = L["T"],
-    Rune_X = L["X"],
 }
 
 -- MARK: Safe update
@@ -80,18 +65,6 @@ function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
     GUI:CreateSlider(coreSettingsGroup, L["FadeTime"], 3, 30, 1, addon.db.LuraHelper.FadeTime, function(value)
         addon.db.LuraHelper.FadeTime = value
     end)
-    GUI:CreateInformationTag(coreSettingsGroup, "\n")
-    local selectedRune = nil
-    local runeNameEditBox = GUI:CreateEditBox(nil, L["RuneName"], nil, function(value)
-        if selectedRune then
-            addon.db.LuraHelper["Rune_" .. selectedRune] = value
-        end
-    end)
-    GUI:CreateDropdown(coreSettingsGroup, L["SelectRune"], RUNES, nil, nil, function(value)
-        selectedRune = value
-        runeNameEditBox:SetText(addon.db.LuraHelper["Rune_" .. value] or "")
-    end)
-    coreSettingsGroup:AddChild(runeNameEditBox)
 
 	-- MARK: Style
 	local styleGroup = GUI:CreateInlineGroup(frame, L["StyleSettings"])
@@ -102,6 +75,10 @@ function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
     GUI:CreateDropdown()
 	GUI:CreateSlider(styleGroup, L["Scale"], 0.5, 3, 0.01, addon.db.LuraHelper.Scale, function(value)
 		addon.db.LuraHelper.Scale = value
+		update()
+	end)
+	GUI:CreateSlider(styleGroup, L["BackgroundOpacity"], 0, 1, 0.01, addon.db.LuraHelper.BackgroundOpacity, function(value)
+		addon.db.LuraHelper.BackgroundOpacity = value
 		update()
 	end)
 

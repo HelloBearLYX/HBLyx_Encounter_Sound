@@ -116,6 +116,11 @@ local function SetUpSlashCommand()
 			addon.core:GetModule("EncounterSound"):TestSound(tonumber(rest))
 		elseif command == "dev" or command == "developer" then
 			addon.DeveloperTools:DisplayAddonInfo()
+		elseif command == "lura" then
+			if addon.core:HasModuleLoaded("LuraHelper") then
+				local luraHelper = addon.core:GetModule("LuraHelper")
+				luraHelper:Activate(not luraHelper:IsActivate()) -- toggle
+			end
 		end
 	end
 end
@@ -157,7 +162,7 @@ end
 
 ---Initialization before main
 function addon:Initialize()
-	addon.version = "3.19"
+	addon.version = "3.20"
 
 	-- set up profile and configures
 	InitializeConfig()
