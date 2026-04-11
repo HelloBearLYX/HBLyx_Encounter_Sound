@@ -30,10 +30,10 @@ local RUNES = {
 
 local MACROS = {
     CIRCLE = "/raid " .. RUNE_PREFIX_PATH .. "rune_circle",-- "/s Lura Circle",
-    DIAMOND = "/raid " .. RUNE_PREFIX_PATH .. "rune_diamond",-- "/ra Lura Diamond",
-    TRIANGLE = "/raid " .. RUNE_PREFIX_PATH .. "rune_triangle",-- "/yell Lura Triangle",
-    T = "/raid " .. RUNE_PREFIX_PATH .. "rune_t",-- "/rw Lura T",
-    X = "/raid " .. RUNE_PREFIX_PATH .. "rune_x",-- "/ping assist",
+    DIAMOND = "/raid " .. RUNE_PREFIX_PATH .. "rune_diamond",-- "/s Lura Diamond",
+    TRIANGLE = "/raid " .. RUNE_PREFIX_PATH .. "rune_triangle",-- "/s Lura Triangle",
+    T = "/raid " .. RUNE_PREFIX_PATH .. "rune_t",-- "/s Lura T",
+    X = "/raid " .. RUNE_PREFIX_PATH .. "rune_x",-- "/s Lura X",
 }
 
 -- MARK: Initialize
@@ -88,6 +88,9 @@ local function RemoveRune(self, index)
     if icon then
         -- icon.texture:SetTexture(nil)
         icon.texture:ClearText()
+        if self.projectionIcons and self.projectionIcons[BASE_ICON_ORDERS[index]] then
+            self.projectionIcons[BASE_ICON_ORDERS[index]].texture:ClearText()
+        end
         icon.rune = nil
         self.assigned = self.assigned - 1
         self.index = self.reverse and math.max(self.index, index) or math.min(self.index, index)
@@ -115,6 +118,9 @@ local function AssignRune(self, rune)
         -- rune = secretwrap(rune) -- for debug
         local scale = addon.db[self.modName]["Scale"] or 1.0
         icon.texture:SetFormattedText("|T%s:%d:%d|t", rune, 32 * scale, 32 * scale)
+        if self.projectionIcons and self.projectionIcons[BASE_ICON_ORDERS[self.index]] then
+            self.projectionIcons[BASE_ICON_ORDERS[self.index]].texture:SetFormattedText("|T%s:%d:%d|t", rune, 32 * scale, 32 * scale)
+        end
         icon.rune = rune
 
         self.assigned = self.assigned + 1
@@ -152,6 +158,13 @@ local function Reverse(self)
                 icon.rune = self.icons["TOPLEFT"].rune
                 self.icons["TOPLEFT"].texture:SetText(tempTexture)
                 self.icons["TOPLEFT"].rune = tempRune
+
+                -- if there is projectionIcons, also switch them
+                if self.projectionIcons and self.projectionIcons["TOPRIGHT"] and self.projectionIcons["TOPLEFT"] then
+                    local tempProjectionTexture = self.projectionIcons["TOPRIGHT"].texture:GetText()
+                    self.projectionIcons["TOPRIGHT"].texture:SetText(self.projectionIcons["TOPLEFT"].texture:GetText())
+                    self.projectionIcons["TOPLEFT"].texture:SetText(tempProjectionTexture)
+                end
             elseif index == "BOTTOMRIGHT" then
                 local tempTexture = icon.texture:GetText()
                 local tempRune = icon.rune
@@ -159,6 +172,13 @@ local function Reverse(self)
                 icon.rune = self.icons["BOTTOMLEFT"].rune
                 self.icons["BOTTOMLEFT"].texture:SetText(tempTexture)
                 self.icons["BOTTOMLEFT"].rune = tempRune
+
+                -- if there is projectionIcons, also switch them
+                if self.projectionIcons and self.projectionIcons["BOTTOMRIGHT"] and self.projectionIcons["BOTTOMLEFT"] then
+                    local tempProjectionTexture = self.projectionIcons["BOTTOMRIGHT"].texture:GetText()
+                    self.projectionIcons["BOTTOMRIGHT"].texture:SetText(self.projectionIcons["BOTTOMLEFT"].texture:GetText())
+                    self.projectionIcons["BOTTOMLEFT"].texture:SetText(tempProjectionTexture)
+                end
             end
         end
     end
@@ -410,6 +430,30 @@ local function CreateSideBar(self)
     self.sideBar.border:SetBackdropBorderColor(0, 0, 0, 1)
 end
 
+-- MARK: ProjectionBar
+
+local function CreateProjectionBar(self)
+    local projectionBar = CreateFrame("Frame", nil, self.frame)
+    projectionBar.background = projectionBar:CreateTexture(nil, "BACKGROUND")
+    projectionBar.background:SetAllPoints()
+    projectionBar.border = CreateFrame("Frame", nil, projectionBar, "BackdropTemplate")
+    projectionBar.border:SetAllPoints()
+    projectionBar.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
+    projectionBar.border:SetBackdropBorderColor(0, 0, 0, 1)
+
+    self.projectionIcons = {}
+    for _, key in pairs(BASE_ICON_ORDERS) do
+        local icon = CreateFrame("Frame", nil, projectionBar)
+        icon.texture = icon:CreateFontString(nil, "OVERLAY")
+        icon.texture:SetAllPoints()
+        icon.texture:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
+        icon.texture:SetTextColor(1, 1, 1)
+        self.projectionIcons[key] = icon
+    end
+
+    self.projectionBar = projectionBar
+end
+
 -- MARK: Create Helpers
 
 local function CreateHelper(self)
@@ -418,6 +462,7 @@ local function CreateHelper(self)
     CreateSideBar(self)
     CreateGeneralButton(self)
     CreateRuneButton(self, self.sideBar)
+    -- CreateProjectionBar(self)
 
     ToggleCombatEvents(self, true)
     self.frame:HookScript("OnShow", function()
@@ -507,6 +552,21 @@ function LuraHelper:UpdateStyle()
 
         self.reverseButton:SetSize(sideIconSize, scale * BASE_BUTTON_HEIGHT)
         self.reverseButton.background:SetColorTexture(0, 0, 1, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
+    end
+
+    if self.projectionBar then
+        self.projectionBar:SetSize(iconSize * #BASE_ICON_ORDERS, iconSize)
+        self.projectionBar:SetPoint("TOP", self.frame, "BOTTOM", 0, 0)
+        self.projectionBar.background:SetColorTexture(0, 0, 0, addon.db[self.modName]["BackgroundOpacity"] or 0.5)
+
+        local lastProjectionIcon = nil
+        for _, key in pairs(BASE_ICON_ORDERS) do
+            local icon = self.projectionIcons[key]
+            icon:SetSize(iconSize, iconSize)
+            icon:ClearAllPoints()
+            icon:SetPoint("RIGHT", lastProjectionIcon or self.projectionBar, lastProjectionIcon and "LEFT" or "RIGHT", 0, 0)
+            lastProjectionIcon = icon
+        end
     end
 end
 
