@@ -29,11 +29,11 @@ local RUNES = {
     }
 
 local MACROS = {
-    CIRCLE = "/raid " .. RUNE_PREFIX_PATH .. "rune_circle",-- "/s Lura Circle",
-    DIAMOND = "/raid " .. RUNE_PREFIX_PATH .. "rune_diamond",-- "/s Lura Diamond",
-    TRIANGLE = "/raid " .. RUNE_PREFIX_PATH .. "rune_triangle",-- "/s Lura Triangle",
-    T = "/raid " .. RUNE_PREFIX_PATH .. "rune_t",-- "/s Lura T",
-    X = "/raid " .. RUNE_PREFIX_PATH .. "rune_x",-- "/s Lura X",
+    CIRCLE = "/raid rune_circle", -- .. RUNE_PREFIX_PATH .. "rune_circle",-- "/s Lura Circle",
+    DIAMOND = "/raid rune_diamond", -- .. RUNE_PREFIX_PATH .. "rune_diamond",-- "/s Lura Diamond",
+    TRIANGLE = "/raid rune_triangle", -- .. RUNE_PREFIX_PATH .. "rune_triangle",-- "/s Lura Triangle",
+    T = "/raid rune_t", -- .. RUNE_PREFIX_PATH .. "rune_t",-- "/s Lura T",
+    X = "/raid rune_x", -- .. RUNE_PREFIX_PATH .. "rune_x",-- "/s Lura X",
 }
 
 -- MARK: Initialize
@@ -116,10 +116,11 @@ local function AssignRune(self, rune)
     local icon = self.icons[BASE_ICON_ORDERS[self.index]]
     if icon then
         -- rune = secretwrap(rune) -- for debug
+        -- addon:debug("rune secret: " .. tostring(issecretvalue(rune)))
         local scale = addon.db[self.modName]["Scale"] or 1.0
-        icon.texture:SetFormattedText("|T%s:%d:%d|t", rune, 32 * scale, 32 * scale)
+        icon.texture:SetFormattedText("|TInterface/AddOns/HBLyx_Encounter_Sound/Media/Lura/%s:%d:%d|t", rune, 32 * scale, 32 * scale)
         if self.projectionIcons and self.projectionIcons[BASE_ICON_ORDERS[self.index]] then
-            self.projectionIcons[BASE_ICON_ORDERS[self.index]].texture:SetFormattedText("|T%s:%d:%d|t", rune, 32 * scale, 32 * scale)
+            self.projectionIcons[BASE_ICON_ORDERS[self.index]].texture:SetFormattedText("|TInterface/AddOns/HBLyx_Encounter_Sound/Media/Lura/%s:%d:%d|t", rune, 32 * scale, 32 * scale)
         end
         icon.rune = rune
 
