@@ -7,6 +7,7 @@ local LuraHelper = {
     timer = nil,
     lastMsg = 0,
     isTestMode = false,
+    encounterStarted = false,
 }
 
 -- MARK: Constants
@@ -625,11 +626,15 @@ function LuraHelper:RegisterEvents()
         if not currentEncounter then
             return
         elseif currentEncounter == 0 then -- end of encounter
-            ClearRunes(self)
-            self:Activate(false)
+            if self.encounterStarted then
+                ClearRunes(self)
+                self:Activate(false)
+                self.encounterStarted = false
+            end
         elseif currentEncounter == 3183 then
             ClearRunes(self)
             self:Activate(true)
+            self.encounterStarted = true
         end
     end)
 
