@@ -57,6 +57,7 @@ end
 
 -- MARK: Toggle Combat Events
 
+---Toggle combat-related chat events for rune assignment
 local function ToggleCombatEvents(self, on)
     local events = {
         -- "CHAT_MSG_SAY",
@@ -80,6 +81,7 @@ end
 
 -- MARK: Rune I/O
 
+---Remove the rune assigned at the given slot
 local function RemoveRune(self, index)
     if self.assigned <= 0 then
         return
@@ -98,10 +100,12 @@ local function RemoveRune(self, index)
     end
 end
 
+---Undo the most recently assigned rune
 local function UndoRune(self)
     RemoveRune(self, self.reverse and self.index + 1 or self.index - 1) -- remove the last assigned rune
 end
 
+---Clear all assigned runes from the helper
 local function ClearRunes(self)
     self.assigned = #BASE_ICON_ORDERS
     for i, _ in pairs(BASE_ICON_ORDERS) do
@@ -109,6 +113,7 @@ local function ClearRunes(self)
     end
 end
 
+---Assign a rune to the current slot and reset the fade timer
 local function AssignRune(self, rune)
     if self.assigned >= #BASE_ICON_ORDERS or not rune then
         return
@@ -138,6 +143,7 @@ local function AssignRune(self, rune)
     end
 end
 
+---Reverse the rune assignment order and mirror the current layout
 local function Reverse(self)
     self.reverse = not self.reverse
     -- switch index to the opposite side based on the current index
@@ -205,6 +211,7 @@ local function GetAnchors(self, anchor)
     end
 end
 
+---Get text anchor points for the given icon anchor
 local function GetTextAnchors(self, anchor)
     if anchor == "TOP" then
         return "BOTTOM", "TOP"
@@ -223,6 +230,7 @@ end
 
 -- MARK: Main Frame
 
+---Create the main canvas frame for the Lura helper
 local function CreateMainFrame(self)
     self.frame = CreateFrame("Frame", ADDON_NAME.. "_" .. self.modName, UIParent)
     self.frame.background = self.frame:CreateTexture(nil, "BACKGROUND")
@@ -235,6 +243,7 @@ end
 
 -- MARK: Icons
 
+---Create the center icon and all rune icon placeholders
 local function CreateIcons(self)
     self.centerIcon = self.frame:CreateTexture(nil, "ARTWORK")
     self.centerIcon:SetSize(BASE_CENTER_SIZE[1], BASE_CENTER_SIZE[2])
@@ -271,6 +280,7 @@ end
 
 -- MARK: General Button
 
+---Create shared control buttons for the helper frame
 local function CreateGeneralButton(self)
     -- hidden button
     self.hideButton = CreateFrame("Button", nil, UIParent)
@@ -398,6 +408,7 @@ end
 
 -- MARK: Rune Button
 
+---Create rune buttons used by raid leaders to send assignments
 local function CreateRuneButton(self, parent)
     self.runeButtons = self.runeButtons or {}
     for runeKey, runeFile in pairs(RUNES) do
@@ -421,6 +432,7 @@ end
 
 -- MARK: Side Bar
 
+---Create the sidebar container for rune buttons
 local function CreateSideBar(self)
     self.sideBar = CreateFrame("Frame", nil, self.frame)
     self.sideBar:SetPoint("LEFT", self.frame, "RIGHT", 0, 0)
@@ -434,6 +446,7 @@ end
 
 -- MARK: ProjectionBar
 
+---Create the optional projection bar that mirrors assigned runes
 local function CreateProjectionBar(self)
     local projectionBar = CreateFrame("Frame", nil, self.frame)
     projectionBar.background = projectionBar:CreateTexture(nil, "BACKGROUND")
@@ -458,6 +471,7 @@ end
 
 -- MARK: Create Helpers
 
+---Create all UI components required by the helper
 local function CreateHelper(self)
     CreateMainFrame(self)
     CreateIcons(self)
@@ -477,6 +491,7 @@ local function CreateHelper(self)
 end
 
 -- MARK: Assign Icon Position
+---Position an icon relative to the center indicator
 local function AssignIconPosition(self, iconKey)
     local icon = self.icons[iconKey]
     if icon then
@@ -488,6 +503,7 @@ end
 
 -- MARK: Toggle RL Buttons
 
+---Show or hide raid leader buttons based on the current permission state
 local function ToggleRLButtons(self)
     if self.ShowRLButton then
         self.undoButton:Show()
@@ -649,9 +665,7 @@ function LuraHelper:RegisterEvents()
         elseif event == "CHAT_MSG_RAID_WARNING" then
             UndoRune(self)
         elseif event == "GROUP_ROSTER_UPDATE" then
-            if IsInRaid() and UnitIsGroupAssistant("player") then
-                self.ShowRLButton = true
-            end
+            self.ShowRLButton = IsInRaid() and UnitIsGroupAssistant("player")
         end
     end)
 end
