@@ -20,12 +20,7 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
-L["ChangeLogContent"] =
-"v3.20\n" .. "-L'ura Helper released\n" ..
-"v3.19\n" .. "-Config UI re-factor, and added new countdown module (skin)\n" ..
-"v3.18\n" .. "-Added two new modules: Private Aura Anchor and Text Warning Skins\n" ..
-"v3.17\n" .. "-Added Timeline Skins module which provides customizable timeline\n" ..
-"v3.16\n" .. "-Add Highlight Icons module which displays highlighted(<= 5s) events in icons\n"
+L["ChangeLogContent"] = "The full change log can be found on: \n https://discord.gg/NkjEKddwDr"
 
 --MARK: Issues
 L["Issues"] = "Issues"

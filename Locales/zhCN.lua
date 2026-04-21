@@ -20,13 +20,7 @@ L["Downloads/Update"] = "下载/更新"
 L["Release_Info"] = "官方发布版本|cffff0000仅在以下地址提供, 其他所有版本均非作者发布|r"
 
 -- MARK: Change Log
-L["ChangeLog"] = "更新日志"
-L["ChangeLogContent"] =
-"v3.20\n" .. "-鲁拉助手发布\n" ..
-"v3.19\n" .. "-配置界面重构, 新倒计时模块(美化)\n" ..
-"v3.18\n" .. "-添加两个新模块: 私有光环锚点和文本警告美化\n" ..
-"v3.17\n" .. "-添加时间轴美化模块, 提供可自定义的时间轴\n" ..
-"v3.16\n" .. "-添加高亮图标模块, 显示高亮(<= 5秒)事件的图标\n"
+L["ChangeLog"] = "完整的更新日志可以在以下地址找到: \n https://discord.gg/NkjEKddwDr"
 
 --MARK: Issues
 L["Issues"] = "问题"
