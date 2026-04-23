@@ -117,6 +117,7 @@ local function GetPAAnchorArgs(self, unit, index, isCoTank)
         parent = isCoTank and self.coTankAuras[index] or self.playerAuras[index],
         showCountdownFrame = true,
         showCountdownNumbers = addon.db[self.modName]["ShowCountdownNumbers"],
+        isContainer = false,
         iconInfo = {
             iconAnchor = {
                 point = "CENTER",
