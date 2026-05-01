@@ -605,6 +605,9 @@ addon.data.INSTANCE_GOSSIP = {
 		[137387] = true, -- right
 		[137428] = true, -- left
 	},
+	[2915] = {
+		[137133] = true, -- engineer unlock rays
+	},
 }
 
 -- MARK: Data Changes
