@@ -237,7 +237,7 @@ local function TestAuras(self, onTest)
             end
         end
 
-        local coTankFrame = self.coTankAuras[i]
+        local coTankFrame = self.coTankAuras and self.coTankAuras[i] or nil
         if coTankFrame then
             CreateTestAuras(self, coTankFrame, i)
 
@@ -361,7 +361,9 @@ function PrivateAuraAnchor:Test(on)
     if on then
         TestAuras(self, true)
         addon.Utilities:MakeFrameDragPosition(self.head, self.modName, "X", "Y")
-        addon.Utilities:MakeFrameDragPosition(self.coTankHead, self.modName, "CoTankX", "CoTankY")
+        if self.coTankHead then
+            addon.Utilities:MakeFrameDragPosition(self.coTankHead, self.modName, "CoTankX", "CoTankY")
+        end
     else
         TestAuras(self, false)
     end
