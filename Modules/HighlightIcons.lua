@@ -157,6 +157,7 @@ local function UnloadEvent(self, frame)
     frame.active = false
     frame.eventTimelineID = nil
     frame.icon:SetTexture(UNKNOWN_SPELL_TEXTURE)
+    frame.cooldown:Clear()
     frame.name:SetText("")
     frame:Hide()
     if frame.timer then
@@ -181,10 +182,18 @@ local function LoadHighlightEvent(self, frame, eventTimelineID)
     frame.active = true
     frame.eventTimelineID = eventTimelineID
     local eventInfo = C_EncounterTimeline.GetEventInfo(eventTimelineID)
-
-    frame.icon:SetTexture(C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
+    -- attempt more complicated icon retrieval logic to handle some script events which may provide either iconFileID or spellID
+    local icon
+    if eventInfo.iconFileID then
+        icon = eventInfo.iconFileID
+    elseif eventInfo.spellID then
+        icon = C_Spell.GetSpellInfo(eventInfo.spellID).iconID
+    else
+        icon = UNKNOWN_SPELL_TEXTURE
+    end
+    frame.icon:SetTexture(icon)
     frame.name:SetText("|c".. (eventInfo.color:GenerateHexColor() or "ffffffff") .. (eventInfo.spellName or "") .. "|r")
-    local duration = C_EncounterTimeline.GetEventTimeRemaining(eventTimelineID)
+    local duration = C_EncounterTimeline.GetEventTimeRemaining(eventTimelineID) or 5.0
     frame.cooldown:SetCooldownDuration(duration)
     frame.timer = C_Timer.NewTimer(duration, function()
         UnloadEvent(self, frame)
@@ -283,9 +292,11 @@ function HighlightIcons:RegisterEvents()
         if event == "ENCOUNTER_TIMELINE_EVENT_HIGHLIGHT" then
             local eventTimelineID = select(1, ...)
             LoadEvent(self, eventTimelineID)
+            addon:debug("HIGHLIGHT fired for eventTimelineID: " .. eventTimelineID)
         elseif event == "ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED" then
             local eventID = select(1, ...)
             ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
+            addon:debug("STATE_CHANGED fired for eventID: " .. eventID)
         end
     end
 
