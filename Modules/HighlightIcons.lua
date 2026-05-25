@@ -292,11 +292,9 @@ function HighlightIcons:RegisterEvents()
         if event == "ENCOUNTER_TIMELINE_EVENT_HIGHLIGHT" then
             local eventTimelineID = select(1, ...)
             LoadEvent(self, eventTimelineID)
-            addon:debug("HIGHLIGHT fired for eventTimelineID: " .. eventTimelineID)
         elseif event == "ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED" then
             local eventID = select(1, ...)
             ON_ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(self, eventID)
-            addon:debug("STATE_CHANGED fired for eventID: " .. eventID)
         end
     end
 
