@@ -7,8 +7,6 @@ local EncounterSound = {
 }
 
 -- MARK: Constants
-local COUNTDOWN_ICON = 132349
-local COUNTDOWN_SPELLID = 386164
 
 -- MARK: Data Migration
 
@@ -328,8 +326,6 @@ function EncounterSound:RegisterEvents()
         end
     end)
 
-    -- addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
-    -- addon.core:RegisterEvent("CANCEL_PLAYER_COUNTDOWN", self.eventFrame, self.modName)
     addon.core:RegisterEvent("PLAYER_REGEN_ENABLED", self.eventFrame, self.modName)
 
     self.eventFrame:SetScript("OnEvent", function(_, event, ...)
@@ -337,26 +333,6 @@ function EncounterSound:RegisterEvents()
             if self.pendingPrivateAuraClear then
                 ClearPrivateAuraSounds(self)
             end
-        -- elseif event == "START_PLAYER_COUNTDOWN" then
-        --     local totalTime = select(3, ...)
-        --     local newCoundDownEvent = C_EncounterTimeline.AddScriptEvent({
-        --         spellID = COUNTDOWN_SPELLID,
-        --         duration = totalTime,
-        --         severity = 2,
-        --         iconFileID = COUNTDOWN_ICON,
-        --         overrideName = L["Countdown"],
-        --     })
-
-        --     if self.countdownEvent then
-        --         C_EncounterTimeline.CancelScriptEvent(self.countdownEvent)
-        --     end
-
-        --     self.countdownEvent = newCoundDownEvent
-        -- elseif event == "CANCEL_PLAYER_COUNTDOWN" then
-        --     if self.countdownEvent then
-        --         C_EncounterTimeline.CancelScriptEvent(self.countdownEvent)
-        --         self.countdownEvent = nil
-        --     end
         end
     end)
 end

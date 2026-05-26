@@ -138,6 +138,7 @@ L["CountdownTextWarning"] = " 开始了一个倒计时: "
 L["CountdownDesc"] = "替换暴雪的倒计时, 提供可自定义的声音警报"
 L["FadeTime"] = "淡出时间"
 L["Undo"] = "撤销"
+L["ShowSpellText"] = "显示技能文本"
 
 -- MARK: Style
 L["Color"] = "颜色"

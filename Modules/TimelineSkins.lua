@@ -28,6 +28,10 @@ function TimelineSkins:Initialize()
 
     self.tickLine = self.frame:CreateTexture(nil, "ARTWORK")
 
+    self.frame.border = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
+    self.frame.border:SetAllPoints()
+    self.frame.border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left = 1, right = 1, top = 1, bottom = 1}})
+    self.frame.border:SetBackdropBorderColor(0, 0, 0, 1)
     self.frame.background = self.frame:CreateTexture(nil, "BACKGROUND")
     self.frame.background:SetAllPoints()
 
@@ -36,6 +40,7 @@ function TimelineSkins:Initialize()
     self.activeIcons = {}
     self.queueHead = CreateFrame("Frame", nil, self.frame) -- a dummy frame to attach the queue icons
     self.queueTail = nil
+    self.testTimer = nil
 
     self:UpdateFrameVisibility()
 
@@ -72,6 +77,11 @@ local function UpdateIconStyle(self, frame)
         addon.db[self.modName]["FontSize"],
         "OUTLINE"
     )
+    if addon.db[self.modName]["ShowText"] then
+        frame.text:Show()
+    else
+        frame.text:Hide()
+    end
     frame.text:ClearAllPoints()
     frame.text:SetPoint(self.textAnchorFrom, frame.textFrame, self.textAnchorTo, 0, 0)
     frame.text:SetWidth(addon.db[self.modName]["IconSize"] * 2)
@@ -281,12 +291,15 @@ local function LoadEvent(self, eventInfo)
         frame = CreateTimelineIcon(self)
     end
 
-    local text = eventInfo.spellName or ""
     frame.eventID = eventInfo.id
     local remaining = eventInfo.duration or 0
     frame.cooldown:SetCooldownDuration(remaining)
-    frame.icon:SetTexture(eventInfo.iconFileID or C_Spell.GetSpellInfo(eventInfo.spellID).iconID or UNKNOWN_SPELL_TEXTURE)
-    frame.text:SetText("|c".. (eventInfo.color:GenerateHexColor() or "ffffffff") .. text .. "|r")
+
+    local icon = (eventInfo.iconFileID and eventInfo.iconFileID) or (eventInfo.spellID and C_Spell.GetSpellInfo(eventInfo.spellID).iconID) or UNKNOWN_SPELL_TEXTURE
+    frame.icon:SetTexture(icon
+)
+    local text = eventInfo.spellName or ""
+    frame.text:SetText(eventInfo.color and eventInfo.color:WrapTextInColorCode(text) or text)
 
     QueueInsert(self, frame)
     self.queueIcons[frame.eventID] = frame
@@ -447,8 +460,20 @@ function TimelineSkins:Test(on)
     if on then
         self.frame:Show()
         addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
-        C_EncounterTimeline.AddEditModeEvents()
+        
+        if self.testTimer then
+            self.testTimer:Cancel()
+            self.testTimer = nil
+        end
+
+        self.testTimer = C_Timer.NewTicker(C_EncounterTimeline.AddEditModeEvents(), function()
+            C_EncounterTimeline.AddEditModeEvents()
+        end)
     else
+        if self.testTimer then
+            self.testTimer:Cancel()
+            self.testTimer = nil
+        end
         self:UpdateFrameVisibility()
         C_EncounterTimeline.CancelEditModeEvents()
     end

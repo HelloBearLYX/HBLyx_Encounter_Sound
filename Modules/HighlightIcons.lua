@@ -183,16 +183,12 @@ local function LoadHighlightEvent(self, frame, eventTimelineID)
     frame.eventTimelineID = eventTimelineID
     local eventInfo = C_EncounterTimeline.GetEventInfo(eventTimelineID)
     -- attempt more complicated icon retrieval logic to handle some script events which may provide either iconFileID or spellID
-    local icon
-    if eventInfo.iconFileID then
-        icon = eventInfo.iconFileID
-    elseif eventInfo.spellID then
-        icon = C_Spell.GetSpellInfo(eventInfo.spellID).iconID
-    else
-        icon = UNKNOWN_SPELL_TEXTURE
-    end
+    local icon = (eventInfo.iconFileID and eventInfo.iconFileID) or (eventInfo.spellID and C_Spell.GetSpellInfo(eventInfo.spellID).iconID) or UNKNOWN_SPELL_TEXTURE
     frame.icon:SetTexture(icon)
-    frame.name:SetText("|c".. (eventInfo.color:GenerateHexColor() or "ffffffff") .. (eventInfo.spellName or "") .. "|r")
+
+    local text = eventInfo.spellName or ""
+    frame.name:SetText(eventInfo.color and eventInfo.color:WrapTextInColorCode(text) or text)
+    
     local duration = C_EncounterTimeline.GetEventTimeRemaining(eventTimelineID) or 5.0
     frame.cooldown:SetCooldownDuration(duration)
     frame.timer = C_Timer.NewTimer(duration, function()

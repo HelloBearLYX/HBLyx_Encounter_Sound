@@ -138,6 +138,7 @@ L["CountdownTextWarning"] = " started a countdown: "
 L["CountdownDesc"] = "Customizable replacement for Blizzard's countdown timer, with customizable sound alerts."
 L["FadeTime"] = "Fade Time"
 L["Undo"] = "Undo"
+L["ShowSpellText"] = "Show Spell Text"
 
 -- MARK: Style
 L["Color"] = "Color"

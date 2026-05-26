@@ -8,6 +8,7 @@ addon.configurationList[MOD_KEY] = {
 	Enabled = false,
     ShowOnlyActive = true,
     ShowQueuedIcons = true,
+	ShowText = true,
     IconSize = 35,
     TimeFontScale = 1,
     X = -30,
@@ -76,10 +77,6 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
         end
 		update()
 	end)
-	GUI:CreateDropdown(styleGroup, L["TextGrow"], addon.Utilities.Grows, nil, addon.db.TimelineSkins.TextGrow, function(key)
-		addon.db.TimelineSkins.TextGrow = key
-		update()
-	end)
 	GUI:CreateSlider(styleGroup, L["Length"], 10, 2000, 1, addon.db.TimelineSkins.Length, function(value)
 		addon.db.TimelineSkins.Length = value
 		update()
@@ -117,6 +114,14 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
 
 	-- MARK: Font
 	local fontGroup = GUI:CreateInlineGroup(styleGroup, L["FontSettings"])
+	GUI:CreateToggleCheckBox(fontGroup, L["ShowSpellText"], addon.db.TimelineSkins.ShowText, function(value)
+		addon.db.TimelineSkins.ShowText = value
+		update()
+	end)
+	GUI:CreateDropdown(fontGroup, L["TextGrow"], addon.Utilities.Grows, nil, addon.db.TimelineSkins.TextGrow, function(key)
+		addon.db.TimelineSkins.TextGrow = key
+		update()
+	end)
 	GUI:CreateFontSelect(fontGroup, L["Font"], addon.db.TimelineSkins.Font, function(value)
 		addon.db.TimelineSkins.Font = value
 		update()
