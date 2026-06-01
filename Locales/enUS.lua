@@ -20,14 +20,8 @@ L["Release_Info"] = "The official release version is |cffff0000only available on
 
 -- MARK: Change Log
 L["ChangeLog"] = "Change Log"
-L["ChangeLogContent"] = "The full change log can be found on: \n https://discord.gg/NkjEKddwDr"
-
---MARK: Issues
-L["Issues"] = "Issues"
-L["AnyIssues"] = "If any issues, please contact."
-L["IssuesContent"] =
-"Q: In the Boss Encounter Sound module, some events or private auras are missing or incorrect. Will they be fixed?\nA: Yes, as this module heavily relies on data mining from the game, and Blizzard constantly updates boss encounters, it takes some time to fetch new data.\n\n" ..
-"Thank you for your understanding and support!"
+L["ChangeLogContent"] = "The full change log can be found on:"
+L["ChangeLogLink"] = "https://discord.gg/NkjEKddwDr"
 
 -- MARK: Contact
 L["Contact"] = "Contact"

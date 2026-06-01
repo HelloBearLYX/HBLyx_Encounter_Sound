@@ -20,14 +20,9 @@ L["Downloads/Update"] = "下载/更新"
 L["Release_Info"] = "官方发布版本|cffff0000仅在以下地址提供, 其他所有版本均非作者发布|r"
 
 -- MARK: Change Log
-L["ChangeLog"] = "完整的更新日志可以在以下地址找到: \n https://discord.gg/NkjEKddwDr"
-
---MARK: Issues
-L["Issues"] = "问题"
-L["AnyIssues"] = "如果你遇到任何问题, 请通过联系方式向插件作者反馈"
-L["IssuesContent"] =
-"Q: 在BOSS战音效模块中, 有一些事件或私有光环缺失或不正确, 会被修正吗?\nA: 会的, 由于该模块高度依赖于对游戏的数据挖掘, 而且暴雪不断更改BOSS战斗, 获取新数据需要一些时间\n\n" ..
-"感谢你的理解和支持!"
+L["ChangeLog"] = "更新日志"
+L["ChangeLogContent"] = "完整的更新日志可以在以下地址找到:"
+L["ChangeLogLink"] = "https://discord.gg/NkjEKddwDr"
 
 -- MARK: Contact
 L["Contact"] = "联系方式"
