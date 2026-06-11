@@ -351,6 +351,16 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	[1305] = {
+		name = select(1, EJ_GetInstanceInfo(1305)) or "Sporefall",
+		encounters = {
+			[3159] = {
+				events = {424, 425, 426, 427, 428, 808, 809},
+				journalID = 2711,
+				privateAuras = {1221639, 1299508, 1222088, 1222129}
+			},
+		},
+	},
 }
 
 -- MARK: Instance Journal
@@ -582,6 +592,15 @@ addon.data.SPELL_INFO = {
     [1284525] = {[12] = true, [3] = true},
     [1284931] = {[12] = true},
     [1284980] = {[12] = true},
+	[1222684] = {[12] = true},
+	[1222495] = {[4] = true},
+	[1221622] = {[5] = true},
+	[1221714] = {[6] = true},
+	[1221965] = {[1] = true},
+	[1221644] = {[4] = true},
+	[1221787] = {[2] = true},
+	[1222176] = {[2] = true},
+	[1221781] = {[0] = true},
 }
 
 -- MARK: Gossips
