@@ -112,7 +112,12 @@ local function LoadEventSounds(self, encounterID)
             for attribute, value in pairs(eventData) do
                 if attribute == "color" then
                     -- Handle color
-                    C_EncounterEvents.SetEventColor(eventID, CreateColorFromHexString(addon.db.EncounterSound.data[encounterID][eventID].color))
+                    local colorObj = CreateColorFromHexString(value)
+                    -- 12.07 added some meaningless parameter trigger at 2nd position
+                    -- so, just add all triggers with the color 
+                    C_EncounterEvents.SetEventColor(eventID, 0, colorObj)
+                    C_EncounterEvents.SetEventColor(eventID, 1, colorObj)
+                    C_EncounterEvents.SetEventColor(eventID, 2, colorObj)
                 else
                     if CheckRole(self, value.role) then -- handle role, role can be nil
                         -- Handle sound trigger

@@ -380,6 +380,7 @@ addon.data.INSTANCE_JOURNAL = {
 	[2939] = 1314, -- Dreamrift
 	[2912] = 1307, -- The Voidspire
 	[2913] = 1308, -- March on Quel'Danas
+	[1592] = 1305, -- Sporefall
 }
 
 -- MARK: Spell Data
