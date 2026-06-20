@@ -115,9 +115,13 @@ local function LoadEventSounds(self, encounterID)
                     local colorObj = CreateColorFromHexString(value)
                     -- 12.07 added some meaningless parameter trigger at 2nd position
                     -- so, just add all triggers with the color 
-                    C_EncounterEvents.SetEventColor(eventID, 0, colorObj)
-                    C_EncounterEvents.SetEventColor(eventID, 1, colorObj)
-                    C_EncounterEvents.SetEventColor(eventID, 2, colorObj)
+                    for t = 0, 2 do
+                        local result = pcall(C_EncounterEvents.SetEventColor, eventID, t, colorObj)
+                        -- if not result then
+                        --     addon:debug("Failed to set color for eventID " .. eventID .. " trigger " .. t)
+                        --     addon:debug("Color value was: " .. value .. "colorObj was: " .. colorObj:GenerateHexColor())
+                        -- end
+                    end
                 else
                     if CheckRole(self, value.role) then -- handle role, role can be nil
                         -- Handle sound trigger
