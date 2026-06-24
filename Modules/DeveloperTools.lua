@@ -7,6 +7,8 @@ local GUI = addon.GUI
 addon.DeveloperTools = {
     displayFrame = nil,
     isOpened = false,
+    eventRecorder = nil,
+    startRecording = false,
 }
 
 -- MARK: Constants
@@ -255,6 +257,45 @@ local function ScanAllPrivateAuras()
     return output
 end
 
+-- MARK: OnEventRecorder
+local function OnEventRecorder(self, event, ...)
+    if event == "ENCOUNTER_TIMELINE_EVENT_ADDED" then
+        -- spellName, spellID, iconID are almost secret values
+        -- rest of the values are public, including id, source, duration, maxQueueDuration
+        local id, source, spellName, spellID, iconID, duration, maxQueueDuration = ...
+        local entry = string.format("%d,%s,%s,%d,%d,%d,%d\n", id, source, spellName or "nil", spellID or -1, iconID or -1, duration or 0, maxQueueDuration or 0)
+        self.eventRecorder.output = self.eventRecorder.output .. entry
+    end
+end
+
+-- MARK: EventRecorder
+local function CreateEventRecorder(self)
+    local eventRecorder = CreateFrame("Frame")
+    eventRecorder:SetScript("OnEvent", function(_, event, ...)
+        OnEventRecorder(self, event, ...)
+    end)
+    eventRecorder.output = "id,source,spellName,spellID,iconID,duration,maxQueueDuration\n"
+    return eventRecorder
+end
+
+-- MARK: TurnEventRecorder()
+local function TurnEventRecorder(self, on)
+    if not self.eventRecorder then
+        self.eventRecorder = CreateEventRecorder(self)
+    end 
+
+    local events = {"ENCOUNTER_TIMELINE_EVENT_ADDED", "PLAYER_REGEN_ENABLED"}
+    if on then
+        for _, event in ipairs(events) do
+            self.eventRecorder:RegisterEvent(event)
+        end
+    else
+        for _, event in ipairs(events) do
+            self.eventRecorder:UnregisterEvent(event)
+        end
+    end
+end
+
 -- MARK: Render
 local function RenderDisplayFrame(self, info)
     self.isOpened = true
@@ -313,6 +354,19 @@ local function RenderDisplayFrame(self, info)
             GUI:CreateButton(panel, "Scan Private Auras", function()
                 local data = ScanAllPrivateAuras()
                 dataOutput:SetText(data)
+            end):SetRelativeWidth(0.32)
+            local recordEditBox = GUI:CreateMultiLineEditBox(panel, "Event Recorder Output:", "")
+            GUI:CreateButton(panel, "Start Event Recorder", function()
+                if self.startRecording then
+                    TurnEventRecorder(self, false)
+                else
+                    TurnEventRecorder(self, true)
+                end
+            end):SetRelativeWidth(0.32)
+            GUI:CreateButton(panel, "Output Event Record", function()
+                if self.eventRecorder then
+                    recordEditBox:SetText(self.eventRecorder.output)
+                end
             end):SetRelativeWidth(0.32)
             panel:DoLayout()
         end
