@@ -27,6 +27,11 @@ local function SetupDisplayFrame(self)
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
     })
     frame:SetBackdropColor(0, 0, 0, 0.75)
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+    frame:RegisterForDrag("LeftButton")
+    frame:SetScript("OnDragStart", frame.StartMoving)
+    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 
     local text = self.outputText or frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     text:ClearAllPoints()
