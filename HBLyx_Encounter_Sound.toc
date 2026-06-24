@@ -29,6 +29,7 @@ Modules\TextWarningSkins.lua
 Modules\PrivateAuraAnchor.lua
 Modules\Countdown.lua
 Modules\Lura.lua
+Modules\EventRecorder.lua
 
 # handle configuration and options
 GUI.lua
@@ -40,6 +41,7 @@ Configs\TextWarningSkins.lua
 Configs\PrivateAuraAnchor.lua
 Configs\Countdown.lua
 Configs\Lura.lua
+Configs\EventRecorder.lua
 
 Configs\Profile.lua
 

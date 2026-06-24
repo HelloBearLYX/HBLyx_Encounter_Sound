@@ -7,8 +7,6 @@ local GUI = addon.GUI
 addon.DeveloperTools = {
     displayFrame = nil,
     isOpened = false,
-    eventRecorder = nil,
-    startRecording = false,
 }
 
 -- MARK: Constants
@@ -257,45 +255,6 @@ local function ScanAllPrivateAuras()
     return output
 end
 
--- MARK: OnEventRecorder
-local function OnEventRecorder(self, event, ...)
-    if event == "ENCOUNTER_TIMELINE_EVENT_ADDED" then
-        -- spellName, spellID, iconID are almost secret values
-        -- rest of the values are public, including id, source, duration, maxQueueDuration
-        local id, source, spellName, spellID, iconID, duration, maxQueueDuration = ...
-        local entry = string.format("%d,%s,%s,%d,%d,%d,%d\n", id, source, spellName or "nil", spellID or -1, iconID or -1, duration or 0, maxQueueDuration or 0)
-        self.eventRecorder.output = self.eventRecorder.output .. entry
-    end
-end
-
--- MARK: EventRecorder
-local function CreateEventRecorder(self)
-    local eventRecorder = CreateFrame("Frame")
-    eventRecorder:SetScript("OnEvent", function(_, event, ...)
-        OnEventRecorder(self, event, ...)
-    end)
-    eventRecorder.output = "id,source,spellName,spellID,iconID,duration,maxQueueDuration\n"
-    return eventRecorder
-end
-
--- MARK: TurnEventRecorder()
-local function TurnEventRecorder(self, on)
-    if not self.eventRecorder then
-        self.eventRecorder = CreateEventRecorder(self)
-    end 
-
-    local events = {"ENCOUNTER_TIMELINE_EVENT_ADDED", "PLAYER_REGEN_ENABLED"}
-    if on then
-        for _, event in ipairs(events) do
-            self.eventRecorder:RegisterEvent(event)
-        end
-    else
-        for _, event in ipairs(events) do
-            self.eventRecorder:UnregisterEvent(event)
-        end
-    end
-end
-
 -- MARK: Render
 local function RenderDisplayFrame(self, info)
     self.isOpened = true
@@ -313,23 +272,44 @@ local function RenderDisplayFrame(self, info)
         self.isOpened = false
     end)
 
-    local tabs = AceGUI:Create("TabGroup")
-    tabs:SetLayout("Flow")
-    tabs:SetFullWidth(true)
-    tabs:SetFullHeight(true)
-    tabs:SetTabs(TABS)
-    self.displayFrame:AddChild(tabs)
-    tabs:SetCallback("OnGroupSelected", function (container, _, tab)
+    self.displayFrame.tab = AceGUI:Create("TabGroup")
+    self.displayFrame.tab:SetLayout("Flow")
+    self.displayFrame.tab:SetFullWidth(true)
+    self.displayFrame.tab:SetFullHeight(true)
+    self.displayFrame.tab:SetTabs(TABS)
+    self.displayFrame:AddChild(self.displayFrame.tab)
+    self.displayFrame.tab:SetCallback("OnGroupSelected", function (container, _, tab)
         container:ReleaseChildren()
 
         if tab == "CopyInfo" then
             local panel = GUI:CreateScrollFrame(container)
-            
+
             local addonInfo = ""
             for _, value in pairs(info) do
                 addonInfo = addonInfo .. value .. "\n------\n\n"
             end
             GUI:CreateMultiLineEditBox(panel, "Copy the addon info below:", addonInfo)
+
+            GUI:CreateButton(panel, "Initialize Event Recorder", function()
+                if not addon.core:HasModuleLoaded("EventRecorder") then
+                    local loaded = addon.core:LoadModule("EventRecorder")
+                    if not loaded then
+                        addon:debug("Failed to load Event Recorder module")
+                        return
+                    end
+                end
+
+                local recorder = addon.core:GetModule("EventRecorder")
+                if recorder and recorder.InitializeRecorder then
+                    if recorder:InitializeRecorder() then
+                        addon:debug("Event Recorder initialized")
+                    else
+                        addon:debug("Failed to initialize Event Recorder")
+                    end
+                else
+                    addon:debug("Event Recorder module is unavailable")
+                end
+            end)
 
             panel:DoLayout()
         elseif tab == "ModulesInfo" then
@@ -355,24 +335,12 @@ local function RenderDisplayFrame(self, info)
                 local data = ScanAllPrivateAuras()
                 dataOutput:SetText(data)
             end):SetRelativeWidth(0.32)
-            local recordEditBox = GUI:CreateMultiLineEditBox(panel, "Event Recorder Output:", "")
-            GUI:CreateButton(panel, "Start Event Recorder", function()
-                if self.startRecording then
-                    TurnEventRecorder(self, false)
-                else
-                    TurnEventRecorder(self, true)
-                end
-            end):SetRelativeWidth(0.32)
-            GUI:CreateButton(panel, "Output Event Record", function()
-                if self.eventRecorder then
-                    recordEditBox:SetText(self.eventRecorder.output)
-                end
-            end):SetRelativeWidth(0.32)
+            -- Event Recorder GUI was moved to a dedicated module and is intentionally empty here.
             panel:DoLayout()
         end
     end)
     
-    tabs:SelectTab("CopyInfo")
+    self.displayFrame.tab:SelectTab("CopyInfo")
 end
 
 -- MARK: DisplayAddonInfo
