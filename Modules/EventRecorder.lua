@@ -26,7 +26,7 @@ local function SetupDisplayFrame(self)
     frame:SetBackdrop({
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
     })
-    frame:SetBackdropColor(0, 0, 0, 0.75)
+    frame:SetBackdropColor(0, 0, 0, 1)
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
