@@ -20,22 +20,22 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1309)) or "The Blinding Vale",
 		encounters = {
 			[3199] = {
-				events = {173, 174, 175, 176, 177},
+				events = {173, 174, 175, 177, 176},
 				journalID = 2769,
 				privateAuras = {1261276}
 			},
 			[3200] = {
-				events = {179, 180, 178},
+				events = {178, 179, 180},
 				journalID = 2770,
 				privateAuras = {}
 			},
 			[3201] = {
-				events = {181, 182, 184, 188, 115, 183},
+				events = {181, 182, 183, 184, 188, 115},
 				journalID = 2771,
 				privateAuras = {1240222}
 			},
 			[3202] = {
-				events = {192, 191, 189, 190},
+				events = {189, 190, 191, 192},
 				journalID = 2772,
 				privateAuras = {}
 			},
@@ -45,17 +45,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1304)) or "Murder Row",
 		encounters = {
 			[3101] = {
-				events = {610, 202, 122, 120},
+				events = {120, 122, 610, 202},
 				journalID = 2679,
 				privateAuras = {}
 			},
 			[3102] = {
-				events = {124, 127, 193, 123, 125},
+				events = {123, 124, 125, 127, 193},
 				journalID = 2680,
 				privateAuras = {474545}
 			},
 			[3103] = {
-				events = {30, 31, 32},
+				events = {30, 32, 31},
 				journalID = 2681,
 				privateAuras = {}
 			},
@@ -75,12 +75,12 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {}
 			},
 			[3208] = {
-				events = {67, 70, 68, 69},
+				events = {67, 68, 69, 70},
 				journalID = 2777,
 				privateAuras = {1235549}
 			},
 			[3209] = {
-				events = {92, 90, 89, 91},
+				events = {90, 92, 89, 91},
 				journalID = 2778,
 				privateAuras = {}
 			},
@@ -91,12 +91,12 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1313)) or "Voidscar Arena",
 		encounters = {
 			[3285] = {
-				events = {39, 558, 40, 42, 41, 782},
+				events = {39, 41, 558, 782, 40, 42},
 				journalID = 2791,
 				privateAuras = {}
 			},
 			[3286] = {
-				events = {297, 47, 54, 55, 46},
+				events = {46, 47, 297, 54, 55},
 				journalID = 2792,
 				privateAuras = {}
 			},
@@ -112,12 +112,12 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1322)) or "Altar of Fangs",
 		encounters = {
 			[3456] = {
-				events = {902},
+				events = {795, 797, 798, 899, 902},
 				journalID = 2878,
 				privateAuras = {}
 			},
 			[3457] = {
-				events = {814, 815, 816, 817, 818},
+				events = {813, 814, 815, 816, 817, 818},
 				journalID = 2879,
 				privateAuras = {}
 			},
