@@ -285,28 +285,6 @@ addon.data.SPELL_INFO = {
 
 -- MARK: Gossips
 addon.data.INSTANCE_GOSSIP = {
-	[658] = {
-		[136624] = true,
-		[136271] = true,
-		[136316] = true,
-		[136280] = true,
-		[136301] = true,
-		[138618] = true,
-	},
-	[2526] = {
-		[107065] = true, -- black
-		[107081] = true, -- bronze
-		[107082] = true, -- blue
-		[107083] = true, -- green
-		[107088] = true, -- red
-	},
-	[2874] = {
-		[137387] = true, -- right
-		[137428] = true, -- left
-	},
-	[2915] = {
-		[137133] = true, -- engineer unlock rays
-	},
 }
 
 -- MARK: Data Changes

@@ -7,6 +7,7 @@ local Countdown = {
 }
 
 -- MARK: Constants
+local M_PLUS_START_TIMER = 9 -- the duration of the countdown when a Mythic+ dungeon starts
 
 -- MARK: Initialize
 
@@ -201,7 +202,7 @@ end
 function Countdown:RegisterEvents()
     addon.core:RegisterEvent("START_PLAYER_COUNTDOWN", self.frame, self.modName)
     addon.core:RegisterEvent("CANCEL_PLAYER_COUNTDOWN", self.frame, self.modName)
-    addon.core:RegisterEvent("CHALLENGE_MODE_START", self.frame, self.modName)
+    addon.core:RegisterEvent("CHALLENGE_MODE_RESET", self.frame, self.modName)
 
     self.frame:SetScript("OnEvent", function(_, event, ...)
         if event == "START_PLAYER_COUNTDOWN" then
@@ -209,8 +210,8 @@ function Countdown:RegisterEvents()
             self:countdown(duration)
         elseif event == "CANCEL_PLAYER_COUNTDOWN" then
             self:countdown(0)
-        elseif event == "CHALLENGE_MODE_START" then
-            self:countdown(9) -- start a 9-second countdown when a Mythic+ dungeon starts
+        elseif event == "CHALLENGE_MODE_RESET" then
+            self:countdown(M_PLUS_START_TIMER) -- start a 9-second countdown when a Mythic+ dungeon starts
         end
     end)
 end
