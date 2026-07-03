@@ -20,7 +20,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1309)) or "The Blinding Vale",
 		encounters = {
 			[3199] = {
-				events = {173, 174, 175, 177, 176},
+				events = {173, 174, 175, 176, 177},
 				journalID = 2769,
 				privateAuras = {1261276}
 			},
@@ -30,7 +30,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {}
 			},
 			[3201] = {
-				events = {181, 182, 183, 184, 188, 115},
+				events = {115, 181, 182, 183, 184, 188},
 				journalID = 2771,
 				privateAuras = {1240222}
 			},
@@ -45,7 +45,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1304)) or "Murder Row",
 		encounters = {
 			[3101] = {
-				events = {120, 122, 610, 202},
+				events = {120, 122, 202, 610},
 				journalID = 2679,
 				privateAuras = {}
 			},
@@ -55,7 +55,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {474545}
 			},
 			[3103] = {
-				events = {30, 32, 31},
+				events = {30, 31, 32, 753},
 				journalID = 2681,
 				privateAuras = {}
 			},
@@ -80,7 +80,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {1235549}
 			},
 			[3209] = {
-				events = {90, 92, 89, 91},
+				events = {90, 92, 89, 91, 598},
 				journalID = 2778,
 				privateAuras = {}
 			},
@@ -91,12 +91,12 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1313)) or "Voidscar Arena",
 		encounters = {
 			[3285] = {
-				events = {39, 41, 558, 782, 40, 42},
+				events = {39, 40, 41, 42, 558, 782},
 				journalID = 2791,
 				privateAuras = {}
 			},
 			[3286] = {
-				events = {46, 47, 297, 54, 55},
+				events = {46, 47, 54, 55, 297},
 				journalID = 2792,
 				privateAuras = {}
 			},
@@ -285,6 +285,17 @@ addon.data.SPELL_INFO = {
 
 -- MARK: Gossips
 addon.data.INSTANCE_GOSSIP = {
+	-- Den of Nalorakk
+	[2825] = {
+		[135009] = true,
+		[135010] = true,
+		[137693] = true,
+	},
+	-- Murder Row
+	[2813] = {
+		[131502] = true,
+		[131567] = true,
+	},
 }
 
 -- MARK: Data Changes
