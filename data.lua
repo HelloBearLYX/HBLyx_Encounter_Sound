@@ -27,12 +27,12 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3200] = {
 				events = {178, 179, 180},
 				journalID = 2770,
-				privateAuras = {}
+				privateAuras = {1236747}
 			},
 			[3201] = {
 				events = {115, 181, 182, 183, 184, 188},
 				journalID = 2771,
-				privateAuras = {1240222}
+				privateAuras = {}
 			},
 			[3202] = {
 				events = {189, 190, 191, 192},
@@ -77,7 +77,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3208] = {
 				events = {67, 68, 69, 70},
 				journalID = 2777,
-				privateAuras = {1235549}
+				privateAuras = {}
 			},
 			[3209] = {
 				events = {90, 92, 89, 91, 598},
