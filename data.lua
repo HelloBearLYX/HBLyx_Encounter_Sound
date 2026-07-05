@@ -290,6 +290,7 @@ addon.data.INSTANCE_GOSSIP = {
 		[135009] = true,
 		[135010] = true,
 		[137693] = true,
+		[137702] = true,
 	},
 	-- Murder Row
 	[2813] = {
