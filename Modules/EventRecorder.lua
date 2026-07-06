@@ -326,8 +326,6 @@ function EventRecorder:Initialize()
             OnTimelineEventStateChanged(self, ...)
         end
     end)
-
-    addon:debug("Event Recorder module loaded")
     return self
 end
 
