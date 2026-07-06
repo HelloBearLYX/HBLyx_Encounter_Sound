@@ -297,6 +297,10 @@ addon.data.INSTANCE_GOSSIP = {
 		[131502] = true,
 		[131567] = true,
 	},
+	-- The Blinding Vale
+	[2859] = {
+		[137222] = true,
+	},
 }
 
 -- MARK: Data Changes
