@@ -288,11 +288,6 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				journalID = 2895,
 				privateAuras = {}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
-				privateAuras = {}
-			},
 		},
 	}
 }
