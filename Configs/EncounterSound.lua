@@ -375,14 +375,22 @@ end
 -- MARK: Get Encounters List
 ---Get encounter list for one instance map.
 ---@param mapID integer instance mapID
----@return table<integer, string|integer> output encounterID to encounter name
+---@return table<string|integer, string> output encounterID to encounter name
 local function GetEncountersList(mapID)
 	local output = {}
 	if addon.data.MAP_ENCOUNTER_EVENTS[mapID] and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters then
 		for encounterID, encounterInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters) do
-			output[encounterID] = encounterInfo.journalID and EJ_GetEncounterInfo(encounterInfo.journalID) or encounterID
-			if type(output[encounterID]) == "string" then
-				output[encounterID] = output[encounterID] .. "(" .. tostring(encounterID) .. ")"
+			if encounterID == "trash" then
+				output[encounterID] = L["EncounterTrash"]
+			elseif type(encounterInfo.journalID) == "number" and encounterInfo.journalID > 0 then
+				local encounterName = EJ_GetEncounterInfo(encounterInfo.journalID)
+				if type(encounterName) == "string" and encounterName ~= "" then
+					output[encounterID] = encounterName .. "(" .. tostring(encounterID) .. ")"
+				else
+					output[encounterID] = tostring(encounterID)
+				end
+			else
+				output[encounterID] = tostring(encounterID)
 			end
 		end
 	end
@@ -506,7 +514,12 @@ end
 ---Render event buttons for selected encounter and bind event detail loading.
 ---@param self table encounter sound panel instance
 local function RenderEncounterSettings(self)
-	for _, eventID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter].events) do
+	local encounterData = addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter]
+	if not encounterData or type(encounterData.events) ~= "table" then
+		return
+	end
+
+	for _, eventID in ipairs(encounterData.events) do
 		local encounterSpellID = C_EncounterEvents.GetEventInfo(eventID).spellID
 		local name = "UNKNOWN"
 		local spell = nil
@@ -514,7 +527,7 @@ local function RenderEncounterSettings(self)
 		
 		if encounterSpellID then
 			spell = Spell:CreateFromSpellID(encounterSpellID)
-			icon = ("|T" .. (spell:GetSpellTexture() or 134400) .. ":20:20|t")
+			icon = ("|T" .. (spell:GetSpellTexture() or 134400) .. ":0|t")
 			name = spell:GetSpellName()
 		end
 		
@@ -608,14 +621,19 @@ end
 ---Render private aura buttons for selected encounter.
 ---@param self table encounter sound panel instance
 local function RenderPrivateAuraSettings(self)
-	for _, spellID in ipairs(addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter].privateAuras) do
+	local encounterData = addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter]
+	if not encounterData or type(encounterData.privateAuras) ~= "table" then
+		return
+	end
+
+	for _, spellID in ipairs(encounterData.privateAuras) do
 		-- some private auras have the same name and description but different id, so only display one
 		local displayID = type(spellID) == "table" and spellID[1] or spellID
 
 		local spell = Spell:CreateFromSpellID(displayID) or nil
 		local name = "UNKNOWN"
 		if spell then
-			name = string.format("|T%s:20:20|t %s", spell:GetSpellTexture(), spell:GetSpellName())
+			name = string.format("|T%s:0|t %s", spell:GetSpellTexture(), spell:GetSpellName())
 		end
 		
 		GUI:CreateButton(self.PASelectGroup, name, function()

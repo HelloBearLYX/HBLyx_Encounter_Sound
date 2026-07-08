@@ -99,7 +99,7 @@ L["LeftButton"] = "左键"
 L["RightButton"] = "右键"
 L["HideMinimapIcon"] = "隐藏小地图图标"
 L["Select"] = "选择"
-L["PrivateAura"] = "私有光环"
+L["PrivateAura"] = "光环"
 L["EncounterSoundEffects"] = "BOSS战音效"
 L["VictorySound"] = "胜利音效"
 L["StartSound"] = "开始音效"
@@ -134,6 +134,7 @@ L["CountdownDesc"] = "替换暴雪的倒计时, 提供可自定义的声音警�
 L["FadeTime"] = "淡出时间"
 L["Undo"] = "撤销"
 L["ShowSpellText"] = "显示技能文本"
+L["EncounterTrash"] = "小怪"
 
 -- MARK: Style
 L["Color"] = "颜色"

@@ -180,7 +180,7 @@ local function LoadPrivateAuraSounds(self, encounterID)
         for spellID, soundName in pairs(privateAuraData) do
             local sound = addon.LSM:Fetch("sound", soundName)
             if sound and not InCombatLockdown() then
-                local pa = C_UnitAuras.AddPrivateAuraAppliedSound({
+                local pa = C_UnitAuras.AddAuraAppliedSound({
                     spellID = spellID,
                     unitToken = "player",
                     soundFileName = sound,
@@ -217,7 +217,7 @@ local function ClearPrivateAuraSounds(self)
         end
 
         for _, pa in ipairs(self.privateAuras) do
-            C_UnitAuras.RemovePrivateAuraAppliedSound(pa)
+            C_UnitAuras.RemoveAuraAppliedSound(pa)
         end
         self.privateAuras = {}
         self.pendingPrivateAuraClear = false

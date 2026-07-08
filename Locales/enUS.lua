@@ -121,7 +121,7 @@ L["MergedInto"] = "merged into"
 L["MergeSuccess"] = "Profile merged |cffffff00successfully|r"
 L["MergeSummary"] = "|cffff5c00Merged Summary|r"
 L["Events"] = "events"
-L["PrivateAuras"] = "private auras"
+L["PrivateAuras"] = "auras"
 L["New"] = "new"
 L["Overwritten"] = "overwritten"
 L["MergeDesc"] = "|cffff5c00Merge Encounter Configuration|r\nMerge the encounter configuration file with the current configuration, duplicated entries will be overwritten by the profile.\nThe merge action will only merge the event settings and private aura settings, other module settings will not be affected.\n\n"
@@ -133,6 +133,7 @@ L["CountdownDesc"] = "Customizable replacement for Blizzard's countdown timer, w
 L["FadeTime"] = "Fade Time"
 L["Undo"] = "Undo"
 L["ShowSpellText"] = "Show Spell Text"
+L["EncounterTrash"] = "Trash"
 
 -- MARK: Style
 L["Color"] = "Color"
