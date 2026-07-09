@@ -8,12 +8,40 @@ local EncounterSound = {
 
 -- MARK: Constants
 
+local AURA_ENCOUNTER_KEY = "aura"
+
 -- MARK: Data Migration
 
 --- used to make data migration, may change due to different patch changes
 local function DataMigrationHelper()
+    addon.db.EncounterSound.dataPA = addon.db.EncounterSound.dataPA or {}
+
+    -- Convert legacy private aura buckets keyed by encounterID to mapID buckets.
+    -- New structure: dataPA[mapID][spellID] = sound
+    local migratedDataPA = {}
+    for key, paData in pairs(addon.db.EncounterSound.dataPA or {}) do
+        if addon.data.MAP_ENCOUNTER_EVENTS[key] then
+            migratedDataPA[key] = migratedDataPA[key] or {}
+            for spellID, sound in pairs(paData or {}) do
+                migratedDataPA[key][spellID] = sound
+            end
+        elseif type(key) == "number" then
+            for mapID, mapData in pairs(addon.data.MAP_ENCOUNTER_EVENTS or {}) do
+                local encounters = mapData.encounters or {}
+                if encounters[key] then
+                    migratedDataPA[mapID] = migratedDataPA[mapID] or {}
+                    for spellID, sound in pairs(paData or {}) do
+                        migratedDataPA[mapID][spellID] = sound
+                    end
+                    break
+                end
+            end
+        end
+    end
+    addon.db.EncounterSound.dataPA = migratedDataPA
+
     -- events
-    for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS) do
+    for encounterID, eventChange in pairs(addon.data.CHANGED_EVENTS or {}) do
         for eventID, change in pairs(eventChange) do
             if addon.db.EncounterSound.data[encounterID] and addon.db.EncounterSound.data[encounterID][eventID] then
                 if change then
@@ -26,19 +54,19 @@ local function DataMigrationHelper()
     end
     
     -- private auras
-    for encounterID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS) do
+    for mapID, privateAuraChange in pairs(addon.data.CHANGED_PRIVATEAURAS or {}) do
         for privateAuraID, change in pairs(privateAuraChange) do
-            if addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][privateAuraID] then
+            if addon.db.EncounterSound.dataPA[mapID] and addon.db.EncounterSound.dataPA[mapID][privateAuraID] then
                 if type(change) == "number" then -- replace
-                    local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
-                    addon.db.EncounterSound.dataPA[encounterID][change] = data
-                    addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
+                    local data = addon.db.EncounterSound.dataPA[mapID][privateAuraID]
+                    addon.db.EncounterSound.dataPA[mapID][change] = data
+                    addon.db.EncounterSound.dataPA[mapID][privateAuraID] = nil
                 elseif type(change) == "boolean" and not change then -- remove
-                    addon.db.EncounterSound.dataPA[encounterID][privateAuraID] = nil
+                    addon.db.EncounterSound.dataPA[mapID][privateAuraID] = nil
                 elseif type(change) == "table" then -- compress
-                    local data = addon.db.EncounterSound.dataPA[encounterID][privateAuraID]
+                    local data = addon.db.EncounterSound.dataPA[mapID][privateAuraID]
                     for _, newID in ipairs(change) do
-                        addon.db.EncounterSound.dataPA[encounterID][newID] = data
+                        addon.db.EncounterSound.dataPA[mapID][newID] = data
                     end
                 end
             end
@@ -171,12 +199,12 @@ end
 
 -- MARK: Load PA Sounds
 
----Load private aura sounds for the given encounter ID
+---Load private aura sounds for the given map ID
 ---@param self EncounterSound self
----@param encounterID integer the encounter ID to load private aura sounds for
-local function LoadPrivateAuraSounds(self, encounterID)
-    if addon.db.EncounterSound.EnablePrivateAuras and addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[encounterID] then
-        local privateAuraData = addon.db.EncounterSound.dataPA[encounterID]
+---@param mapID integer the map ID to load private aura sounds for
+local function LoadPrivateAuraSounds(self, mapID)
+    if addon.db.EncounterSound.EnablePrivateAuras and addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[mapID] then
+        local privateAuraData = addon.db.EncounterSound.dataPA[mapID]
         for spellID, soundName in pairs(privateAuraData) do
             local sound = addon.LSM:Fetch("sound", soundName)
             if sound and not InCombatLockdown() then
@@ -191,7 +219,8 @@ local function LoadPrivateAuraSounds(self, encounterID)
         end
 
         if not addon.db.EncounterSound.HideEncounterPrint then
-            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. encounterID .. "|r")
+            local mapName = (addon.data.MAP_ENCOUNTER_EVENTS[mapID] and addon.data.MAP_ENCOUNTER_EVENTS[mapID].name) or tostring(mapID)
+            addon.Utilities:print(L["PrivateAuraSettings"] .. ": |cffffff00" .. mapName .. "|r")
         end
     end
 end
@@ -199,10 +228,23 @@ end
 -- MARK: Load Instance PA
 
 local function LoadInstancePrivateAuraSounds(self, instanceID)
-    local journalID = addon.data.INSTANCE_JOURNAL[instanceID]
-    for encounterID, _ in pairs(addon.data.MAP_ENCOUNTER_EVENTS[journalID].encounters or {}) do
-        LoadPrivateAuraSounds(self, encounterID)
+    local mapID = addon.data.INSTANCE_JOURNAL[instanceID]
+    if not mapID then
+        return
     end
+
+    -- Keep dataPA aligned with the new map-scoped aura model.
+    -- If dataPA is empty for the map but static aura definitions exist, seed defaults.
+    if addon.db.EncounterSound.dataPA and not addon.db.EncounterSound.dataPA[mapID] then
+        local auraEncounter = addon.data.MAP_ENCOUNTER_EVENTS[mapID]
+            and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters
+            and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[AURA_ENCOUNTER_KEY]
+        if auraEncounter and type(auraEncounter.privateAuras) == "table" then
+            addon.db.EncounterSound.dataPA[mapID] = addon.db.EncounterSound.dataPA[mapID] or {}
+        end
+    end
+
+    LoadPrivateAuraSounds(self, mapID)
 end
 
 -- MARK: Clear PA Sounds

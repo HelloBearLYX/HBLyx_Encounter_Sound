@@ -15,7 +15,7 @@ addon.configurationList[MOD_KEY] = {
 	ProfileName = "Default",
 	HideEncounterPrint = true,
 	data = {}, -- data structure: { [encounterID] = { [eventID] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
-	dataPA = {}, -- data structure: { [encounterID] = { [spellID] = sound } }
+	dataPA = {}, -- data structure: { [mapID] = { [spellID] = sound } }
 	templates = {}, -- data structure: { [templateName] = { [trigger] = {sound = sound, role = {role = true}}, color = color} } }
 }
 
@@ -169,11 +169,11 @@ end
 -- MARK: Add - PA Sound
 
 ---Add private aura sound mapping to DB.
----@param encounterID integer encounterID
+---@param mapID integer instance mapID
 ---@param spellID integer private aura spellID
 ---@param sound string sound file path or sound kit ID
-local function AddPASound(encounterID, spellID, sound)
-	if not encounterID or not spellID or not sound then
+local function AddPASound(mapID, spellID, sound)
+	if not mapID or not spellID or not sound then
 		return
 	end
 
@@ -181,11 +181,11 @@ local function AddPASound(encounterID, spellID, sound)
 		addon.db.EncounterSound.dataPA = {}
 	end
 
-	if not addon.db.EncounterSound.dataPA[encounterID] then
-		addon.db.EncounterSound.dataPA[encounterID] = {}
+	if not addon.db.EncounterSound.dataPA[mapID] then
+		addon.db.EncounterSound.dataPA[mapID] = {}
 	end
 
-	addon.db.EncounterSound.dataPA[encounterID][spellID] = sound
+	addon.db.EncounterSound.dataPA[mapID][spellID] = sound
 
 	PrintIOResult(true, true, nil, spellID)
 end
@@ -335,18 +335,18 @@ end
 -- MARK: Remove - PA Sound
 
 ---Remove private aura sound mapping from DB.
----@param encounterID integer encounterID
+---@param mapID integer instance mapID
 ---@param spellID integer private aura spellID
 ---@return boolean removed true if removed
-local function RemovePASound(encounterID, spellID)
-	if not encounterID or not spellID then
+local function RemovePASound(mapID, spellID)
+	if not mapID or not spellID then
 		return false
 	end
 
-	if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[encounterID] and addon.db.EncounterSound.dataPA[encounterID][spellID] then
-		addon.db.EncounterSound.dataPA[encounterID][spellID] = nil
-		if not next(addon.db.EncounterSound.dataPA[encounterID]) then
-			addon.db.EncounterSound.dataPA[encounterID] = nil
+	if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[mapID] and addon.db.EncounterSound.dataPA[mapID][spellID] then
+		addon.db.EncounterSound.dataPA[mapID][spellID] = nil
+		if not next(addon.db.EncounterSound.dataPA[mapID]) then
+			addon.db.EncounterSound.dataPA[mapID] = nil
 		end
 		PrintIOResult(true, false, nil, spellID)
 		return true
@@ -382,6 +382,8 @@ local function GetEncountersList(mapID)
 		for encounterID, encounterInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters) do
 			if encounterID == "trash" then
 				output[encounterID] = L["EncounterTrash"]
+			elseif encounterID == "aura" then
+				output[encounterID] = L["PrivateAuraSettings"]
 			elseif type(encounterInfo.journalID) == "number" and encounterInfo.journalID > 0 then
 				local encounterName = EJ_GetEncounterInfo(encounterInfo.journalID)
 				if type(encounterName) == "string" and encounterName ~= "" then
@@ -591,10 +593,10 @@ local function SetPASettings(self)
 		if value then
 			if type(self.inputPA) == "table" then
 				for _, spellID in ipairs(self.inputPA) do
-					AddPASound(self.inputEncounter, spellID, value)
+					AddPASound(self.inputMap, spellID, value)
 				end
 			else
-				AddPASound(self.inputEncounter, self.inputPA, value)
+				AddPASound(self.inputMap, self.inputPA, value)
 			end
 		end
 	end)
@@ -604,12 +606,12 @@ local function SetPASettings(self)
 		if type(self.inputPA) == "table" then
 			result = true
 			for _, spellID in ipairs(self.inputPA) do
-				if not RemovePASound(self.inputEncounter, spellID) then
+				if not RemovePASound(self.inputMap, spellID) then
 					result = false
 				end
 			end
 		else
-			result = RemovePASound(self.inputEncounter, self.inputPA)
+			result = RemovePASound(self.inputMap, self.inputPA)
 		end
 
 		if result then
@@ -640,8 +642,8 @@ local function RenderPrivateAuraSettings(self)
 			local displayID = type(spellID) == "table" and spellID[1] or spellID
 			self.inputPA = spellID
 
-			if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[self.inputEncounter] and addon.db.EncounterSound.dataPA[self.inputEncounter][displayID] then
-				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputEncounter][displayID])
+			if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[self.inputMap] and addon.db.EncounterSound.dataPA[self.inputMap][displayID] then
+				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputMap][displayID])
 			else
 				self.PASoundDropdown:SetValue(nil)
 			end
@@ -749,48 +751,71 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 	local selectGroup = GUI:CreateInlineGroup(self.frame, L["Select"])
 	GUI:CreateInformationTag(selectGroup, L["EncounterSoundInstruction"], "LEFT")
 	local settingsGroup = GUI:CreateInlineGroup(nil, L["EncounterSettings"])
-	GUI:CreateInformationTag(settingsGroup, L["EncounterEventsInstruction"], "LEFT")
-	GUI:CreateButton(settingsGroup, L["TestTimeline"], function()
-		if self.inputEncounter then
-			addon.core:GetModule(MOD_KEY):TestSound(self.inputEncounter)
+	self.dynamicSettingsGroup = GUI:CreateInlineGroup(settingsGroup, "")
+
+	local function ClearDynamicSettings()
+		self.dynamicSettingsGroup:ReleaseChildren()
+		self.eventSelectGroup = nil
+		self.eventSettingsGroup = nil
+		self.eventDescription = nil
+		self.generalGroup = nil
+		self.templateApply = nil
+		self.eventColor = nil
+		self.triggers = nil
+		self.PAGroup = nil
+		self.PASelectGroup = nil
+		self.PASettingsGroup = nil
+		self.PADescription = nil
+		self.PASoundDropdown = nil
+		self.inputEvent = nil
+		self.inputPA = nil
+	end
+
+	local function BuildEventSettings()
+		GUI:CreateInformationTag(self.dynamicSettingsGroup, L["EncounterEventsInstruction"], "LEFT")
+		GUI:CreateButton(self.dynamicSettingsGroup, L["TestTimeline"], function()
+			if type(self.inputEncounter) == "number" then
+				addon.core:GetModule(MOD_KEY):TestSound(self.inputEncounter)
+			end
+		end)
+		self.eventSelectGroup = GUI:CreateInlineGroup(self.dynamicSettingsGroup, L["EncounterEvent"])
+		self.eventSettingsGroup = GUI:CreateInlineGroup(self.dynamicSettingsGroup, "")
+		self.eventDescription = GUI:CreateInformationTag(self.eventSettingsGroup, "|T134400:0|t" .. L["SelectAnEvent"], "LEFT")
+		self.generalGroup = GUI:CreateInlineGroup(self.eventSettingsGroup, L["GeneralSettings"])
+		SetGeneralSettings(self)
+		SetTriggersSetting(self)
+		RenderEncounterSettings(self)
+	end
+
+	local function BuildAuraSettings()
+		self.PAGroup = GUI:CreateInlineGroup(self.dynamicSettingsGroup, L["PrivateAuraSettings"])
+		GUI:CreateInformationTag(self.PAGroup, L["PrivateAuraInstruction"], "LEFT")
+		self.PASelectGroup = GUI:CreateInlineGroup(self.PAGroup, L["PrivateAura"])
+		self.PASettingsGroup = GUI:CreateInlineGroup(self.PAGroup, "")
+		self.PADescription = GUI:CreateInformationTag(self.PASettingsGroup, "|T134400:0|t" .. L["SelectPA"], "LEFT")
+		SetPASettings(self)
+		RenderPrivateAuraSettings(self)
+	end
+
+	local function RenderEncounterSelection()
+		ClearDynamicSettings()
+		if self.inputEncounter == "aura" then
+			BuildAuraSettings()
+		elseif self.inputEncounter then
+			BuildEventSettings()
 		end
-	end)
-
-	-- event setting group
-	self.eventSelectGroup = GUI:CreateInlineGroup(settingsGroup, L["EncounterEvent"])
-	self.eventSettingsGroup = GUI:CreateInlineGroup(settingsGroup, "")
-	self.eventDescription = GUI:CreateInformationTag(self.eventSettingsGroup, "|T134400:0|t" .. L["SelectAnEvent"], "LEFT")
-	self.generalGroup = GUI:CreateInlineGroup(self.eventSettingsGroup, L["GeneralSettings"])
-	SetGeneralSettings(self)
-	SetTriggersSetting(self)
-
-	-- PA setting group
-	self.PAGroup = GUI:CreateInlineGroup(settingsGroup, L["PrivateAuraSettings"])
-	GUI:CreateInformationTag(self.PAGroup, L["PrivateAuraInstruction"], "LEFT")
-	self.PASelectGroup = GUI:CreateInlineGroup(self.PAGroup, L["PrivateAura"])
-	self.PASettingsGroup = GUI:CreateInlineGroup(self.PAGroup, "")
-	self.PADescription = GUI:CreateInformationTag(self.PASettingsGroup, "|T134400:0|t" .. L["SelectPA"], "LEFT")
-	SetPASettings(self)
+		self.frame:DoLayout()
+	end
 	
 	local encounterGroup = 	GUI:CreateDropdown(nil, L["SelectEncounter"], {}, nil, nil, function (value)
-		ResetEventSettings(self)
-		ResetPASettings(self)
-
 		self.inputEncounter = value
-		self.inputEvent = nil
-		RenderEncounterSettings(self)
-
-		RenderPrivateAuraSettings(self)
-
-		self.frame:DoLayout()
+		RenderEncounterSelection()
 	end)
 	GUI:CreateDropdown(selectGroup, L["SelectInstance"], GetMapsList(isRaid), nil, nil, function (value)
-		ResetEventSettings(self)
-		ResetPASettings(self)
-		
 		self.inputMap = value
 		self.inputEncounter = nil
 		self.inputEvent = nil
+		ClearDynamicSettings()
 		local list = GetEncountersList(value)
 		encounterGroup:SetList(list)
 		encounterGroup:SetValue(nil)

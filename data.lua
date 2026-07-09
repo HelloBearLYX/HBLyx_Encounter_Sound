@@ -13,9 +13,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				-- journalID = 0,
 				-- privateAuras = {spellID1, spellID2, spellID3, ...}
 			-- },
-			-- ["trash"] = {
-				-- events = {eventID1, eventID2, ...},
-				-- journalID = 0,
+			-- ["aura"] = {	
 				-- privateAuras = {spellID1, spellID2, ...}
 			-- },
 	-- }
@@ -25,29 +23,23 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1309)) or "The Blinding Vale",
 		encounters = {
 			[3199] = {
-				events = {173, 174, 175, 176, 177},
+				events = {173, 174, 175, 176, 177},	
 				journalID = 2769,
-				privateAuras = {1261276, 1276586, 1235865}
 			},
 			[3200] = {
 				events = {178, 179, 180},
 				journalID = 2770,
-				privateAuras = {1236747, 1259365, 1237091}
 			},
 			[3201] = {
 				events = {115, 181, 182, 183, 184, 188},
 				journalID = 2771,
-				privateAuras = {1240222, 1239825, 1241058, 1257094}
 			},
 			[3202] = {
 				events = {189, 190, 191, 192},
 				journalID = 2772,
-				privateAuras = {1247052, 1247746, 1246751}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
-				privateAuras = {}
+			["aura"] = {
+				privateAuras = {1261276, 1276586, 1235865, 1236747, 1259365, 1237091, 1240222, 1239825, 1241058, 1257094, 1247052, 1247746, 1246751}
 			},
 		},
 	},
@@ -57,27 +49,21 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3101] = {
 				events = {120, 122, 202, 610},
 				journalID = 2679,
-				privateAuras = {1228198}
 			},
 			[3102] = {
 				events = {123, 124, 125, 127, 193},
 				journalID = 2680,
-				privateAuras = {474545, 474740, 1214352}
 			},
 			[3103] = {
 				events = {30, 31, 32, 753},
 				journalID = 2681,
-				privateAuras = {}
 			},
 			[3105] = {
 				events = {37, 38, 207},
 				journalID = 2682,
-				privateAuras = {1217483}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
-				privateAuras = {}
+			["aura"] = {
+				privateAuras = {1228198, 474545, 474740, 1214352, 1217483}
 			},
 		},
 	},
@@ -87,22 +73,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3207] = {
 				events = {86, 87, 88},
 				journalID = 2776,
-				privateAuras = {1234846}
 			},
 			[3208] = {
 				events = {67, 68, 69, 70},
 				journalID = 2777,
-				privateAuras = {1235549}
 			},
 			[3209] = {
 				events = {90, 92, 89, 91, 598},
 				journalID = 2778,
-				privateAuras = {1242869, 1261781, 1262253}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
-				privateAuras = {}
+			["aura"] = {
+				privateAuras = {1234846, 1235549, 1242869, 1261781, 1262253}
 			},
 
 		},
@@ -113,21 +94,16 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3285] = {
 				events = {39, 40, 41, 42, 558, 782},
 				journalID = 2791,
-				privateAuras = {}
 			},
 			[3286] = {
 				events = {46, 47, 54, 55, 297},
 				journalID = 2792,
-				privateAuras = {}
 			},
 			[3287] = {
 				events = {56, 57, 58, 171},
 				journalID = 2793,
-				privateAuras = {}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
+			["aura"] = {
 				privateAuras = {}
 			},
 
@@ -139,21 +115,16 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3456] = {
 				events = {795, 797, 798, 899, 902},
 				journalID = 2878,
-				privateAuras = {}
 			},
 			[3457] = {
 				events = {813, 814, 815, 816, 817, 818},
 				journalID = 2879,
-				privateAuras = {}
 			},
 			[3458] = {
 				events = {821, 822, 823, 824},
 				journalID = 2880,
-				privateAuras = {}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
+			["aura"] = {
 				privateAuras = {1294569, 1294557, 1307571, 1294845, 1308518}
 			},
 		},
@@ -164,27 +135,21 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2139] = {
 				events = {767, 891, 892, 893},
 				journalID = 2165,
-				privateAuras = {}
 			},
 			[2142] = {
 				events = {878, 879, 880},
 				journalID = 2171,
-				privateAuras = {}
 			},
 			[2140] = {
 				events = {870, 872, 871, 873, 874, 875, 876},
 				journalID = 2170,
-				privateAuras = {}
 			},
 			[2143] = {
-				events = {831, 832, 833, 834, 835},
+				events = {831, 832, 833, 834, 835, 836},
 				journalID = 2172,
-				privateAuras = {}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
-				privateAuras = {}
+			["aura"] = {
+				privateAuras = {{1306736, 265773}, 265914, {271555, 267702}, 267626, 267763, 267618, 267874, 266191, 266231, 266238, 1303267, 1303039, 1302945, 1303399, 1303490, 1301851, 1298304, 1297918, 1306763, 1298104, 1294815, 1302028, 1297781, 270499, 270292, 270927, 272021, 272388, 270492}
 			},
 		},
 	},
@@ -194,26 +159,20 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2124] = {
 				events = {689, 690, 691, 692},
 				journalID = 2142,
-				privateAuras = {}
 			},
 			[2125] = {
 				events = {701, 702, 703, 704, 705, 706},
 				journalID = 2143,
-				privateAuras = {}
 			},
 			[2126] = {
 				events = {697, 698},
 				journalID = 2144,
-				privateAuras = {}
 			},
 			[2127] = {
 				events = {354, 828},
 				journalID = 2145,
-				privateAuras = {}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
+			["aura"] = {
 				privateAuras = {}
 			},
 		},
@@ -224,21 +183,16 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2609] = {
 				events = {866, 867, 868, 869},
 				journalID = 2488,
-				privateAuras = {}
 			},
 			[2606] = {
 				events = {882, 883, 884},
 				journalID = 2485,
-				privateAuras = {}
 			},
 			[2623] = {
 				events = {885, 887, 888, 889, 890},
 				journalID = 2503,
-				privateAuras = {}
 			},
-			["trash"] = {
-				events = {},
-				journalID = 0,
+			["aura"] = {
 				privateAuras = {}
 			},
 		},
@@ -251,41 +205,36 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3470] = {
 				events = {675, 676, 693, 731, 804},
 				journalID = 2888,
-				privateAuras = {}
 			},
 			[3445] = {
 				events = {637, 638, 639, 640, 643, 673, 788},
 				journalID = 2874,
-				privateAuras = {}
 			},
 			[3455] = {
 				events = {754, 757, 759},
 				journalID = 2882,
-				privateAuras = {}
 			},
 			[3497] = {
 				events = {721, 722, 725, 727, 729, 768, 776, 783},
 				journalID = 2894,
-				privateAuras = {}
 			},
 			[3420] = {
 				events = {653, 664, 665, 863},
 				journalID = 2871,
-				privateAuras = {}
 			},
 			[3421] = {
 				events = {711, 740, 742, 743, 744, 751, 753, 896, 897, 900},
 				journalID = 2887,
-				privateAuras = {}
 			},
 			[3429] = {
 				events = {667, 677, 680, 682, 684, 687, 794, 811, 812, 898},
 				journalID = 2883,
-				privateAuras = {}
 			},
 			[3492] = {
 				events = {699, 700, 746, 799, 800, 806, 810, 825, 826, 830},
 				journalID = 2895,
+			},
+			["aura"] = {
 				privateAuras = {}
 			},
 		},
