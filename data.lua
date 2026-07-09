@@ -172,12 +172,12 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {}
 			},
 			[2140] = {
-				events = {870, 871, 873, 874, 875, 876},
+				events = {870, 872, 871, 873, 874, 875, 876},
 				journalID = 2170,
 				privateAuras = {}
 			},
 			[2143] = {
-				events = {831, 832, 833, 835},
+				events = {831, 832, 833, 834, 835},
 				journalID = 2172,
 				privateAuras = {}
 			},
@@ -192,22 +192,22 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1030)) or "Temple of Sethraliss",
 		encounters = {
 			[2124] = {
-				events = {689, 690, 691, 692, 718},
+				events = {689, 690, 691, {692, 718}},
 				journalID = 2142,
 				privateAuras = {}
 			},
 			[2125] = {
-				events = {703, 704, 705, 706},
+				events = {701, 702, 703, 704, 705, 706},
 				journalID = 2143,
 				privateAuras = {}
 			},
 			[2126] = {
-				events = {698},
+				events = {697, 698},
 				journalID = 2144,
 				privateAuras = {}
 			},
 			[2127] = {
-				events = {},
+				events = {354, 828},
 				journalID = 2145,
 				privateAuras = {}
 			},
@@ -222,17 +222,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1202)) or "Ruby Life Pools",
 		encounters = {
 			[2609] = {
-				events = {869},
+				events = {866, 867, 868, 869},
 				journalID = 2488,
 				privateAuras = {}
 			},
 			[2606] = {
-				events = {884},
+				events = {882, 883, 884},
 				journalID = 2485,
 				privateAuras = {}
 			},
 			[2623] = {
-				events = {885, 887, 888, 890},
+				events = {885, 887, 888, 889, 890},
 				journalID = 2503,
 				privateAuras = {}
 			},
