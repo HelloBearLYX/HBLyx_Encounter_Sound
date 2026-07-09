@@ -192,7 +192,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1030)) or "Temple of Sethraliss",
 		encounters = {
 			[2124] = {
-				events = {689, 690, 691, {692, 718}},
+				events = {689, 690, 691, 692},
 				journalID = 2142,
 				privateAuras = {}
 			},
