@@ -27,6 +27,32 @@ local EVENT_TRIGGERS = {
 }
 local TRIGGER_ORDER = {"0", "1", "2"} -- keep a separate order table since the trigger keys are string type
 
+local function IsAuraOnlyEncounter(encounterID)
+	return encounterID == "trash" or encounterID == "aura"
+end
+
+local function GetSelectedEncounterData(mapID, encounterID)
+	if not mapID or not encounterID then
+		return nil
+	end
+
+	local mapData = addon.data.MAP_ENCOUNTER_EVENTS[mapID]
+	if not mapData or not mapData.encounters then
+		return nil
+	end
+
+	return mapData.encounters[encounterID]
+end
+
+local function GetPrivateAuraSourceData(mapID, encounterID)
+	local encounterData = GetSelectedEncounterData(mapID, encounterID)
+	if encounterData and type(encounterData.privateAuras) == "table" then
+		return encounterData
+	end
+
+	return nil
+end
+
 -- MARK: Get Trigger Desc
 
 ---Get trigger description for current trigger type
@@ -383,7 +409,7 @@ local function GetEncountersList(mapID)
 			if encounterID == "trash" then
 				output[encounterID] = L["EncounterTrash"]
 			elseif encounterID == "aura" then
-				output[encounterID] = L["PrivateAuraSettings"]
+				output[encounterID] = L["EncounterTrash"]
 			elseif type(encounterInfo.journalID) == "number" and encounterInfo.journalID > 0 then
 				local encounterName = EJ_GetEncounterInfo(encounterInfo.journalID)
 				if type(encounterName) == "string" and encounterName ~= "" then
@@ -516,7 +542,7 @@ end
 ---Render event buttons for selected encounter and bind event detail loading.
 ---@param self table encounter sound panel instance
 local function RenderEncounterSettings(self)
-	local encounterData = addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter]
+	local encounterData = GetSelectedEncounterData(self.inputMap, self.inputEncounter)
 	if not encounterData or type(encounterData.events) ~= "table" then
 		return
 	end
@@ -623,7 +649,7 @@ end
 ---Render private aura buttons for selected encounter.
 ---@param self table encounter sound panel instance
 local function RenderPrivateAuraSettings(self)
-	local encounterData = addon.data.MAP_ENCOUNTER_EVENTS[self.inputMap].encounters[self.inputEncounter]
+	local encounterData = GetPrivateAuraSourceData(self.inputMap, self.inputEncounter)
 	if not encounterData or type(encounterData.privateAuras) ~= "table" then
 		return
 	end
@@ -799,10 +825,11 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 
 	local function RenderEncounterSelection()
 		ClearDynamicSettings()
-		if self.inputEncounter == "aura" then
+		if self.inputEncounter then
+			if not IsAuraOnlyEncounter(self.inputEncounter) then
+				BuildEventSettings()
+			end
 			BuildAuraSettings()
-		elseif self.inputEncounter then
-			BuildEventSettings()
 		end
 		self.frame:DoLayout()
 	end

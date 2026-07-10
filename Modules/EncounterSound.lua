@@ -8,7 +8,8 @@ local EncounterSound = {
 
 -- MARK: Constants
 
-local AURA_ENCOUNTER_KEY = "aura"
+local AURA_ENCOUNTER_KEY = "trash"
+local LEGACY_AURA_ENCOUNTER_KEY = "aura"
 
 -- MARK: Data Migration
 
@@ -238,7 +239,10 @@ local function LoadInstancePrivateAuraSounds(self, instanceID)
     if addon.db.EncounterSound.dataPA and not addon.db.EncounterSound.dataPA[mapID] then
         local auraEncounter = addon.data.MAP_ENCOUNTER_EVENTS[mapID]
             and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters
-            and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[AURA_ENCOUNTER_KEY]
+            and (
+                addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[AURA_ENCOUNTER_KEY]
+                or addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[LEGACY_AURA_ENCOUNTER_KEY]
+            )
         if auraEncounter and type(auraEncounter.privateAuras) == "table" then
             addon.db.EncounterSound.dataPA[mapID] = addon.db.EncounterSound.dataPA[mapID] or {}
         end
