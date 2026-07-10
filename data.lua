@@ -152,7 +152,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2139] = {
 				events = {767, 891, 892, 893},
 				journalID = 2165,
-				privateAuras = {{1306736, 265773}, 265914},
+				privateAuras = {265773, 265914}, -- damage aura (1306736) for 265773
 			},
 			[2142] = {
 				events = {878, 879, 880},
@@ -180,25 +180,25 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2124] = {
 				events = {689, 690, 691, 692},
 				journalID = 2142,
-				privateAuras = {},
+				privateAuras = {1289229, 1288885, 1308738, 1292035},
 			},
 			[2125] = {
 				events = {701, 702, 703, 704, 705, 706},
 				journalID = 2143,
-				privateAuras = {},
+				privateAuras = {1308838, 1290030, 263958, {1289109, 1289588}, 1293048, 267027, 1300227},
 			},
 			[2126] = {
 				events = {697, 698},
 				journalID = 2144,
-				privateAuras = {},
+				privateAuras = {266923, 1291815},
 			},
 			[2127] = {
 				events = {354, 828},
 				journalID = 2145,
-				privateAuras = {},
+				privateAuras = {1300666, 1302158, 1303446, 1302618, 1300877, 1302826, 1300704, 1300714},
 			},
 			["trash"] = {
-				privateAuras = {}
+				privateAuras = {1225638, 48743, 1300684, 1293307, 80354, 273274, 1308546, 123981, 1296052, 116888, 1291468, 1308113, 1308148, 1303596, 1289589, 1293133, 1303486, 1295635, 264206, 1291399, 1288457, 326809, 272655}
 			},
 		},
 	},
@@ -208,7 +208,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2609] = {
 				events = {866, 867, 868, 869},
 				journalID = 2488,
-				privateAuras = {384024, 385518, 397077, 373688, 1305234},
+				privateAuras = {384024, 385518, 373688, 1305234}, -- 397077 is the global damage and pull aura for 385518
 			},
 			[2606] = {
 				events = {882, 883, 884},
