@@ -71,6 +71,43 @@ local function CreateAuraContainer(name, includeSpellIDs)
     return container
 end
 
+-- MARK: Fetch Include Spell IDs
+local function FetchIncludeSpellIDs()
+	-- data template
+	-- [mapID] = {
+		-- seasonMapID	= 0,
+		-- name = select(1, EJ_GetInstanceInfo(mapID)) or "instance name",
+		-- encounters = {
+			-- [encounterID] = {
+				-- events = {eventID1, eventID2, eventID3, ...},
+				-- journalID = 0,
+				-- privateAuras = {spellID1, spellID2, spellID3, ...}
+			-- },
+			-- ["trash"] = {	
+				-- privateAuras = {spellID1, spellID2, ...}
+			-- },
+	-- }
+
+    -- iterate through all map and encounter data to collect include spell IDs
+    local output = {}
+    for _, mapInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS) do
+        for _, encounterInfo in pairs(mapInfo.encounters) do
+            for _, spellID in ipairs(encounterInfo.privateAuras or {}) do
+                if type(spellID) == "table" then
+                    -- insert all spell IDs from the table
+                    for _, id in ipairs(spellID) do
+                        output[id] = true
+                    end
+                elseif type(spellID) == "number" then
+                    output[spellID] = true
+                end
+            end
+        end
+    end
+
+    return output
+end
+
 -- MARK: Initialize
 
 ---Initialize (Constructor)
@@ -78,7 +115,7 @@ end
 function PrivateAuraAnchor:Initialize()
     self.eventFrame = CreateFrame("Frame")
     -- get includeSpellIDs
-    local includeLustSpellIDs = {} -- TODO: get ids from data.lua
+    local includeLustSpellIDs = FetchIncludeSpellIDs()
 
     -- use 12.1 new aura system instead of the old private aura system
     self.player = CreateAuraContainer("player", includeLustSpellIDs)
@@ -133,7 +170,10 @@ end
 
 ---Update style settings and render them in-game for CustomTracker
 function PrivateAuraAnchor:UpdateStyle()
-    -- TODO: implement style update logic for PrivateAuraAnchor
+    self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["AnchorOffsetX"] or 0, addon.db[self.modName]["AnchorOffsetY"] or 0)
+    if self.coTank then
+        self.coTank:SetPoint("LEFT", self.player, "RIGHT", addon.db[self.modName]["AnchorOffsetX"] or 0, addon.db[self.modName]["AnchorOffsetY"] or 0)
+    end
 end
 
 -- MARK: Test
