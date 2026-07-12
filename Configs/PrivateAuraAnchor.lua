@@ -82,29 +82,29 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 		update()
 	end)
 
-    local coTankGroup = GUI:CreateInlineGroup(frame, L["CoTankAuras"])
-    GUI:CreateToggleCheckBox(coTankGroup, L["ShowCoTankAuras"], addon.db.PrivateAuraAnchor.ShowCoTankAuras, function(value)
-        addon.db.PrivateAuraAnchor.ShowCoTankAuras = value
-        addon:ShowDialog(ADDON_NAME .. "RLNeeded")
-    end)
+    -- local coTankGroup = GUI:CreateInlineGroup(frame, L["CoTankAuras"])
+    -- GUI:CreateToggleCheckBox(coTankGroup, L["ShowCoTankAuras"], addon.db.PrivateAuraAnchor.ShowCoTankAuras, function(value)
+    --     addon.db.PrivateAuraAnchor.ShowCoTankAuras = value
+    --     addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+    -- end)
 
-	local coTankStyleGroup = GUI:CreateInlineGroup(coTankGroup, L["StyleSettings"])
+	-- local coTankStyleGroup = GUI:CreateInlineGroup(coTankGroup, L["StyleSettings"])
 
-	local coTankIconGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["IconSettings"])
-	GUI:CreateSlider(coTankIconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.CoTankIconSize, function(value)
-		addon.db.PrivateAuraAnchor.CoTankIconSize = value
-		update()
-	end)
+	-- local coTankIconGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["IconSettings"])
+	-- GUI:CreateSlider(coTankIconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.CoTankIconSize, function(value)
+	-- 	addon.db.PrivateAuraAnchor.CoTankIconSize = value
+	-- 	update()
+	-- end)
 
-	local coTankPositionGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["PositionSettings"])
-	GUI:CreateSlider(coTankPositionGroup, L["X"], -2000, 2000, 1, addon.db.PrivateAuraAnchor.CoTankX, function(value)
-		addon.db.PrivateAuraAnchor.CoTankX = value
-		update()
-	end)
-	GUI:CreateSlider(coTankPositionGroup, L["Y"], -1000, 1000, 1, addon.db.PrivateAuraAnchor.CoTankY, function(value)
-		addon.db.PrivateAuraAnchor.CoTankY = value
-		update()
-	end)
+	-- local coTankPositionGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["PositionSettings"])
+	-- GUI:CreateSlider(coTankPositionGroup, L["X"], -2000, 2000, 1, addon.db.PrivateAuraAnchor.CoTankX, function(value)
+	-- 	addon.db.PrivateAuraAnchor.CoTankX = value
+	-- 	update()
+	-- end)
+	-- GUI:CreateSlider(coTankPositionGroup, L["Y"], -1000, 1000, 1, addon.db.PrivateAuraAnchor.CoTankY, function(value)
+	-- 	addon.db.PrivateAuraAnchor.CoTankY = value
+	-- 	update()
+	-- end)
 
 	return frame
 end

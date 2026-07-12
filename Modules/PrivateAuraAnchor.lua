@@ -56,7 +56,7 @@ local function CreateAuraContainer(name)
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
     container:SetAuraLayoutAnchorPoint("LEFT")
 
-    container:AddAuraGroup("defaultGroup", "HARMFUL|!PLAYER", {
+    container:AddAuraGroup(name, "HARMFUL|!PLAYER", {
         maxFrameCount = maxCount,
         initializeFrame = function(frame)
             InitializeAuraButtonFrame(frame)
@@ -86,10 +86,10 @@ function PrivateAuraAnchor:Initialize()
     self.player = CreateAuraContainer("player")
     self.player:SetUnit("player")
 
-    if addon.db[self.modName]["ShowCoTankAuras"] then
-        -- do the same things as player but do not set unit yet
-        self.coTank = CreateAuraContainer("coTank")
-    end
+    -- if addon.db[self.modName]["ShowCoTankAuras"] then
+    --     -- do the same things as player but do not set unit yet
+    --     self.coTank = CreateAuraContainer("coTank")
+    -- end
 
     return self
 end
@@ -165,11 +165,11 @@ function PrivateAuraAnchor:UpdateStyle()
     self.player:ClearAllPoints()
     self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
     self.player:SetSize(width, height)
-    if self.coTank then
-        self.coTank:ClearAllPoints()
-        self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
-        self.coTank:SetSize(width, height)
-    end
+    -- if self.coTank then
+    --     self.coTank:ClearAllPoints()
+    --     self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+    --     self.coTank:SetSize(width, height)
+    -- end
 end
 
 -- MARK: Test
@@ -193,23 +193,23 @@ function PrivateAuraAnchor:Test(on)
 
             ToggleTestRegion(self.player, true, L["PrivateAuraAnchorSettings"])
         end
-        if self.coTank then
-            -- re-apply position and size to the container to show the test overlay
-            self.coTank:ClearAllPoints()
-            self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
-            local width = (addon.db[self.modName]["CoTankIconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
-            local height = addon.db[self.modName]["CoTankIconSize"] or 45
-            self.coTank:SetSize(width, height)
+        -- if self.coTank then
+        --     -- re-apply position and size to the container to show the test overlay
+        --     self.coTank:ClearAllPoints()
+        --     self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+        --     local width = (addon.db[self.modName]["CoTankIconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
+        --     local height = addon.db[self.modName]["CoTankIconSize"] or 45
+        --     self.coTank:SetSize(width, height)
 
-            ToggleTestRegion(self.coTank, true, L["CoTankAuras"])
-        end
+        --     ToggleTestRegion(self.coTank, true, L["CoTankAuras"])
+        -- end
     else
         if self.player then
             ToggleTestRegion(self.player, false, L["PrivateAuraAnchorSettings"])
         end
-        if self.coTank then
-            ToggleTestRegion(self.coTank, false, L["CoTankAuras"])
-        end
+        -- if self.coTank then
+        --     ToggleTestRegion(self.coTank, false, L["CoTankAuras"])
+        -- end
     end
 end
 
@@ -217,20 +217,21 @@ end
 
 ---Register events
 function PrivateAuraAnchor:RegisterEvents()
-    if addon.db[self.modName]["ShowCoTankAuras"] and self.coTank then
-        addon.core:RegisterEvent("GROUP_ROSTER_UPDATE", self.eventFrame, self.modName)
+    -- if addon.db[self.modName]["ShowCoTankAuras"] and self.coTank then
+        -- addon.core:RegisterEvent("GROUP_ROSTER_UPDATE", self.eventFrame, self.modName)
 
-        self.eventFrame:SetScript("OnEvent", function(_, event)
-            if event == "GROUP_ROSTER_UPDATE" then
-                self.coTankToken = SearchCoTank()
-                if self.coTankToken then
-                    self.coTank:SetUnit(self.coTankToken)
-                else
-                    self.coTank:Hide()
-                end
-            end
-        end)
-    end
+        -- self.eventFrame:SetScript("OnEvent", function(_, event)
+        --     if event == "GROUP_ROSTER_UPDATE" then
+        --         self.coTankToken = SearchCoTank()
+        --         if self.coTankToken then
+        --             self.coTank:SetUnit(self.coTankToken)
+        --         else
+        --             self.coTank:SetUnit(nil)
+        --             self.coTank:Hide()
+        --         end
+        --     end
+        -- end)
+    -- end
 end
 
 -- MARK: Register Module
