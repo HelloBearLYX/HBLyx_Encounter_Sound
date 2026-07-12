@@ -202,7 +202,9 @@ function PrivateAuraAnchor:RegisterEvents()
         self.eventFrame:SetScript("OnEvent", function(_, event)
             if event == "GROUP_ROSTER_UPDATE" then
                 self.coTankToken = SearchCoTank()
-                self.coTank:SetUnit(self.coTankToken)
+                if self.coTankToken then
+                    self.coTank:SetUnit(self.coTankToken)
+                end
             end
         end)
     end
