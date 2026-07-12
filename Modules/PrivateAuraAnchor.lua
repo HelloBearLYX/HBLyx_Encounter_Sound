@@ -47,13 +47,13 @@ local function InitializeAuraButtonFrame(frame)
 end
 
 -- MARK: Create Container
-local function CreateAuraContainer(name, includeSpellIDs)
+local function CreateAuraContainer(name, spellIDs)
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
     container:SetAuraLayoutAnchorPoint("LEFT")
 
     container:AddAuraGroup("defaultGroup", "HARMFUL", {
         maxFrameCount = addon.db.PrivateAuraAnchor.MaxAuraCount or MAX_AURA_COUNT,
-        candidateFilters = { includeSpellIDs = includeSpellIDs },
+        candidateFilters = { excludeSpellIDs = spellIDs },
         initializeFrame = function(frame)
             InitializeAuraButtonFrame(frame)
         end,
@@ -108,6 +108,13 @@ local function FetchIncludeSpellIDs()
     return output
 end
 
+-- MARK: FetchExcludeSpellIDs
+local function FetchExcludeSpellIDs()
+    local output = {382912, 57723, 57724, 80354, 264689}
+
+    return output
+end
+
 -- MARK: Initialize
 
 ---Initialize (Constructor)
@@ -115,15 +122,15 @@ end
 function PrivateAuraAnchor:Initialize()
     self.eventFrame = CreateFrame("Frame")
     -- get includeSpellIDs
-    local includeLustSpellIDs = FetchIncludeSpellIDs()
+    local includeSpellIDs = FetchExcludeSpellIDs()
 
     -- use 12.1 new aura system instead of the old private aura system
-    self.player = CreateAuraContainer("player", includeLustSpellIDs)
+    self.player = CreateAuraContainer("player", includeSpellIDs)
     self.player:SetUnit("player")
 
     if addon.db[self.modName]["ShowCoTankAuras"] then
         -- do the same things as player but do not set unit yet
-        self.coTank = CreateAuraContainer("coTank", includeLustSpellIDs)
+        self.coTank = CreateAuraContainer("coTank", includeSpellIDs)
     end
 
     return self
@@ -170,9 +177,11 @@ end
 
 ---Update style settings and render them in-game for CustomTracker
 function PrivateAuraAnchor:UpdateStyle()
-    self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["AnchorOffsetX"] or 0, addon.db[self.modName]["AnchorOffsetY"] or 0)
+    self.player:ClearAllPoints()
+    self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
     if self.coTank then
-        self.coTank:SetPoint("LEFT", self.player, "RIGHT", addon.db[self.modName]["AnchorOffsetX"] or 0, addon.db[self.modName]["AnchorOffsetY"] or 0)
+        self.coTank:ClearAllPoints()
+        self.coTank:SetPoint("LEFT", self.player, "RIGHT", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
     end
 end
 
