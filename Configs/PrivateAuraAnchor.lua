@@ -7,16 +7,15 @@ local MOD_KEY = "PrivateAuraAnchor"
 addon.configurationList[MOD_KEY] = {
 	Enabled = false,
 	MaxAuras = 3,
-	X = 175,
-	Y = -85,
+	X = 150,
+	Y = -80,
 	IconSize = 45,
-	Grow = "RIGHT",
 	HideBorder = true,
 	ShowCountdownNumbers = true,
 
     ShowCoTankAuras = true,
-    CoTankX = 175,
-    CoTankY = -25,
+    CoTankX = 150,
+    CoTankY = -30,
     CoTankIconSize = 45,
     CoTankGrow = "RIGHT",
 }
@@ -61,15 +60,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 
 	-- MARK: Style
 	local styleGroup = GUI:CreateInlineGroup(frame, L["StyleSettings"])
-	GUI:CreateToggleCheckBox(styleGroup, L["ShowCountdownNumbers"], addon.db.PrivateAuraAnchor.ShowCountdownNumbers, function(value)
-		addon.db.PrivateAuraAnchor.ShowCountdownNumbers = value
-		update()
-	end)
-    GUI:CreateDropdown(styleGroup, L["Grow"], addon.Utilities.Grows, nil, addon.db.PrivateAuraAnchor.Grow, function(key)
-		addon.db.PrivateAuraAnchor.Grow = key
-		update()
-	end)
-
 	-- MARK: Icon
 	local iconGroup = GUI:CreateInlineGroup(styleGroup, L["IconSettings"])
 	GUI:CreateSlider(iconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.IconSize, function(value)
@@ -79,11 +69,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	GUI:CreateSlider(iconGroup, L["MaxAuras"], 1, 5, 1, addon.db.PrivateAuraAnchor.MaxAuras, function(value)
 		addon.db.PrivateAuraAnchor.MaxAuras = value
 		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
-	end)
-	GUI:CreateToggleCheckBox(iconGroup, L["HideBorder"], addon.db.PrivateAuraAnchor.HideBorder, function(value)
-		addon.db.PrivateAuraAnchor.HideBorder = value
-		addon.core:GetModule(MOD_KEY):CreatePrivateAnchors("player")
-		addon.core:GetModule(MOD_KEY):CreatePrivateAnchors("co-tank")
 	end)
 
 	-- MARK: Position
@@ -104,10 +89,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
     end)
 
 	local coTankStyleGroup = GUI:CreateInlineGroup(coTankGroup, L["StyleSettings"])
-	GUI:CreateDropdown(coTankStyleGroup, L["Grow"], addon.Utilities.Grows, nil, addon.db.PrivateAuraAnchor.CoTankGrow, function(key)
-		addon.db.PrivateAuraAnchor.CoTankGrow = key
-		update()
-	end)
 
 	local coTankIconGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["IconSettings"])
 	GUI:CreateSlider(coTankIconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.CoTankIconSize, function(value)

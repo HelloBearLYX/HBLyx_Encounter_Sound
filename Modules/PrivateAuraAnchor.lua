@@ -8,12 +8,13 @@ local PrivateAuraAnchor = {
 
 -- MARK: Constants
 local TEST_ICON_TEXTURE = 134400
-local AURA_FRAME_SIZE = 40
+local AURA_FRAME_SIZE = 45
 local MAX_AURA_COUNT = 3
 
 -- MARK: Initialize Aura
 local function InitializeAuraButtonFrame(frame)
-    frame:SetSize(AURA_FRAME_SIZE, AURA_FRAME_SIZE)
+    local iconSize = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
+    frame:SetSize(iconSize, iconSize)
 
     if not frame.texture then
         local icon = frame:CreateTexture(nil, "BACKGROUND")
@@ -47,13 +48,16 @@ local function InitializeAuraButtonFrame(frame)
 end
 
 -- MARK: Create Container
-local function CreateAuraContainer(name, spellIDs)
+local function CreateAuraContainer(name)
+    local maxCount = addon.db.PrivateAuraAnchor.MaxAuras or MAX_AURA_COUNT
+    local width = (addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE) * maxCount
+    local height = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
+
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
     container:SetAuraLayoutAnchorPoint("LEFT")
 
     container:AddAuraGroup("defaultGroup", "HARMFUL|!PLAYER", {
-        maxFrameCount = addon.db.PrivateAuraAnchor.MaxAuraCount or MAX_AURA_COUNT,
-        candidateFilters = { excludeSpellIDs = spellIDs },
+        maxFrameCount = maxCount,
         initializeFrame = function(frame)
             InitializeAuraButtonFrame(frame)
         end,
@@ -63,56 +67,12 @@ local function CreateAuraContainer(name, spellIDs)
             gapX = 0,
             gapY = 0,
             forceNewRow = false,
-            elementWidth = addon.db.PrivateAuraAnchor.AuraFrameSize or AURA_FRAME_SIZE,
-            elementHeight = addon.db.PrivateAuraAnchor.AuraFrameSize or AURA_FRAME_SIZE,
+            elementWidth = addon.db.PrivateAuraAnchor.AuraFrameSize or width,
+            elementHeight = addon.db.PrivateAuraAnchor.AuraFrameSize or height,
         },
     })
 
     return container
-end
-
--- MARK: Fetch Include Spell IDs
-local function FetchIncludeSpellIDs()
-	-- data template
-	-- [mapID] = {
-		-- seasonMapID	= 0,
-		-- name = select(1, EJ_GetInstanceInfo(mapID)) or "instance name",
-		-- encounters = {
-			-- [encounterID] = {
-				-- events = {eventID1, eventID2, eventID3, ...},
-				-- journalID = 0,
-				-- privateAuras = {spellID1, spellID2, spellID3, ...}
-			-- },
-			-- ["trash"] = {	
-				-- privateAuras = {spellID1, spellID2, ...}
-			-- },
-	-- }
-
-    -- iterate through all map and encounter data to collect include spell IDs
-    local output = {}
-    for _, mapInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS) do
-        for _, encounterInfo in pairs(mapInfo.encounters) do
-            for _, spellID in ipairs(encounterInfo.privateAuras or {}) do
-                if type(spellID) == "table" then
-                    -- insert all spell IDs from the table
-                    for _, id in ipairs(spellID) do
-                        output[id] = true
-                    end
-                elseif type(spellID) == "number" then
-                    output[spellID] = true
-                end
-            end
-        end
-    end
-
-    return output
-end
-
--- MARK: FetchExcludeSpellIDs
-local function FetchExcludeSpellIDs()
-    local output = {57723, 57724, 80354, 264689}
-
-    return output
 end
 
 -- MARK: Initialize
@@ -121,16 +81,14 @@ end
 ---@return PrivateAuraAnchor PrivateAuraAnchor a PrivateAuraAnchor object
 function PrivateAuraAnchor:Initialize()
     self.eventFrame = CreateFrame("Frame")
-    -- get includeSpellIDs
-    local includeSpellIDs = FetchExcludeSpellIDs()
 
     -- use 12.1 new aura system instead of the old private aura system
-    self.player = CreateAuraContainer("player", includeSpellIDs)
+    self.player = CreateAuraContainer("player")
     self.player:SetUnit("player")
 
     if addon.db[self.modName]["ShowCoTankAuras"] then
         -- do the same things as player but do not set unit yet
-        self.coTank = CreateAuraContainer("coTank", includeSpellIDs)
+        self.coTank = CreateAuraContainer("coTank")
     end
 
     return self
@@ -173,15 +131,44 @@ local function SearchCoTank()
     return nil
 end
 
+-- MARK: CreateTestRegion
+
+local function ToggleTestRegion(container, on, label)
+    if not container.testOverlay then
+        local testOverlay = CreateFrame("Frame", nil, container)
+        testOverlay:SetAllPoints()
+        testOverlay.texture = testOverlay:CreateTexture(nil, "ARTWORK")
+        testOverlay.texture:SetAllPoints()
+        testOverlay.texture:SetColorTexture(0, 0, 1, 0.5)
+        testOverlay.title = testOverlay:CreateFontString(nil, "OVERLAY")
+        testOverlay.title:SetPoint("CENTER", testOverlay, "TOP", 0, 0)
+        testOverlay.title:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+        testOverlay.title:SetText(label)
+        container.testOverlay = testOverlay
+    end
+
+    if on then
+        container.testOverlay:Show()
+    else
+        container.testOverlay:Hide()
+    end
+end
+
 -- MARK: UpdateStyle
 
 ---Update style settings and render them in-game for CustomTracker
 function PrivateAuraAnchor:UpdateStyle()
+    local maxCount = addon.db.PrivateAuraAnchor.MaxAuras or MAX_AURA_COUNT
+    local width = (addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE) * maxCount
+    local height = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
+
     self.player:ClearAllPoints()
     self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
+    self.player:SetSize(width, height)
     if self.coTank then
         self.coTank:ClearAllPoints()
-        self.coTank:SetPoint("LEFT", self.player, "RIGHT", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+        self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+        self.coTank:SetSize(width, height)
     end
 end
 
@@ -195,9 +182,34 @@ function PrivateAuraAnchor:Test(on)
     end
 
     if on then
-        -- TODO: implement test mode logic for PrivateAuraAnchor
+        -- make psedo auras for testing
+        if self.player then
+            -- re-apply position and size to the container to show the test overlay
+            self.player:ClearAllPoints()
+            self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
+            local width = (addon.db[self.modName]["IconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
+            local height = addon.db[self.modName]["CoTankIconSize"] or 45
+            self.player:SetSize(width, height)
+
+            ToggleTestRegion(self.player, true, L["PrivateAuraAnchorSettings"])
+        end
+        if self.coTank then
+            -- re-apply position and size to the container to show the test overlay
+            self.coTank:ClearAllPoints()
+            self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+            local width = (addon.db[self.modName]["CoTankIconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
+            local height = addon.db[self.modName]["CoTankIconSize"] or 45
+            self.coTank:SetSize(width, height)
+
+            ToggleTestRegion(self.coTank, true, L["CoTankAuras"])
+        end
     else
-        -- TODO: implement test mode logic for PrivateAuraAnchor
+        if self.player then
+            ToggleTestRegion(self.player, false, L["PrivateAuraAnchorSettings"])
+        end
+        if self.coTank then
+            ToggleTestRegion(self.coTank, false, L["CoTankAuras"])
+        end
     end
 end
 
@@ -213,6 +225,8 @@ function PrivateAuraAnchor:RegisterEvents()
                 self.coTankToken = SearchCoTank()
                 if self.coTankToken then
                     self.coTank:SetUnit(self.coTankToken)
+                else
+                    self.coTank:Hide()
                 end
             end
         end)
