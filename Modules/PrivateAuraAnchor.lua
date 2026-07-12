@@ -51,7 +51,7 @@ local function CreateAuraContainer(name, spellIDs)
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
     container:SetAuraLayoutAnchorPoint("LEFT")
 
-    container:AddAuraGroup("defaultGroup", "HARMFUL", {
+    container:AddAuraGroup("defaultGroup", "HARMFUL|!PLAYER", {
         maxFrameCount = addon.db.PrivateAuraAnchor.MaxAuraCount or MAX_AURA_COUNT,
         candidateFilters = { excludeSpellIDs = spellIDs },
         initializeFrame = function(frame)
@@ -110,7 +110,7 @@ end
 
 -- MARK: FetchExcludeSpellIDs
 local function FetchExcludeSpellIDs()
-    local output = {382912, 57723, 57724, 80354, 264689}
+    local output = {57723, 57724, 80354, 264689}
 
     return output
 end
