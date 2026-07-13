@@ -19,6 +19,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 	-- }
 
 	-- MARK: current season 12.1
+	-- MARK: TBV
 	[1309] = {
 		name = select(1, EJ_GetInstanceInfo(1309)) or "The Blinding Vale",
 		encounters = {
@@ -47,6 +48,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	-- MARK: MR
 	[1304] = {
 		name = select(1, EJ_GetInstanceInfo(1304)) or "Murder Row",
 		encounters = {
@@ -75,6 +77,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	-- MARK: DoN
 	[1311] = {
 		name = select(1, EJ_GetInstanceInfo(1311)) or "Den of Nalorakk",
 		encounters = {
@@ -98,30 +101,32 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	-- MARK: VA
 	[1313] = {
 		name = select(1, EJ_GetInstanceInfo(1313)) or "Voidscar Arena",
 		encounters = {
 			[3285] = {
 				events = {39, 40, 41, 42, 558, 782},
 				journalID = 2791,
-				privateAuras = {},
+				privateAuras = {1222103, 1296967},
 			},
 			[3286] = {
 				events = {46, 47, 54, 55, 297},
 				journalID = 2792,
-				privateAuras = {},
+				privateAuras = {1263971, 1222642, 1222692},
 			},
 			[3287] = {
 				events = {56, 57, 58, 171},
 				journalID = 2793,
-				privateAuras = {},
+				privateAuras = {1264188, 1300372, 1263983},
 			},
 			["trash"] = {
-				privateAuras = {}
+				privateAuras = {1299913, 1249712, 1267894, 1299244, 1250043, 1233535, 1300138, 1252406}
 			},
 
 		},
 	},
+	-- MARK: AoF
 	[1322] = {
 		name = select(1, EJ_GetInstanceInfo(1322)) or "Altar of Fangs",
 		encounters = {
@@ -145,6 +150,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	-- MARK: KR
 	[1041] = {
 		name = select(1, EJ_GetInstanceInfo(1041)) or "King's Rest",
 		encounters = {
@@ -173,6 +179,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	-- MARK: ToS
 	[1030] = {
 		name = select(1, EJ_GetInstanceInfo(1030)) or "Temple of Sethraliss",
 		encounters = {
@@ -201,6 +208,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	-- MARK: RLP
 	[1202] = {
 		name = select(1, EJ_GetInstanceInfo(1202)) or "Ruby Life Pools",
 		encounters = {
