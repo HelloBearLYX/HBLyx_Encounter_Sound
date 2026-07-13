@@ -55,6 +55,7 @@ local function CreateAuraContainer(name)
 
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
     container:SetAuraLayoutAnchorPoint("LEFT")
+    container:SetSize(width, height)
 
     container:AddAuraGroup(name, "HARMFUL|!PLAYER", {
         maxFrameCount = maxCount,
@@ -67,7 +68,7 @@ local function CreateAuraContainer(name)
             gapX = 0,
             gapY = 0,
             forceNewRow = false,
-            elementWidth = addon.db.PrivateAuraAnchor.AuraFrameSize or width,
+            elementWidth = addon.db.PrivateAuraAnchor.AuraFrameSize or height,
             elementHeight = addon.db.PrivateAuraAnchor.AuraFrameSize or height,
         },
     })
