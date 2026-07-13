@@ -330,6 +330,9 @@ addon.data.INSTANCE_GOSSIP = {
 	[2859] = {
 		[137222] = true,
 	},
+	[1877] = {
+		[48126] = true,
+	}
 }
 
 -- MARK: Data Changes
