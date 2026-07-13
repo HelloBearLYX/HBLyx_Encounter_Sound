@@ -68,8 +68,8 @@ local function CreateAuraContainer(name)
             gapX = 0,
             gapY = 0,
             forceNewRow = false,
-            elementWidth = addon.db.PrivateAuraAnchor.AuraFrameSize or height,
-            elementHeight = addon.db.PrivateAuraAnchor.AuraFrameSize or height,
+            elementWidth = addon.db.PrivateAuraAnchor.IconSize or height,
+            elementHeight = addon.db.PrivateAuraAnchor.IconSize or height,
         },
     })
 

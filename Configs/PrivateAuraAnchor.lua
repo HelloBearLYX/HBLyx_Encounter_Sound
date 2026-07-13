@@ -10,14 +10,10 @@ addon.configurationList[MOD_KEY] = {
 	X = 150,
 	Y = -80,
 	IconSize = 45,
-	HideBorder = true,
-	ShowCountdownNumbers = true,
 
     ShowCoTankAuras = true,
     CoTankX = 150,
     CoTankY = -30,
-    CoTankIconSize = 45,
-    CoTankGrow = "RIGHT",
 }
 
 -- MARK: Safe update
@@ -89,13 +85,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
     end)
 
 	local coTankStyleGroup = GUI:CreateInlineGroup(coTankGroup, L["StyleSettings"])
-
-	local coTankIconGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["IconSettings"])
-	GUI:CreateSlider(coTankIconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.CoTankIconSize, function(value)
-		addon.db.PrivateAuraAnchor.CoTankIconSize = value
-		update()
-	end)
-
 	local coTankPositionGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["PositionSettings"])
 	GUI:CreateSlider(coTankPositionGroup, L["X"], -2000, 2000, 1, addon.db.PrivateAuraAnchor.CoTankX, function(value)
 		addon.db.PrivateAuraAnchor.CoTankX = value
