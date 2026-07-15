@@ -133,20 +133,20 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[3456] = {
 				events = {795, 797, 798, 899, 902},
 				journalID = 2878,
-				privateAuras = {},
+				privateAuras = {1297876, 1307700},
 			},
 			[3457] = {
 				events = {813, 814, 815, 816, 817, 818},
 				journalID = 2879,
-				privateAuras = {},
+				privateAuras = {1299189, 1300503, 1305368, 1299080},
 			},
 			[3458] = {
 				events = {821, 822, 823, 824},
 				journalID = 2880,
-				privateAuras = {},
+				privateAuras = {1300894, 1301508, 1301231},
 			},
 			["trash"] = {
-				privateAuras = {1294569, 1294557, 1307571, 1294845, 1308518}
+				privateAuras = {1294569, 1306669, 1306550, 1306232, 1294557, 1294845, 1307571, 1307531, 1308518}
 			},
 		},
 	},
