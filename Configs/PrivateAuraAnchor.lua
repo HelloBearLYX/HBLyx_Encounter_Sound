@@ -10,6 +10,7 @@ addon.configurationList[MOD_KEY] = {
 	X = 150,
 	Y = -80,
 	IconSize = 45,
+	StackTextSize = 12,
 
     ShowCoTankAuras = true,
     CoTankX = 150,
@@ -60,7 +61,11 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	local iconGroup = GUI:CreateInlineGroup(styleGroup, L["IconSettings"])
 	GUI:CreateSlider(iconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.IconSize, function(value)
 		addon.db.PrivateAuraAnchor.IconSize = value
-		update()
+		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+	end)
+	GUI:CreateSlider(iconGroup, L["StackTextSize"], 4, 40, 1, addon.db.PrivateAuraAnchor.StackTextSize, function(value)
+		addon.db.PrivateAuraAnchor.StackTextSize = value
+		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
 	end)
 	GUI:CreateSlider(iconGroup, L["MaxAuras"], 1, 5, 1, addon.db.PrivateAuraAnchor.MaxAuras, function(value)
 		addon.db.PrivateAuraAnchor.MaxAuras = value

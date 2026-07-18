@@ -34,6 +34,16 @@ local function InitializeAuraButtonFrame(frame)
         frame:SetDurationCooldown(cooldown)
     end
 
+    -- bottomright stack count text
+    if not frame.stack then
+        local stack = frame:CreateFontString(nil, "OVERLAY")
+        stack:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+        stack:SetFont("Fonts\\FRIZQT__.TTF", addon.db.PrivateAuraAnchor.StackTextSize or 12, "OUTLINE")
+        stack:SetTextColor(1, 1, 1, 1)
+        frame.stack = stack
+        frame:SetApplicationCount(stack)
+    end
+
     if not frame.border then
         local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
         border:SetAllPoints()

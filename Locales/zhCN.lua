@@ -135,6 +135,7 @@ L["FadeTime"] = "淡出时间"
 L["Undo"] = "撤销"
 L["ShowSpellText"] = "显示技能文本"
 L["EncounterTrash"] = "小怪"
+L["StackTextSize"] = "层数大小"
 
 -- MARK: Style
 L["Color"] = "颜色"

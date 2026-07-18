@@ -134,6 +134,7 @@ L["FadeTime"] = "Fade Time"
 L["Undo"] = "Undo"
 L["ShowSpellText"] = "Show Spell Text"
 L["EncounterTrash"] = "Trash"
+L["StackTextSize"] = "Stack Size"
 
 -- MARK: Style
 L["Color"] = "Color"
