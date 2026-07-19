@@ -190,9 +190,7 @@ L["BackgroundOpacity"] = "Background Opacity"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "Encounter Sound"
-L["EncounterSoundSettingsDesc"] = "Set and play custom sound alert for encounter time line events and private auras.\n\n" ..
-"Many issue will be fixed and module will be improved with the process of data mining, thanks for your feedback and support!\n\n" ..
-"This module is keeping working in progress, and hope this module can provide more flexible sound alerts for encounters.\n\n"
+L["EncounterSoundSettingsDesc"] = "Set and play custom sound alert for encounter time line events and private auras."
 
 L["EncounterSettings"] = "Encounter Events Settings"
 L["SelectEncounter"] = "Select Encounter"

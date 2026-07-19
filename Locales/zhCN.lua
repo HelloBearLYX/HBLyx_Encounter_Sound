@@ -191,9 +191,7 @@ L["BackgroundOpacity"] = "背景透明度"
 
 -- MARK: Encounter Sound
 L["EncounterSoundSettings"] = "BOSS战音效"
-L["EncounterSoundSettingsDesc"] = "为BOSS战时间轴事件和私有光环设置和播放自定义音效\n" ..
-"随着数据挖掘的过程, 许多问题将被修复, 模块也会得到改进, 感谢你的反馈和支持!\n" ..
-"这个模块持续开发中, 希望这个模块可以为BOSS战提供更灵活的音效警报\n\n"
+L["EncounterSoundSettingsDesc"] = "为BOSS战时间轴事件和私有光环设置和播放自定义音效"
 
 L["EncounterSettings"] = "BOSS战事件设置"
 L["SelectEncounter"] = "选择BOSS战"
