@@ -214,6 +214,10 @@ L["EncounterEventsInstruction"] =
 "|cffffff00测试时间轴|r: 会模拟本Boss所有的时间轴事件(非实际Boss时间轴), 并以6秒为间隔, 以便测试设置的正确性和效果, 但是实际时间轴时间表现可能会不同\n\n" ..
 "|cffff0000注意|r: 测试时间轴仅适用于已设置的事件, 因此, |cffFF7C0A如果该BOSS战没有设置任何事件, 测试时间轴将无法工作|r\n\n"
 L["PrivateAuraInstruction"] = "为光环应用一个声音警报, 当私有光环被施加在\"玩家\"身上时播放声音警报\n\n"
+L["AuraSoundTriggers"] = "光环声音触发器"
+L["AuraSoundTrigger0"] = "首次施加时"
+L["AuraSoundTrigger1"] = "再次施加时"
+L["AuraSoundTrigger2"] = "移除时"
 
 -- MARK: Templates
 L["TemplateSettings"] = "模板"

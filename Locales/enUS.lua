@@ -213,6 +213,10 @@ L["EncounterEventsInstruction"] =
 "|cffffff00Test Timeline|r: simulate the timeline for all events of this Boss with 6 seconds intervals(not actual timeline), to test the correctness and effect of the settings, but the actual timeline trigger perform differently\n\n" ..
 "|cffff0000NOTE|r: Test Timeline only works with the events which has been set already, and, therefore, |cffFF7C0Aif there is no event has been set for this encounter, Test Timeline will not work|r.\n\n"
 L["PrivateAuraInstruction"] = "Apply a sound alert for auras, and the sound alert is played when the private aura is applied on \"player\".\n\n"
+L["AuraSoundTriggers"] = "Aura Sound Triggers"
+L["AuraSoundTrigger0"] = "When First Applied"
+L["AuraSoundTrigger1"] = "When Re-Applied"
+L["AuraSoundTrigger2"] = "When Removed"
 
 -- MARK: Templates
 L["TemplateSettings"] = "Template"

@@ -26,6 +26,11 @@ local EVENT_TRIGGERS = {
 	["2"] = L["OnTimelineEventHighlight"],
 }
 local TRIGGER_ORDER = {"0", "1", "2"} -- keep a separate order table since the trigger keys are string type
+local PATriggers = {
+	[1] = L["AuraSoundTrigger0"],
+	[2] = L["AuraSoundTrigger1"],
+	[3] = L["AuraSoundTrigger2"],
+}
 
 local function IsAuraOnlyEncounter(encounterID)
 	return encounterID == "trash" or encounterID == "aura"
@@ -198,7 +203,10 @@ end
 ---@param mapID integer instance mapID
 ---@param spellID integer private aura spellID
 ---@param sound string sound file path or sound kit ID
-local function AddPASound(mapID, spellID, sound)
+---@param triggers table table of triggers
+local function AddPASound(mapID, spellID, sound, triggers)
+	-- after 07/21/26 API changes, the aura sound are separate into three triggers
+	-- make all the dataPA to [mapID] = {[spellID] = {trigger, soundName}} format, and replaced the old [mapID] = {[spellID] = soundName} format
 	if not mapID or not spellID or not sound then
 		return
 	end
@@ -211,7 +219,11 @@ local function AddPASound(mapID, spellID, sound)
 		addon.db.EncounterSound.dataPA[mapID] = {}
 	end
 
-	addon.db.EncounterSound.dataPA[mapID][spellID] = sound
+	local triggersOuput = {}
+	for t, _ in pairs(triggers or {}) do
+		table.insert(triggersOuput, t - 1) -- convert to 1-based index for the triggers
+	end
+	addon.db.EncounterSound.dataPA[mapID][spellID] = {trigger = triggersOuput, sound = sound}
 
 	PrintIOResult(true, true, nil, spellID)
 end
@@ -615,18 +627,32 @@ end
 ---Create private aura sound setting widgets.
 ---@param self table encounter sound panel instance
 local function SetPASettings(self)
+	-- after 07/21/26 API changes, the aura sound are separate into three triggers
+	self.PATriggerDropdown = GUI:CreateMultiDropdown(self.PASettingsGroup, L["AuraSoundTriggers"], PATriggers, nil, nil)
+	self.PATriggerDropdown.widget:SetRelativeWidth(0.49)
 	self.PASoundDropdown = GUI:CreateSoundSelect(self.PASettingsGroup, L["SoundSettings"], nil, function(value)
-		if value then
+		-- if value then 
+		-- 	if type(self.inputPA) == "table" then
+		-- 		for _, spellID in ipairs(self.inputPA) do
+		-- 			AddPASound(self.inputMap, spellID, value, self.PATriggerDropdown:GetSelectedKeys())
+		-- 		end
+		-- 	else
+		-- 		AddPASound(self.inputMap, self.inputPA, value, self.PATriggerDropdown:GetSelectedKeys())
+		-- 	end
+		-- end
+	end)
+	self.PASoundDropdown:SetRelativeWidth(0.49)
+	GUI:CreateButton(self.PASettingsGroup, L["Add"], function()
+		if self.inputPA and self.PASoundDropdown:GetValue() then
 			if type(self.inputPA) == "table" then
 				for _, spellID in ipairs(self.inputPA) do
-					AddPASound(self.inputMap, spellID, value)
+					AddPASound(self.inputMap, spellID, self.PASoundDropdown:GetValue(), self.PATriggerDropdown:GetSelectedKeys())
 				end
 			else
-				AddPASound(self.inputMap, self.inputPA, value)
+				AddPASound(self.inputMap, self.inputPA, self.PASoundDropdown:GetValue(), self.PATriggerDropdown:GetSelectedKeys())
 			end
 		end
-	end)
-	self.PASoundDropdown:SetRelativeWidth(0.5)
+	end):SetRelativeWidth(0.24)
 	GUI:CreateButton(self.PASettingsGroup, L["Remove"], function()
 		local result
 		if type(self.inputPA) == "table" then
@@ -641,9 +667,10 @@ local function SetPASettings(self)
 		end
 
 		if result then
+			self.PATriggerDropdown:ClearSelections()
 			self.PASoundDropdown:SetValue(nil)
 		end
-	end)
+	end):SetRelativeWidth(0.24)
 end
 
 ---Render private aura buttons for selected encounter.
@@ -664,13 +691,17 @@ local function RenderPrivateAuraSettings(self)
 			name = string.format("|T%s:0|t %s", spell:GetSpellTexture(), spell:GetSpellName())
 		end
 		
+		-- after 07/21/26 API changes, the aura sound are separate into three triggers, so the display name will be the same for all three triggers, and the user can select different sound for each trigger
+		-- need to make each dropdown to show the current sound for each trigger, and when the user select a sound, it will apply to all three triggers for the selected aura
 		GUI:CreateButton(self.PASelectGroup, name, function()
 			local displayID = type(spellID) == "table" and spellID[1] or spellID
 			self.inputPA = spellID
 
 			if addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[self.inputMap] and addon.db.EncounterSound.dataPA[self.inputMap][displayID] then
-				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputMap][displayID])
+				self.PATriggerDropdown:SetSelectedKeys(addon.db.EncounterSound.dataPA[self.inputMap][displayID].trigger)
+				self.PASoundDropdown:SetValue(addon.db.EncounterSound.dataPA[self.inputMap][displayID].sound)
 			else
+				self.PATriggerDropdown:ClearSelections()
 				self.PASoundDropdown:SetValue(nil)
 			end
 
