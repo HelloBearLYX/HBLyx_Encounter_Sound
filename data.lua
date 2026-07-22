@@ -160,7 +160,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {265773, 1306736, 265914}, -- damage aura (1306736) for 265773
 			},
 			[2142] = {
-				events = {878, 879, 880},
+				events = {878, 879, 880, 973},
 				journalID = 2171,
 				privateAuras = {267702, 267626, 267763, 267618, 267874},
 			},
