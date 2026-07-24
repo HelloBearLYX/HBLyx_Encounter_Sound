@@ -215,7 +215,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			[2609] = {
 				events = {866, 867, 868, 869},
 				journalID = 2488,
-				privateAuras = {1305234, 384024, 385518, 373688, 372963}, -- 397077 is the global damage and pull aura for 385518
+				privateAuras = {1305234, 384024, 385518, 397077, 373688, 372963}, -- 397077 is the global damage and pull aura for 385518
 			},
 			[2606] = {
 				events = {882, 883, 884},
