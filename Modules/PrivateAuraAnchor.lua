@@ -10,6 +10,7 @@ local PrivateAuraAnchor = {
 local TEST_ICON_TEXTURE = 134400
 local AURA_FRAME_SIZE = 45
 local MAX_AURA_COUNT = 3
+local FILTER_STRING = "HARMFUL|!PLAYER"
 
 -- MARK: Initialize Aura
 local function InitializeAuraButtonFrame(frame)
@@ -64,20 +65,20 @@ local function CreateAuraContainer(name)
     local height = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
 
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
-    container:SetAuraLayoutAnchorPoint("LEFT")
+    container:SetPoint("LEFT", UIParent, "CENTER", addon.db[PrivateAuraAnchor.modName]["X"] or 0, addon.db[PrivateAuraAnchor.modName]["Y"] or 0)
     container:SetSize(width, height)
 
-    container:AddAuraGroup(name, "HARMFUL|!PLAYER", {
+    container:AddAuraGroup(name, FILTER_STRING, {
         maxFrameCount = maxCount,
         initializeFrame = function(frame)
             InitializeAuraButtonFrame(frame)
         end,
         layout = {
-            elementSpacingX = 0,
-            elementSpacingY = 0,
-            gapX = 0,
-            gapY = 0,
-            forceNewRow = false,
+            elementSpacing = 0,
+            lineSpacing = 0,
+            groupSpacing = 0,
+            groupLineSpacing = 0,
+            forceNewLine = false,
             elementWidth = addon.db.PrivateAuraAnchor.IconSize or height,
             elementHeight = addon.db.PrivateAuraAnchor.IconSize or height,
         },
