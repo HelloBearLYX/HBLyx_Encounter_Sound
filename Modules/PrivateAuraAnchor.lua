@@ -161,6 +161,11 @@ local function ToggleTestRegion(container, on, label)
 
     if on then
         container.testOverlay:Show()
+        -- addon.Utilities:MakeFrameDragPosition(container.testOverlay, PrivateAuraAnchor.modName, "X", "Y", function()
+        --     local anchorFrom, relativeTo, anchorTo, _, _  = container:GetPoint()
+        --     container:ClearAllPoints()
+        --     container:SetPoint(anchorFrom, relativeTo, anchorTo, addon.db[PrivateAuraAnchor.modName]["X"] or 0, addon.db[PrivateAuraAnchor.modName]["Y"] or 0)
+        -- end)
     else
         container.testOverlay:Hide()
     end

@@ -39,7 +39,8 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 		else
 			if value then
 				addon.core:LoadModule(MOD_KEY)
-				addon.core:TestModule(MOD_KEY)
+				addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+				-- addon.core:TestModule(MOD_KEY)
 			end
 		end
 	end)
