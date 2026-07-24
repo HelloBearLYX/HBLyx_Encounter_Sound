@@ -11,6 +11,12 @@ local TEST_ICON_TEXTURE = 134400
 local AURA_FRAME_SIZE = 45
 local MAX_AURA_COUNT = 3
 local FILTER_STRING = "HARMFUL|!PLAYER"
+local ANCHOR = {
+    ["LEFT"] = AnchorUtil.FlowDirection.Left,
+    ["RIGHT"] = AnchorUtil.FlowDirection.Right,
+    ["UP"] = AnchorUtil.FlowDirection.Up,
+    ["DOWN"] = AnchorUtil.FlowDirection.Down,
+}
 
 -- MARK: Initialize Aura
 local function InitializeAuraButtonFrame(frame)
@@ -65,7 +71,11 @@ local function CreateAuraContainer(name)
     local height = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
 
     local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
-    container:SetPoint("LEFT", UIParent, "CENTER", addon.db[PrivateAuraAnchor.modName]["X"] or 0, addon.db[PrivateAuraAnchor.modName]["Y"] or 0)
+    -- decide grow direction first, and then set the position based on the grow direction
+    local horizontalDirection = addon.db.PrivateAuraAnchor.Grow or "RIGHT"
+    container:SetFlowLayoutGrowthDirection(ANCHOR[horizontalDirection], ANCHOR["UP"])
+    local anchorFrom = horizontalDirection == "RIGHT" and "LEFT" or "RIGHT" -- if RIGHT then LEFT, if LEFT then RIGHT
+    container:SetPoint(anchorFrom, UIParent, "CENTER", addon.db[PrivateAuraAnchor.modName]["X"] or 0, addon.db[PrivateAuraAnchor.modName]["Y"] or 0)
     container:SetSize(width, height)
 
     container:AddAuraGroup(name, FILTER_STRING, {
@@ -175,17 +185,24 @@ end
 
 ---Update style settings and render them in-game for CustomTracker
 function PrivateAuraAnchor:UpdateStyle()
+    self.player:SetAuraGroupMaxFrameCount("player", addon.db[self.modName]["MaxAuras"] or 3)
     local maxCount = addon.db.PrivateAuraAnchor.MaxAuras or MAX_AURA_COUNT
     local width = (addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE) * maxCount
     local height = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
 
     self.player:ClearAllPoints()
-    self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
+    local horizontalDirection = addon.db.PrivateAuraAnchor.Grow or "RIGHT"
+    self.player:SetFlowLayoutGrowthDirection(ANCHOR[horizontalDirection], ANCHOR["UP"])
+    local anchorFrom = horizontalDirection == "RIGHT" and "LEFT" or "RIGHT" -- if RIGHT then LEFT, if LEFT then RIGHT
+    self.player:SetPoint(anchorFrom, UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
     self.player:SetSize(width, height)
+    self.player:SetFlowLayoutGrowthDirection(ANCHOR[addon.db.PrivateAuraAnchor.Grow or "RIGHT"], ANCHOR["UP"])
     if self.coTank then
+        self.coTank:SetAuraGroupMaxFrameCount("coTank", addon.db[self.modName]["MaxAuras"] or 3)
         self.coTank:ClearAllPoints()
-        self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+        self.coTank:SetPoint(anchorFrom, UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
         self.coTank:SetSize(width, height)
+        self.coTank:SetFlowLayoutGrowthDirection(ANCHOR[addon.db.PrivateAuraAnchor.Grow or "RIGHT"], ANCHOR["UP"])
     end
 end
 
@@ -202,8 +219,9 @@ function PrivateAuraAnchor:Test(on)
         -- make psedo auras for testing
         if self.player then
             -- re-apply position and size to the container to show the test overlay
+            local anchorFrom = addon.db.PrivateAuraAnchor.Grow == "RIGHT" and "LEFT" or "RIGHT"
             self.player:ClearAllPoints()
-            self.player:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
+            self.player:SetPoint(anchorFrom, UIParent, "CENTER", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0)
             local width = (addon.db[self.modName]["IconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
             local height = addon.db[self.modName]["CoTankIconSize"] or 45
             self.player:SetSize(width, height)
@@ -212,8 +230,9 @@ function PrivateAuraAnchor:Test(on)
         end
         if self.coTank then
             -- re-apply position and size to the container to show the test overlay
+            local anchorFrom = addon.db.PrivateAuraAnchor.Grow == "RIGHT" and "LEFT" or "RIGHT"
             self.coTank:ClearAllPoints()
-            self.coTank:SetPoint("LEFT", UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
+            self.coTank:SetPoint(anchorFrom, UIParent, "CENTER", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0)
             local width = (addon.db[self.modName]["CoTankIconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
             local height = addon.db[self.modName]["CoTankIconSize"] or 45
             self.coTank:SetSize(width, height)

@@ -5,12 +5,13 @@ local MOD_KEY = "PrivateAuraAnchor"
 
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
-	Enabled = false,
+	Enabled = true,
 	MaxAuras = 3,
 	X = 150,
 	Y = -80,
 	IconSize = 45,
 	StackTextSize = 12,
+	Grow = "RIGHT", -- only horizontal direction can be set, vertical direction is always UP
 
     ShowCoTankAuras = true,
     CoTankX = 150,
@@ -70,7 +71,12 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	end)
 	GUI:CreateSlider(iconGroup, L["MaxAuras"], 1, 5, 1, addon.db.PrivateAuraAnchor.MaxAuras, function(value)
 		addon.db.PrivateAuraAnchor.MaxAuras = value
+		update()
+	end)
+	GUI:CreateDropdown(styleGroup, L["Grow"], {RIGHT = "RIGHT", LEFT = "LEFT"}, nil, addon.db.PrivateAuraAnchor.Grow, function(value)
+		addon.db.PrivateAuraAnchor.Grow = value
 		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+		update()
 	end)
 
 	-- MARK: Position
