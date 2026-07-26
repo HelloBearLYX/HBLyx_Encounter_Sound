@@ -238,7 +238,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1320)) or "The Venomous Abyss",
 		encounters = {
 			[3470] = {
-				events = {675, 676, 693, 695, 712, 731, 804},
+				events = {675, 676, 693, 695, 710, 712, 731, 804, 865, 877},
 				journalID = 2888,
 				privateAuras = {1287434, 1288554, 1284103, 1307939, 1293214, 1300235, 1299988, 1300239, 1294933, 1284109, 1288772, 1297624, 1292751},
 			},
