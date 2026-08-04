@@ -278,7 +278,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				privateAuras = {},
 			},
 		},
-	}
+	},
+	[1317] = {
+		name = select(1, EJ_GetInstanceInfo(1317)) or "	The Tidebound Grotto",
+		encounters = {
+			[3379] = {
+				events = {366, 370, 367, 369, 372, 976, 977},
+				journalID = 2849,
+				privateAuras = {},
+			},
+		},
+	},
 }
 
 -- MARK: Instance Journal
