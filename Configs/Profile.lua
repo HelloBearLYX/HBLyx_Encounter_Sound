@@ -105,6 +105,50 @@ local function PrintMergeSummary(countEvents, newEventsCount, countPA, newPAcoun
     addon.Utilities:print(printMsg)
 end
 
+---Normalize private aura trigger list to addon-supported trigger IDs.
+---@param triggerData any
+---@return table<number> normalizedTriggers
+local function NormalizePATriggers(triggerData)
+    local normalized = {}
+    local seen = {}
+
+    if type(triggerData) == "table" then
+        for _, trigger in ipairs(triggerData) do
+            local value = tonumber(trigger)
+            if value and value >= 0 and value <= 2 and not seen[value] then
+                seen[value] = true
+                table.insert(normalized, value)
+            end
+        end
+    end
+
+    if #normalized == 0 then
+        normalized = { 0 }
+    else
+        table.sort(normalized)
+    end
+
+    return normalized
+end
+
+---Normalize one private aura entry to {trigger = {...}, sound = "..."} format.
+---@param paEntry any
+---@return table|nil
+local function NormalizePAEntry(paEntry)
+    if type(paEntry) == "string" then
+        return { trigger = { 0 }, sound = paEntry }
+    end
+
+    if type(paEntry) == "table" and type(paEntry.sound) == "string" then
+        return {
+            trigger = NormalizePATriggers(paEntry.trigger),
+            sound = paEntry.sound,
+        }
+    end
+
+    return nil
+end
+
 ---Merge a profile into the current profile
 ---@param data string profile string to merge
 ---@return boolean success if the merge was successful
@@ -124,6 +168,7 @@ function addon:MergeProfile(data)
     -- Merge the new profile into the current profile
     local countEvents, countPA = 0, 0
     local newEventsCount, newPAcount = 0, 0
+
     -- handle events
     for encounterID, eventsData in pairs(newProfile.data or {}) do
         for eventID, configData in pairs(eventsData) do
@@ -138,18 +183,24 @@ function addon:MergeProfile(data)
             countEvents = countEvents + 1
         end
     end
-    -- handle private auras
-    for encounterID, paData in pairs(newProfile.dataPA or {}) do
-        if not currentProfile.dataPA then currentProfile.dataPA = {} end
-        if not currentProfile.dataPA[encounterID] then currentProfile.dataPA[encounterID] = {} end
 
-        for spellID, sound in pairs(paData or {}) do
-            if not currentProfile.dataPA[encounterID][spellID] then
-                newPAcount = newPAcount + 1
+    -- handle private auras (new schema: [mapID][spellID] = {trigger = {...}, sound = "..."})
+    for mapID, paData in pairs(newProfile.dataPA or {}) do
+        if type(paData) == "table" then
+            if not currentProfile.dataPA then currentProfile.dataPA = {} end
+            if not currentProfile.dataPA[mapID] then currentProfile.dataPA[mapID] = {} end
+
+            for spellID, paEntry in pairs(paData) do
+                local normalizedPAEntry = NormalizePAEntry(paEntry)
+                if normalizedPAEntry then
+                    if not currentProfile.dataPA[mapID][spellID] then
+                        newPAcount = newPAcount + 1
+                    end
+
+                    currentProfile.dataPA[mapID][spellID] = normalizedPAEntry
+                    countPA = countPA + 1
+                end
             end
-
-            currentProfile.dataPA[encounterID][spellID] = sound
-            countPA = countPA + 1
         end
     end
 
