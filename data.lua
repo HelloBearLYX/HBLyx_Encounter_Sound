@@ -352,6 +352,7 @@ addon.data.INSTANCE_GOSSIP = {
 	-- Altar of Fangs
 	[2993] = {
 		[141729] = true,
+		[141730] = true,
 	},
 }
 
