@@ -283,9 +283,9 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		name = select(1, EJ_GetInstanceInfo(1317)) or "	The Tidebound Grotto",
 		encounters = {
 			[3379] = {
-				events = {366, 370, 367, 369, 372, 976, 977},
+				events = {366, 367, 369, 370, 372, 654, 976, 977},
 				journalID = 2849,
-				privateAuras = {},
+				privateAuras = {1268562, 1282937, 1313393, 1258668, 1260837},
 			},
 		},
 	},
