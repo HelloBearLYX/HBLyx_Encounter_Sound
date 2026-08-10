@@ -45,15 +45,17 @@ local function InitializeAuraButtonFrame(frame)
     frame.stack = stack
     frame:SetApplicationCount(stack)
 
-    local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    border:SetAllPoints()
-    border:SetBackdrop({
-        edgeFile = "Interface\\Buttons\\WHITE8x8",
-        edgeSize = 1,
-        insets = { left = 1, right = 1, top = 1, bottom = 1 },
-    })
-    border:SetBackdropBorderColor(0, 0, 0, 1)
-    frame:SetBorder(border)
+    if not frame.border then
+        local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+        border:SetAllPoints()
+        border:SetBackdrop({
+            edgeFile = "Interface\\Buttons\\WHITE8x8",
+            edgeSize = 1,
+            insets = { left = 1, right = 1, top = 1, bottom = 1 },
+        })
+        border:SetBackdropBorderColor(0, 0, 0, 1)
+        frame.border = border
+    end
 end
 
 -- MARK: Create Container
