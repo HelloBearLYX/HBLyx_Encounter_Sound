@@ -23,45 +23,37 @@ local function InitializeAuraButtonFrame(frame)
     local iconSize = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
     frame:SetSize(iconSize, iconSize)
 
-    if not frame.texture then
-        local icon = frame:CreateTexture(nil, "BACKGROUND")
-        icon:SetAllPoints()
-        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        frame.texture = icon
-        frame:SetIcon(icon)
-    end
+    local icon = frame:CreateTexture(nil, "BACKGROUND")
+    icon:SetAllPoints()
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    frame.texture = icon
+    frame:SetIcon(icon)
 
-    if not frame.cooldown then
-        local cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
-        cooldown:SetAllPoints()
-        cooldown:SetDrawEdge(false)
-        cooldown:SetReverse(true)
-        cooldown:SetScale(0.75)
-        frame.cooldown = cooldown
-        frame:SetDurationCooldown(cooldown)
-    end
+    local cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
+    cooldown:SetAllPoints()
+    cooldown:SetDrawEdge(false)
+    cooldown:SetReverse(true)
+    cooldown:SetScale(0.75)
+    frame.cooldown = cooldown
+    frame:SetDurationCooldown(cooldown)
 
     -- bottomright stack count text
-    if not frame.stack then
-        local stack = frame:CreateFontString(nil, "OVERLAY")
-        stack:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        stack:SetFont("Fonts\\FRIZQT__.TTF", addon.db.PrivateAuraAnchor.StackTextSize or 12, "OUTLINE")
-        stack:SetTextColor(1, 1, 1, 1)
-        frame.stack = stack
-        frame:SetApplicationCount(stack)
-    end
+    local stack = frame:CreateFontString(nil, "OVERLAY")
+    stack:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    stack:SetFont("Fonts\\FRIZQT__.TTF", addon.db.PrivateAuraAnchor.StackTextSize or 12, "OUTLINE")
+    stack:SetTextColor(1, 1, 1, 1)
+    frame.stack = stack
+    frame:SetApplicationCount(stack)
 
-    if not frame.border then
-        local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-        border:SetAllPoints()
-        border:SetBackdrop({
-            edgeFile = "Interface\\Buttons\\WHITE8x8",
-            edgeSize = 1,
-            insets = { left = 1, right = 1, top = 1, bottom = 1 },
-        })
-        border:SetBackdropBorderColor(0, 0, 0, 1)
-        frame.border = border
-    end
+    local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+    border:SetAllPoints()
+    border:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8x8",
+        edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    border:SetBackdropBorderColor(0, 0, 0, 1)
+    frame:SetBorder(border)
 end
 
 -- MARK: Create Container
