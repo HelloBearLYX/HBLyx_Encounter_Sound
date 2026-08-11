@@ -5,20 +5,17 @@ local MOD_KEY = "PrivateAuraAnchor"
 
 -- MARK: Defaults
 addon.configurationList[MOD_KEY] = {
-	Enabled = false,
+	Enabled = true,
 	MaxAuras = 3,
-	X = 175,
-	Y = -85,
+	X = 150,
+	Y = -80,
 	IconSize = 45,
-	Grow = "RIGHT",
-	HideBorder = true,
-	ShowCountdownNumbers = true,
+	StackTextSize = 12,
+	Grow = "RIGHT", -- only horizontal direction can be set, vertical direction is always UP
 
     ShowCoTankAuras = true,
-    CoTankX = 175,
-    CoTankY = -25,
-    CoTankIconSize = 45,
-    CoTankGrow = "RIGHT",
+    CoTankX = 150,
+    CoTankY = -30,
 }
 
 -- MARK: Safe update
@@ -43,7 +40,8 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 		else
 			if value then
 				addon.core:LoadModule(MOD_KEY)
-				addon.core:TestModule(MOD_KEY)
+				addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+				-- addon.core:TestModule(MOD_KEY)
 			end
 		end
 	end)
@@ -61,29 +59,24 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 
 	-- MARK: Style
 	local styleGroup = GUI:CreateInlineGroup(frame, L["StyleSettings"])
-	GUI:CreateToggleCheckBox(styleGroup, L["ShowCountdownNumbers"], addon.db.PrivateAuraAnchor.ShowCountdownNumbers, function(value)
-		addon.db.PrivateAuraAnchor.ShowCountdownNumbers = value
-		update()
-	end)
-    GUI:CreateDropdown(styleGroup, L["Grow"], addon.Utilities.Grows, nil, addon.db.PrivateAuraAnchor.Grow, function(key)
-		addon.db.PrivateAuraAnchor.Grow = key
-		update()
-	end)
-
 	-- MARK: Icon
 	local iconGroup = GUI:CreateInlineGroup(styleGroup, L["IconSettings"])
 	GUI:CreateSlider(iconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.IconSize, function(value)
 		addon.db.PrivateAuraAnchor.IconSize = value
-		update()
+		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+	end)
+	GUI:CreateSlider(iconGroup, L["StackTextSize"], 4, 40, 1, addon.db.PrivateAuraAnchor.StackTextSize, function(value)
+		addon.db.PrivateAuraAnchor.StackTextSize = value
+		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
 	end)
 	GUI:CreateSlider(iconGroup, L["MaxAuras"], 1, 5, 1, addon.db.PrivateAuraAnchor.MaxAuras, function(value)
 		addon.db.PrivateAuraAnchor.MaxAuras = value
-		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+		update()
 	end)
-	GUI:CreateToggleCheckBox(iconGroup, L["HideBorder"], addon.db.PrivateAuraAnchor.HideBorder, function(value)
-		addon.db.PrivateAuraAnchor.HideBorder = value
-		addon.core:GetModule(MOD_KEY):CreatePrivateAnchors("player")
-		addon.core:GetModule(MOD_KEY):CreatePrivateAnchors("co-tank")
+	GUI:CreateDropdown(styleGroup, L["Grow"], {RIGHT = "RIGHT", LEFT = "LEFT"}, nil, addon.db.PrivateAuraAnchor.Grow, function(value)
+		addon.db.PrivateAuraAnchor.Grow = value
+		addon:ShowDialog(ADDON_NAME .. "RLNeeded")
+		update()
 	end)
 
 	-- MARK: Position
@@ -104,17 +97,6 @@ function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
     end)
 
 	local coTankStyleGroup = GUI:CreateInlineGroup(coTankGroup, L["StyleSettings"])
-	GUI:CreateDropdown(coTankStyleGroup, L["Grow"], addon.Utilities.Grows, nil, addon.db.PrivateAuraAnchor.CoTankGrow, function(key)
-		addon.db.PrivateAuraAnchor.CoTankGrow = key
-		update()
-	end)
-
-	local coTankIconGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["IconSettings"])
-	GUI:CreateSlider(coTankIconGroup, L["IconSize"], 10, 200, 1, addon.db.PrivateAuraAnchor.CoTankIconSize, function(value)
-		addon.db.PrivateAuraAnchor.CoTankIconSize = value
-		update()
-	end)
-
 	local coTankPositionGroup = GUI:CreateInlineGroup(coTankStyleGroup, L["PositionSettings"])
 	GUI:CreateSlider(coTankPositionGroup, L["X"], -2000, 2000, 1, addon.db.PrivateAuraAnchor.CoTankX, function(value)
 		addon.db.PrivateAuraAnchor.CoTankX = value

@@ -272,23 +272,44 @@ local function RenderDisplayFrame(self, info)
         self.isOpened = false
     end)
 
-    local tabs = AceGUI:Create("TabGroup")
-    tabs:SetLayout("Flow")
-    tabs:SetFullWidth(true)
-    tabs:SetFullHeight(true)
-    tabs:SetTabs(TABS)
-    self.displayFrame:AddChild(tabs)
-    tabs:SetCallback("OnGroupSelected", function (container, _, tab)
+    self.displayFrame.tab = AceGUI:Create("TabGroup")
+    self.displayFrame.tab:SetLayout("Flow")
+    self.displayFrame.tab:SetFullWidth(true)
+    self.displayFrame.tab:SetFullHeight(true)
+    self.displayFrame.tab:SetTabs(TABS)
+    self.displayFrame:AddChild(self.displayFrame.tab)
+    self.displayFrame.tab:SetCallback("OnGroupSelected", function (container, _, tab)
         container:ReleaseChildren()
 
         if tab == "CopyInfo" then
             local panel = GUI:CreateScrollFrame(container)
-            
+
             local addonInfo = ""
             for _, value in pairs(info) do
                 addonInfo = addonInfo .. value .. "\n------\n\n"
             end
             GUI:CreateMultiLineEditBox(panel, "Copy the addon info below:", addonInfo)
+
+            GUI:CreateButton(panel, "Initialize Event Recorder", function()
+                if not addon.core:HasModuleLoaded("EventRecorder") then
+                    local loaded = addon.core:LoadModule("EventRecorder")
+                    if not loaded then
+                        addon:debug("Failed to load Event Recorder module")
+                        return
+                    end
+                end
+
+                local recorder = addon.core:GetModule("EventRecorder")
+                if recorder and recorder.InitializeRecorder then
+                    if recorder:InitializeRecorder() then
+                        addon:debug("Event Recorder initialized")
+                    else
+                        addon:debug("Failed to initialize Event Recorder")
+                    end
+                else
+                    addon:debug("Event Recorder module is unavailable")
+                end
+            end)
 
             panel:DoLayout()
         elseif tab == "ModulesInfo" then
@@ -314,11 +335,12 @@ local function RenderDisplayFrame(self, info)
                 local data = ScanAllPrivateAuras()
                 dataOutput:SetText(data)
             end):SetRelativeWidth(0.32)
+            -- Event Recorder GUI was moved to a dedicated module and is intentionally empty here.
             panel:DoLayout()
         end
     end)
     
-    tabs:SelectTab("CopyInfo")
+    self.displayFrame.tab:SelectTab("CopyInfo")
 end
 
 -- MARK: DisplayAddonInfo
