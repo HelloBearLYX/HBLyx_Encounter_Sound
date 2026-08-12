@@ -12,7 +12,7 @@ local TEST_ICON_TEXTURE = 134400
 local AURA_FRAME_SIZE = 45
 local MAX_AURA_COUNT = 3
 local FILTER_STRING = "HARMFUL"
-local CANDIDATE_FILTER = {isFromPlayerOrPlayerPet = false, isBossAura = true, includeDispelTypes = { Magic = true, Curse = true, Disease = true, Poison = true, Bleed = true }}
+local CANDIDATE_FILTER = {isFromPlayerOrPlayerPet = false}
 local ANCHOR = {
     ["LEFT"] = AnchorUtil.FlowDirection.Left,
     ["RIGHT"] = AnchorUtil.FlowDirection.Right,
