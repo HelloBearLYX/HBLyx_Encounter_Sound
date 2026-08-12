@@ -10,7 +10,8 @@ local PrivateAuraAnchor = {
 local TEST_ICON_TEXTURE = 134400
 local AURA_FRAME_SIZE = 45
 local MAX_AURA_COUNT = 3
-local FILTER_STRING = "HARMFUL|!PLAYER"
+local FILTER_STRING = "HARMFUL"
+local CANDIDATE_FILTER = {isFromPlayerOrPlayerPet = false, isBossAura = true, includeDispelTypes = { Magic = true, Curse = true, Disease = true, Poison = true, Bleed = true }}
 local ANCHOR = {
     ["LEFT"] = AnchorUtil.FlowDirection.Left,
     ["RIGHT"] = AnchorUtil.FlowDirection.Right,
@@ -86,6 +87,7 @@ local function CreateAuraContainer(name)
             elementWidth = addon.db.PrivateAuraAnchor.IconSize or height,
             elementHeight = addon.db.PrivateAuraAnchor.IconSize or height,
         },
+        candidateFilters = CANDIDATE_FILTER,
     })
 
     return container
