@@ -104,12 +104,15 @@ end
 local function GetIOLabel(trigger, ID)
 	local info, output
 	if trigger then
-		info = C_Spell.GetSpellInfo(C_EncounterEvents.GetEventInfo(ID).spellID or 134400)
+		local encounterSpellID = C_EncounterEvents.GetEventInfo(ID).spellID
+		info = C_Spell.GetSpellInfo(encounterSpellID or 134400)
 		local triggerLabel = EVENT_TRIGGERS[trigger] or trigger
-		output = string.format((trigger ~= "" and "%s%s-%s" or "%s%s%s"), "|T" .. (info.iconID or "") .. ":0|t", info.name, triggerLabel)
+		local name = encounterSpellID and string.format("%s(%d)", info.name, encounterSpellID) or info.name
+		output = string.format((trigger ~= "" and "%s%s-%s" or "%s%s%s"), "|T" .. (info.iconID or "") .. ":0|t", name, triggerLabel)
 	else
 		info = C_Spell.GetSpellInfo(ID or 134400)
-		output = string.format("%s%s", "|T" .. (info.iconID or "") .. ":0|t", info.name)
+		local name = ID and string.format("%s(%d)", info.name, ID) or info.name
+		output = string.format("%s%s", "|T" .. (info.iconID or "") .. ":0|t", name)
 	end
 
 	return output
@@ -414,8 +417,10 @@ end
 ---Get encounter list for one instance map.
 ---@param mapID integer instance mapID
 ---@return table<string|integer, string> output encounterID to encounter name
+---@return table order encounterIDs sorted by their configured order field
 local function GetEncountersList(mapID)
 	local output = {}
+	local order = {}
 	if addon.data.MAP_ENCOUNTER_EVENTS[mapID] and addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters then
 		for encounterID, encounterInfo in pairs(addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters) do
 			if encounterID == "trash" then
@@ -432,10 +437,20 @@ local function GetEncountersList(mapID)
 			else
 				output[encounterID] = tostring(encounterID)
 			end
+			table.insert(order, encounterID)
 		end
+
+		table.sort(order, function(a, b)
+			local orderA = addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[a].order or math.huge
+			local orderB = addon.data.MAP_ENCOUNTER_EVENTS[mapID].encounters[b].order or math.huge
+			if orderA == orderB then
+				return tostring(a) < tostring(b)
+			end
+			return orderA < orderB
+		end)
 	end
 
-	return output
+	return output, order
 end
 
 -- MARK: Get Template List
@@ -601,7 +616,8 @@ local function RenderEncounterSettings(self)
 
 			if spell then
 				spell:ContinueOnSpellLoad(function()
-					self.eventDescription:SetText(string.format("%s%s: %s", icon, name, GetFlagText(encounterSpellID)) .. "\n" .. (spell:GetSpellDescription() or "UNKNOWN") .. "\n")
+					local descName = encounterSpellID and string.format("%s(%d)", name, encounterSpellID) or name
+					self.eventDescription:SetText(string.format("%s%s: %s", icon, descName, GetFlagText(encounterSpellID)) .. "\n" .. (spell:GetSpellDescription() or "UNKNOWN") .. "\n")
 					self.frame:DoLayout()
 				end)
 			end
@@ -707,7 +723,8 @@ local function RenderPrivateAuraSettings(self)
 
 			if spell then
 				spell:ContinueOnSpellLoad(function()
-					self.PADescription:SetText(name.. "\n" .. (spell:GetSpellDescription() or "UNKNOWN") .. "\n")
+					local descName = string.format("|T%s:0|t %s(%d)", spell:GetSpellTexture(), spell:GetSpellName() or "UNKNOWN", displayID)
+					self.PADescription:SetText(descName.. "\n" .. (spell:GetSpellDescription() or "UNKNOWN") .. "\n")
 					self.frame:DoLayout()
 				end)
 			end
@@ -874,8 +891,8 @@ function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
 		self.inputEncounter = nil
 		self.inputEvent = nil
 		ClearDynamicSettings()
-		local list = GetEncountersList(value)
-		encounterGroup:SetList(list)
+		local list, order = GetEncountersList(value)
+		encounterGroup:SetList(list, order)
 		encounterGroup:SetValue(nil)
 
 		self.frame:DoLayout()

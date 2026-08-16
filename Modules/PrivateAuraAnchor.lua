@@ -169,7 +169,7 @@ local function ToggleTestRegion(self, on)
 
             local text = overlay:CreateFontString(nil, "OVERLAY")
             text:SetPoint("CENTER", overlay, "TOP", 0, 0)
-            text:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+            text:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
             text:SetText(label)
 
             overlay.text = text
