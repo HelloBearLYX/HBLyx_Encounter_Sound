@@ -158,7 +158,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				order = 2,
 				events = {813, 814, 815, 816, 817, 818},
 				journalID = 2879,
-				privateAuras = {1299189, 1300503, 1305368, 1299080},
+				privateAuras = {1299189, 1300503, 1305368, 1299080, 1310974},
 			},
 			[3458] = {
 				order = 3,
@@ -313,7 +313,7 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 				order = 7,
 				events = {667, 677, 678, 669, 680, 681, 682, 683, 684, 685, 686, 687, 794, 803, 811, 812, 898},
 				journalID = 2883,
-				privateAuras = {1285911, 1282487, 1282281, 1283832, 1286918, 1286895, 1289900, 1286573, 1298381, 1299266, 1299680, 1299960, 1287227}, -- 1283485 is not able to load due to spell loading issue in game
+				privateAuras = {1285911, 1282487, 1283485, 1286441, 1282281, 1283832, 1286918, 1286895, 1289900, 1286573, 1298381, 1299266, 1299680, 1299960, 1287227}, -- 1283485 is not able to load due to spell loading issue in game
 			},
 			[3492] = {
 				order = 8,
