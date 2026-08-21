@@ -61,7 +61,7 @@ local function InitializeAuraButtonFrame(frame)
 end
 
 -- MARK: Create Container
-local function CreateAuraContainer(name)
+local function CreateAuraContainer(name, x, y)
     local maxCount = addon.db.PrivateAuraAnchor.MaxAuras or MAX_AURA_COUNT
     local width = (addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE) * maxCount
     local height = addon.db.PrivateAuraAnchor.IconSize or AURA_FRAME_SIZE
@@ -71,7 +71,7 @@ local function CreateAuraContainer(name)
     local horizontalDirection = addon.db.PrivateAuraAnchor.Grow or "RIGHT"
     container:SetFlowLayoutGrowthDirection(ANCHOR[horizontalDirection], ANCHOR["UP"])
     local anchorFrom = horizontalDirection == "RIGHT" and "LEFT" or "RIGHT" -- if RIGHT then LEFT, if LEFT then RIGHT
-    container:SetPoint(anchorFrom, UIParent, "CENTER", addon.db[PrivateAuraAnchor.modName]["X"] or 0, addon.db[PrivateAuraAnchor.modName]["Y"] or 0)
+    container:SetPoint(anchorFrom, UIParent, "CENTER", x or 0, y or 0)
     container:SetSize(width, height)
 
     container:AddAuraGroup(name, FILTER_STRING, {
@@ -102,7 +102,7 @@ function PrivateAuraAnchor:Initialize()
     self.eventFrame = CreateFrame("Frame")
 
     -- use 12.1 new aura system instead of the old private aura system
-    self.player = CreateAuraContainer("player")
+    self.player = CreateAuraContainer("player", addon.db[self.modName]["X"], addon.db[self.modName]["Y"])
     self.player:SetUnit("player")
 
     -- if addon.db[self.modName]["ShowCoTankAuras"] then
@@ -278,7 +278,7 @@ function PrivateAuraAnchor:RegisterEvents()
                 self.coTankToken = SearchCoTank()
                 if self.coTankToken then
                     if not self.coTank then
-                        self.coTank = CreateAuraContainer("coTank")
+                        self.coTank = CreateAuraContainer("coTank", addon.db[self.modName]["CoTankX"], addon.db[self.modName]["CoTankY"])
                     end
                     self.coTank:SetUnit(self.coTankToken)
                 else
