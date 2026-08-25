@@ -12,7 +12,19 @@ local TEST_ICON_TEXTURE = 134400
 local AURA_FRAME_SIZE = 45
 local MAX_AURA_COUNT = 3
 local FILTER_STRING = "HARMFUL"
-local CANDIDATE_FILTER = {isFromPlayerOrPlayerPet = false}
+local CANDIDATE_FILTER = {excludeSpellIDs = {
+    [57723] = true,--Exhaustion
+    [80354] = true,--Temporal Displacement
+    [57724] = true,--Sated
+    [390435] = true,--Exhaustion
+    [264689] = true,--Fatigued
+    [160455] = true,--Fatigued
+    [95809] = true,--Insanity
+    [124255] = true,--Stagger
+    [71041] = true,--Dungeon Deserter
+    [206151] = true,--Challenger's Burden
+    -- [25771] = true, -- Forbearance this is currently not allow to excluded
+}}
 local ANCHOR = {
     ["LEFT"] = AnchorUtil.FlowDirection.Left,
     ["RIGHT"] = AnchorUtil.FlowDirection.Right,
