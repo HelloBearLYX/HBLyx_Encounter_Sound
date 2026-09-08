@@ -259,12 +259,12 @@ local function CreateIcons(self)
         local icon = CreateFrame("Frame", nil, self.frame)
         icon.texture = icon:CreateFontString(nil, "OVERLAY")
         icon.texture:SetAllPoints()
-        icon.texture:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
+        icon.texture:SetFont(addon.DEFAULTS.font, 16, "OUTLINE")
         icon.texture:SetTextColor(1, 1, 1)
         icon.text = icon:CreateFontString(nil, "OVERLAY")
         icon.text:SetPoint("CENTER", icon, "CENTER", 0, 0)
         icon.text:SetFont(
-            "Fonts\\FRIZQT__.TTF",
+            addon.DEFAULTS.font,
             14,
             "OUTLINE"
         )
@@ -305,7 +305,7 @@ local function CreateGeneralButton(self)
     self.hideButton.text = self.hideButton:CreateFontString(nil, "OVERLAY")
     self.hideButton.text:SetPoint("CENTER", self.hideButton, "CENTER", 0, 0)
     self.hideButton.text:SetFont(
-        "Fonts\\FRIZQT__.TTF",
+        addon.DEFAULTS.font,
         10,
         "OUTLINE"
     )
@@ -324,7 +324,7 @@ local function CreateGeneralButton(self)
     clearButton.text = clearButton:CreateFontString(nil, "OVERLAY")
     clearButton.text:SetPoint("CENTER", clearButton, "CENTER", 0, 0)
     clearButton.text:SetFont(
-        "Fonts\\FRIZQT__.TTF",
+        addon.DEFAULTS.font,
         10,
         "OUTLINE"
     )
@@ -355,7 +355,7 @@ local function CreateGeneralButton(self)
     reverseButton.text = reverseButton:CreateFontString(nil, "OVERLAY")
     reverseButton.text:SetPoint("CENTER", reverseButton, "CENTER", 0, 0)
     reverseButton.text:SetFont(
-        "Fonts\\FRIZQT__.TTF",
+        addon.DEFAULTS.font,
         10,
         "OUTLINE"
     )
@@ -386,7 +386,7 @@ local function CreateGeneralButton(self)
     undoButton.text = undoButton:CreateFontString(nil, "OVERLAY")
     undoButton.text:SetPoint("CENTER", undoButton, "CENTER", 0, 0)
     undoButton.text:SetFont(
-        "Fonts\\FRIZQT__.TTF",
+        addon.DEFAULTS.font,
         10,
         "OUTLINE"
     )
@@ -461,7 +461,7 @@ local function CreateProjectionBar(self)
         local icon = CreateFrame("Frame", nil, projectionBar)
         icon.texture = icon:CreateFontString(nil, "OVERLAY")
         icon.texture:SetAllPoints()
-        icon.texture:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
+        icon.texture:SetFont(addon.DEFAULTS.font, 16, "OUTLINE")
         icon.texture:SetTextColor(1, 1, 1)
         self.projectionIcons[key] = icon
     end

@@ -173,7 +173,7 @@ end
 function Countdown:UpdateStyle()
     self.frame:SetSize(addon.db[self.modName]["FontSize"] * 5, addon.db[self.modName]["FontSize"] * 1)
     self.frame:SetPoint("CENTER", UIParent, "CENTER", addon.db[self.modName]["X"], addon.db[self.modName]["Y"])
-    self.frame.text:SetFont(addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF", addon.db[self.modName]["FontSize"], "OUTLINE")
+    self.frame.text:SetFont(addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or addon.DEFAULTS.font, addon.db[self.modName]["FontSize"], "OUTLINE")
     self.frame.text:SetTextColor(addon.Utilities:HexToRGB(addon.db[self.modName]["FontColor"]))
 end
 

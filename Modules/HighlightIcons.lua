@@ -35,7 +35,7 @@ local function UpdateIconStyle(self, frame)
     frame.cooldown:SetScale(addon.db[self.modName]["TimeFontScale"])
     frame.icon:SetTexCoord(addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"], addon.db[self.modName]["IconZoom"], 1 - addon.db[self.modName]["IconZoom"])
     frame.name:SetFont(
-        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or "Fonts\\FRIZQT__.TTF",
+        addon.LSM:Fetch("font", addon.db[self.modName]["Font"]) or addon.DEFAULTS.font,
         addon.db[self.modName]["FontSize"],
         "OUTLINE"
     )

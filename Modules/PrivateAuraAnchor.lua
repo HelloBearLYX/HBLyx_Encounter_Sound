@@ -41,7 +41,7 @@ local function InitializeAuraButtonFrame(frame)
     -- bottomright stack count text
     local stack = frame:CreateFontString(nil, "OVERLAY")
     stack:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-    stack:SetFont("Fonts\\FRIZQT__.TTF", addon.db.PrivateAuraAnchor.StackTextSize or 12, "OUTLINE")
+    stack:SetFont(addon.DEFAULTS.font, addon.db.PrivateAuraAnchor.StackTextSize or 12, "OUTLINE")
     stack:SetTextColor(1, 1, 1, 1)
     frame.stack = stack
     frame:SetApplicationCount(stack)
@@ -177,7 +177,7 @@ local function ToggleTestRegion(self, on)
 
             local text = overlay:CreateFontString(nil, "OVERLAY")
             text:SetPoint("CENTER", overlay, "TOP", 0, 0)
-            text:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+            text:SetFont(addon.DEFAULTS.font, 10, "OUTLINE")
             text:SetText(label)
 
             overlay.text = text
