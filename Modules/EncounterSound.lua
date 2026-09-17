@@ -344,6 +344,7 @@ function EncounterSound:RegisterEvents()
     addon.core:RegisterStateMonitor("instanceInfo", self.modName, function ()
         local instanceID = addon.states["instanceInfo"].instanceID
         if instanceID and addon.data.INSTANCE_JOURNAL[instanceID] then
+            -- addon:debug("loading instance private aura sounds for instanceID: " .. instanceID)
             LoadInstancePrivateAuraSounds(self, instanceID)
             self.lastInstanceID = instanceID
         elseif instanceID == 0 or (self.lastInstanceID and instanceID ~= self.lastInstanceID) then

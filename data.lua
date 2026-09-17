@@ -324,13 +324,13 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 		},
 	},
 	[1317] = {
-		name = select(1, EJ_GetInstanceInfo(1317)) or "	The Tidebound Grotto",
+		name = select(1, EJ_GetInstanceInfo(1317)) or "The Tidebound Grotto",
 		encounters = {
 			[3379] = {
 				order = 1,
 				events = {366, 367, 369, 370, 372, 654, 976, 977},
 				journalID = 2849,
-				privateAuras = {1268562, 1282937, 1313393, 1258668, 1260837, 1260843, 1307352, 1281393, 1282537, 1257644, 1257654, 1258154, 1266340, 1271380, 1309786, 1258677, 1271458, 1265425},
+				privateAuras = {1268562, 1282937, 1313448, 1313393, 1258668, 1260837, 1260843, 1307352, 1281393, 1282537, 1257644, 1257654, 1258154, 1266340, 1271380, 1309786, 1258677, 1271458, 1265425, 1258901},
 			},
 		},
 	},
@@ -347,6 +347,7 @@ addon.data.INSTANCE_JOURNAL = {
 	[1877] = 1030, -- Temple of Sethraliss
 	[2521] = 1202, -- Ruby Life Pools
 	[3004] = 1320, -- The Venomous Abyss
+	[2987] = 1317, -- The Tidebound Grotto
 }
 
 -- MARK: Spell Data
