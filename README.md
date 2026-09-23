@@ -21,6 +21,7 @@
 # 魔兽世界的工具合集插件 by HBLyx
 ## **下载**: 官方版本仅在以下地址发布, 所有其他均不来自作者
 - **CurseForge**:  https://www.curseforge.com/wow/addons/hblyx-encounter-sound
+- **新手盒子**: https://www.wclbox.com/games/1/PluginItem/17821?version=2
 
 ## **模组**
 - **BOSS战语音**: 为BOSS战时间线事件和私有光环设置并播放自定义音效
