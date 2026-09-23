@@ -31,7 +31,6 @@ local TITLE_ICON = "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Media\\HBLyx.png:
 local LINKS = {
     { text = "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Media\\Curseforge.png:0|t CurseForge", url = "https://www.curseforge.com/wow/addons/hblyx-encounter-sound" },
     { text = "新手盒子", url = "https://www.wclbox.com/games/1/PluginItem/17821?version=2" },
-    { text = "网易DD", url = "https://url.cc.163.com/lgd5Uv" },
 }
 
 local CONTACTS = {
