@@ -1,0 +1,344 @@
+local addon = select(2, ...)
+
+---@class SliderWidget
+---@field type string widget type
+---@field frame Frame the container frame of the slider
+---@field label FontString the label above the slider bar
+---@field slider Slider the slider bar
+---@field editBox EditBox the value box on the right of the slider bar
+---@field lowText FontString the label showing the minimum value
+---@field highText FontString the label showing the maximum value
+---@field thumb Texture the draggable handle of the slider bar
+---@field fill Texture the line showing the value's proportion between min and max
+local Slider = {
+    type = "Slider",
+    frame = nil,
+    label = nil,
+    slider = nil,
+    editBox = nil,
+    value = 0,
+    min = 0,
+    max = 100,
+    step = 1,
+}
+
+-- MARK: Default values
+local DEFAULT_WIDTH = 200
+local DEFAULT_HEIGHT = 40
+local LABEL_HEIGHT = 14
+local CONTROL_HEIGHT = 20
+local EDITBOX_WIDTH = 50
+local PADDING = 4
+
+-- MARK: Helpers
+
+---Round the value to the closest valid step within [min, max]
+local function SnapValue(widget, value)
+    value = tonumber(value) or widget.min
+    if widget.step and widget.step > 0 then
+        value = widget.min + math.floor((value - widget.min) / widget.step + 0.5) * widget.step
+    end
+    return math.max(widget.min, math.min(widget.max, value))
+end
+
+local function FormatValue(widget, value)
+    if widget.step and widget.step < 1 then
+        return string.format("%.2f", value)
+    end
+    return string.format("%d", value)
+end
+
+---Resize the fill line to match how far the value sits between min and max
+local function UpdateFill(widget)
+    local range = widget.max - widget.min
+    if range <= 0 then range = 1 end
+    local pct = (widget.value - widget.min) / range
+    local trackWidth = widget.slider:GetWidth() - 4
+    widget.fill:SetWidth(math.max(1, pct * trackWidth))
+end
+
+---Push the value into the widgets without firing the callback again
+local function RefreshDisplay(widget)
+    widget.settingValue = true
+    widget.slider:SetValue(widget.value)
+    widget.editBox:SetText(FormatValue(widget, widget.value))
+    widget.editBox:SetCursorPosition(0)
+    widget.settingValue = false
+    UpdateFill(widget)
+end
+
+-- MARK: Script handlers
+local function Slider_OnValueChanged(frame, value)
+    local widget = frame.obj
+    if widget.settingValue then return end
+
+    local snapped = SnapValue(widget, value)
+    widget.value = snapped
+    RefreshDisplay(widget)
+
+    if widget.onValueChanged then
+        widget.onValueChanged(widget, snapped)
+    end
+end
+
+local function Slider_OnMouseWheel(frame, delta)
+    local widget = frame.obj
+    widget:SetValue(widget.value + delta * (widget.step or 1))
+    if widget.onValueChanged then
+        widget.onValueChanged(widget, widget.value)
+    end
+end
+
+local function EditBox_OnEnterPressed(frame)
+    local widget = frame.obj
+    widget:SetValue(frame:GetText())
+    frame:ClearFocus()
+
+    if widget.onValueChanged then
+        widget.onValueChanged(widget, widget.value)
+    end
+end
+
+local function EditBox_OnEscapePressed(frame)
+    frame:ClearFocus()
+    RefreshDisplay(frame.obj)
+end
+
+local function Control_OnEnter(frame)
+    local widget = frame.obj
+    if widget.onEnter then
+        widget.onEnter(widget)
+    end
+end
+
+local function Control_OnLeave(frame)
+    local widget = frame.obj
+    if widget.onLeave then
+        widget.onLeave(widget)
+    end
+end
+
+-- MARK: API
+function Slider:SetParent(parent)
+    self.frame:SetParent(parent)
+end
+
+function Slider:SetLabel(text)
+    self.label:SetText(text or "")
+end
+
+function Slider:SetFontSize(size)
+    self.label:SetFont(addon.UICore:GetDefaultFont(), size or 12, "OUTLINE")
+    self.editBox:SetFont(addon.UICore:GetDefaultFont(), size or 12, "OUTLINE")
+end
+
+function Slider:SetPoint(anchorFrom, relativeTo, anchorTo, x, y)
+    if not relativeTo or not anchorTo then
+        self.frame:SetPoint(anchorFrom, x, y)
+    else
+        self.frame:SetPoint(anchorFrom, relativeTo, anchorTo, x, y)
+    end
+end
+
+function Slider:SetSize(width, height)
+    width = width or DEFAULT_WIDTH
+    height = height or DEFAULT_HEIGHT
+
+    self.frame:SetSize(width, height)
+    self.label:SetSize(width, LABEL_HEIGHT)
+    self.slider:SetSize(width - EDITBOX_WIDTH - PADDING, height - LABEL_HEIGHT - PADDING)
+    self.editBox:SetSize(EDITBOX_WIDTH, CONTROL_HEIGHT)
+    UpdateFill(self)
+end
+
+function Slider:GetWidth()
+    return self.frame:GetWidth()
+end
+
+function Slider:GetHeight()
+    return self.frame:GetHeight()
+end
+
+function Slider:SetPosition(x, y)
+    self.frame:ClearAllPoints()
+    self.frame:SetPoint("TOPLEFT", x or 0, y or 0)
+end
+
+function Slider:Show()
+    self.frame:Show()
+end
+
+function Slider:Hide()
+    self.frame:Hide()
+end
+
+---@param min number? the lower bound
+---@param max number? the upper bound
+---@param step number? the granularity of the slider
+function Slider:SetMinMaxValues(min, max, step)
+    self.min = min or 0
+    self.max = max or 100
+    self.step = step or 1
+
+    self.slider:SetMinMaxValues(self.min, self.max)
+    self.slider:SetValueStep(self.step)
+    self.slider:SetObeyStepOnDrag(true)
+    self.lowText:SetText(FormatValue(self, self.min))
+    self.highText:SetText(FormatValue(self, self.max))
+
+    self:SetValue(self.value)
+end
+
+function Slider:SetValue(value)
+    self.value = SnapValue(self, value)
+    RefreshDisplay(self)
+end
+
+function Slider:GetValue()
+    return self.value
+end
+
+function Slider:SetDisabled(disabled)
+    self.disabled = disabled and true or false
+
+    if self.disabled then
+        self.slider:Disable()
+        self.editBox:EnableMouse(false)
+        self.editBox:ClearFocus()
+        self.label:SetTextColor(unpack(addon.UICore:GetDisabledTextColor()))
+        self.thumb:SetVertexColor(unpack(addon.UICore:GetDisabledTextColor()))
+        self.fill:SetVertexColor(unpack(addon.UICore:GetDisabledTextColor()))
+    else
+        self.slider:Enable()
+        self.editBox:EnableMouse(true)
+        self.label:SetTextColor(unpack(addon.UICore:GetNormalTextColor()))
+        self.thumb:SetVertexColor(unpack(addon.UICore:GetNormalTextColor()))
+        self.fill:SetVertexColor(unpack(addon.UICore:GetNormalTextColor()))
+    end
+end
+
+function Slider:SetOnValueChanged(callback)
+    self.onValueChanged = callback
+end
+
+function Slider:SetOnEnter(callback)
+    self.onEnter = callback
+end
+
+function Slider:SetOnLeave(callback)
+    self.onLeave = callback
+end
+
+function Slider:Release()
+    self.onValueChanged = nil
+    self.onEnter = nil
+    self.onLeave = nil
+    self:SetDisabled(false)
+    self.editBox:ClearFocus()
+    self:SetMinMaxValues()
+    self:SetSize()
+    self:SetLabel("")
+    self:SetPosition()
+    self.frame:SetParent(nil)
+    self.frame:Hide()
+end
+
+-- MARK: Build
+function Slider:Create(parent, width, height, labelText, min, max, step, value)
+    local widget = setmetatable({}, { __index = Slider })
+
+    width = width or DEFAULT_WIDTH
+    height = height or DEFAULT_HEIGHT
+
+    local frame = CreateFrame("Frame", nil, parent)
+    frame:Hide()
+    frame:SetSize(width, height)
+    frame:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+    frame.obj = widget
+
+    local label = frame:CreateFontString(nil, "OVERLAY")
+    label:SetFont(addon.UICore:GetDefaultFont(), 12, "OUTLINE")
+    label:SetTextColor(1, 1, 1, 1)
+    label:SetText(labelText or "")
+    label:SetJustifyH("LEFT")
+    label:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+    label:SetSize(width, LABEL_HEIGHT)
+
+    local slider = CreateFrame("Slider", nil, frame, "BackdropTemplate")
+    slider:SetBackdrop(addon.UICore:GetDefaultBackdrop())
+    addon.UICore:SetBackdropColor(slider)
+    addon.UICore:SetBorderColor(slider)
+    slider:SetOrientation("HORIZONTAL")
+    slider:SetHitRectInsets(0, 0, -4, -4)
+    slider:SetSize(width - EDITBOX_WIDTH - PADDING, height - LABEL_HEIGHT - PADDING)
+    slider:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -PADDING)
+    slider:EnableMouseWheel(true)
+    slider.obj = widget
+
+    -- the thumb is the draggable handle of the slider bar
+    local thumb = slider:CreateTexture(nil, "OVERLAY")
+    thumb:SetColorTexture(1, 1, 1, 1)
+    thumb:SetSize(8, CONTROL_HEIGHT - 4)
+    slider:SetThumbTexture(thumb)
+
+    -- the fill is a thin line showing the proportion of the value between min and max
+    local fill = slider:CreateTexture(nil, "ARTWORK")
+    fill:SetColorTexture(unpack(addon.UICore:GetHighlightColor()))
+    fill:SetHeight(4)
+    fill:SetPoint("LEFT", slider, "LEFT", 2, 0)
+    fill:SetWidth(1)
+
+    local lowText = slider:CreateFontString(nil, "ARTWORK")
+    lowText:SetFont(addon.UICore:GetDefaultFont(), 10, "OUTLINE")
+    lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, 0)
+
+    local highText = slider:CreateFontString(nil, "ARTWORK")
+    highText:SetFont(addon.UICore:GetDefaultFont(), 10, "OUTLINE")
+    highText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, 0)
+
+    local editBox = CreateFrame("EditBox", nil, frame, "BackdropTemplate")
+    editBox:SetBackdrop(addon.UICore:GetDefaultBackdrop())
+    addon.UICore:SetBackdropColor(editBox)
+    addon.UICore:SetBorderColor(editBox)
+    editBox:SetFont(addon.UICore:GetDefaultFont(), 12, "OUTLINE")
+    editBox:SetJustifyH("CENTER")
+    editBox:SetAutoFocus(false)
+    editBox:SetNumeric(false)
+    editBox:SetMaxLetters(8)
+    editBox:SetSize(EDITBOX_WIDTH, CONTROL_HEIGHT)
+    editBox:SetPoint("LEFT", slider, "RIGHT", PADDING, 0)
+    editBox.obj = widget
+
+    slider:SetScript("OnValueChanged", Slider_OnValueChanged)
+    slider:SetScript("OnMouseWheel", Slider_OnMouseWheel)
+    slider:SetScript("OnEnter", Control_OnEnter)
+    slider:SetScript("OnLeave", Control_OnLeave)
+    editBox:SetScript("OnEnterPressed", EditBox_OnEnterPressed)
+    editBox:SetScript("OnEscapePressed", EditBox_OnEscapePressed)
+
+    widget.frame = frame
+    widget.label = label
+    widget.slider = slider
+    widget.thumb = thumb
+    widget.fill = fill
+    widget.lowText = lowText
+    widget.highText = highText
+    widget.editBox = editBox
+    widget.type = Slider.type
+    widget.value = value or min or 0
+
+    widget:SetMinMaxValues(min, max, step)
+
+    return widget
+end
+
+function Slider:Reuse(parent, width, height, labelText, min, max, step, value)
+    self.frame:SetParent(parent)
+    self:SetLabel(labelText or "")
+    self:SetSize(width, height)
+    self.value = value or min or 0
+    self:SetMinMaxValues(min, max, step)
+    return self
+end
+
+addon.UICore:RegisterWidget(Slider)
