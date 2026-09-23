@@ -7,6 +7,19 @@ local AutoGossip = {
 }
 
 -- MARK: Constants
+local GENERAL_GOSSIP = {
+    -- CN Server Mount
+	[139945] = true,
+	[139946] = true,
+	[139947] = true,
+	[139948] = true,
+	[139949] = true,
+	[139950] = true,
+	[139951] = true,
+	[139952] = true,
+	[139953] = true,
+	[139954] = true,
+}
 
 -- MARK: Initialize
 
@@ -32,6 +45,11 @@ function AutoGossip:RegisterEvents()
 
                 if addon.data.INSTANCE_GOSSIP[addon.states["instanceInfo"].instanceID or 0] then
                     if addon.data.INSTANCE_GOSSIP[addon.states["instanceInfo"].instanceID][gossipID] then
+                        C_GossipInfo.SelectOption(gossipID)
+                    end
+                else -- no instance gossipID use GENERAL_GOSSIP
+                    -- data structure are [gossipID] = true
+                    if GENERAL_GOSSIP[gossipID] then
                         C_GossipInfo.SelectOption(gossipID)
                     end
                 end
