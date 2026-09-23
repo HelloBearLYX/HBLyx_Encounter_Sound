@@ -16,7 +16,7 @@ elseif addon.Locale == "zhTW" then
     -- Traditional Chinese
 	addon.DEFAULTS.font = "Fonts\\blei.ttf"
 elseif addon.Locale == "koKR" then
-    -- English
+    -- Korean
 	addon.DEFAULTS.font = "Fonts\\2002.ttf"
 end
 
@@ -54,21 +54,21 @@ local optionsList = {
 		},
 		inline = true,
 	},
-	DeveloperTools = {
-		type = "group",
-		name = "Developer Tools",
-		order = 2,
-		args = {
-			PrintInfo = {
-				type = "execute",
-				name = "Print Addon Info",
-				func = function()
-					addon.DeveloperTools:DisplayAddonInfo()
-				end,
-			},
-		},
-		inline = true,
-	},
+	-- DeveloperTools = {
+	-- 	type = "group",
+	-- 	name = "Developer Tools",
+	-- 	order = 2,
+	-- 	args = {
+	-- 		PrintInfo = {
+	-- 			type = "execute",
+	-- 			name = "Print Addon Info",
+	-- 			func = function()
+	-- 				addon.DeveloperTools:DisplayAddonInfo()
+	-- 			end,
+	-- 		},
+	-- 	},
+	-- 	inline = true,
+	-- },
 }
 
 addon.optionsList = optionsList

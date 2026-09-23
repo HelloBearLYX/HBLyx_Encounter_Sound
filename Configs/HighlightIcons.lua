@@ -31,8 +31,6 @@ GUI.TagPanels.HighlightIcons = {}
 function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
-	frame:SetLayout("Flow")
-	frame:SetFullWidth(true)
 
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["HighlightIconsSettings"] .. "|r", addon.db.HighlightIcons.Enabled, function(value)
 		addon.db.HighlightIcons.Enabled = value

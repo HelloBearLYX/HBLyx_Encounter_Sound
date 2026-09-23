@@ -28,8 +28,6 @@ GUI.TagPanels.PrivateAuraAnchor = {}
 function GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
-	frame:SetLayout("Flow")
-	frame:SetFullWidth(true)
 
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["PrivateAuraAnchorSettings"] .. "|r", addon.db.PrivateAuraAnchor.Enabled, function(value)
 		addon.db.PrivateAuraAnchor.Enabled = value

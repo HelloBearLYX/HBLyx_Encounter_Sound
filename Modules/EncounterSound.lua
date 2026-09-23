@@ -13,34 +13,35 @@ local LEGACY_AURA_ENCOUNTER_KEY = "aura"
 
 -- MARK: Data Migration
 
---- used to make data migration, may change due to different patch changes
-local function DataMigrationHelper()
-    addon.db.EncounterSound.dataPA = addon.db.EncounterSound.dataPA or {}
-    -- 3.21.0 data migration
+--- 3.22.0 data migration: each aura trigger now keeps its own independent sound instead of
+--- one sound shared by every selected trigger.
+--- convert [mapID][spellID] = {trigger = {t, ...}, sound = soundName} to [mapID][spellID] = {[t] = soundName, ...}
+local function DataMigrationHelper3220()
+    if not addon.db.EncounterSound.dataPA then
+        return
+    end
 
-    -- make all the dataPA to [mapID] = {[spellID] = {trigger = {triggers}, sound = soundName}} format, and replaced the old [mapID] = {[spellID] = soundName} format
-    -- also since old data has no trigger, add the default trigger 0 for all the old data
     for mapID, spellData in pairs(addon.db.EncounterSound.dataPA) do
         if type(spellData) == "table" then
-            for spellID, soundName in pairs(spellData) do
-                if type(soundName) == "string" then
-                    addon.db.EncounterSound.dataPA[mapID][spellID] = {trigger = {0}, sound = soundName} -- convert to new format
-                elseif type(soundName) == "table" and soundName.sound then
-                    addon.db.EncounterSound.dataPA[mapID][spellID] = {trigger = {0}, sound = soundName.sound} -- convert to new format
+            for spellID, auraData in pairs(spellData) do
+                if type(auraData) == "table" and type(auraData.trigger) == "table" and auraData.sound then
+                    local converted = {}
+                    for _, trigger in ipairs(auraData.trigger) do
+                        converted[trigger] = auraData.sound
+                    end
+                    addon.db.EncounterSound.dataPA[mapID][spellID] = converted
                 end
             end
         end
     end
 
-    -- update version after migration
     addon.db.EncounterSound.version = addon.version -- update version after migration
 end
 
 --- used to apply the data migration if needed, and update the version after change the data migration
 local function DataMigration(force)
-    if force or not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.21.0") then
-        if pcall(DataMigrationHelper) then
-            -- addon.db.EncounterSound.version = addon.version .. ".2" -- update version after migration
+    if force or not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.22.0") then
+        if pcall(DataMigrationHelper3220) then
             addon.Utilities:print(L["DataMigration"] .. " |cffff0000succeeded|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r")
         else
             addon.Utilities:print(L["DataMigration"] .. " |cffff0000failed|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r. You may re-try data migration with reload or you can contact author to report this.")
@@ -160,32 +161,20 @@ end
 local function LoadPrivateAuraSounds(self, mapID)
     if addon.db.EncounterSound.EnablePrivateAuras and addon.db.EncounterSound.dataPA and addon.db.EncounterSound.dataPA[mapID] then
         local privateAuraData = addon.db.EncounterSound.dataPA[mapID]
-        for spellID, soundData in pairs(privateAuraData) do
-            local sound = addon.LSM:Fetch("sound", soundData.sound)
-            if sound and not InCombatLockdown() then
-                -- 07/21 API change C_UnitAuras.AddAuraAppliedSound to AddAuraSound with triggers
-                -- local pa = C_UnitAuras.AddAuraAppliedSound({
-                --     spellID = spellID,
-                --     unitToken = "player",
-                --     soundFileName = sound,
-                --     outputChannel = addon.db.EncounterSound.SoundChannel or "Master",
-                -- })
-                local soundInfo = {
-                    spellID = spellID,
-                    unitToken = "player",
-                    soundFileName = sound,
-                    outputChannel = addon.db.EncounterSound.SoundChannel or "Master",
-                }
-                -- register for all triggers with the sound
-                for attribute, _ in pairs(privateAuraData[spellID]) do
-                    if attribute == "trigger" then
-                        for _, trigger in ipairs(privateAuraData[spellID].trigger) do
-                            if trigger and sound then
-                                soundInfo.soundFileName = sound
-                                local pa = C_UnitAuras.AddAuraSound(trigger, soundInfo)
-                                table.insert(self.privateAuras, pa)
-                            end
-                        end
+        for spellID, triggerData in pairs(privateAuraData) do
+            if not InCombatLockdown() then
+                -- each trigger keeps its own independent sound
+                for trigger, soundName in pairs(triggerData) do
+                    local sound = addon.LSM:Fetch("sound", soundName)
+                    if sound then
+                        local soundInfo = {
+                            spellID = spellID,
+                            unitToken = "player",
+                            soundFileName = sound,
+                            outputChannel = addon.db.EncounterSound.SoundChannel or "Master",
+                        }
+                        local pa = C_UnitAuras.AddAuraSound(trigger, soundInfo)
+                        table.insert(self.privateAuras, pa)
                     end
                 end
             end

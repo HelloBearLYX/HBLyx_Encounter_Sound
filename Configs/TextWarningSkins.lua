@@ -28,8 +28,6 @@ GUI.TagPanels.TextWarningSkins = {}
 function GUI.TagPanels.TextWarningSkins:CreateTabPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
-	frame:SetLayout("Flow")
-	frame:SetFullWidth(true)
 
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["TextWarningSkinsSettings"] .. "|r", addon.db.TextWarningSkins.Enabled, function(value)
 		addon.db.TextWarningSkins.Enabled = value

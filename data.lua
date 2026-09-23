@@ -373,33 +373,4 @@ addon.data.SPELL_FLAGS = {
 addon.data.SPELL_INFO = {
 }
 
--- MARK: Gossips
-addon.data.INSTANCE_GOSSIP = {
-	-- Den of Nalorakk
-	[2825] = {
-		[135009] = true,
-		[135010] = true,
-		[137693] = true,
-		[137702] = true,
-	},
-	-- Murder Row
-	[2813] = {
-		[131502] = true,
-		[131567] = true,
-	},
-	-- The Blinding Vale
-	[2859] = {
-		[137222] = true,
-	},
-	-- Temple of Sethraliss
-	[1877] = {
-		[48126] = true,
-	},
-	-- Altar of Fangs
-	[2993] = {
-		[141729] = true,
-		[141730] = true,
-	},
-}
-
 -- MARK: Data Changes

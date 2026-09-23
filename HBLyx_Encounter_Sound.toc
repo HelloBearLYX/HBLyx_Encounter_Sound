@@ -3,7 +3,7 @@
 ## Notes: A collections of features including Combat Indicator and Combat Timer, and more features are coming
 ## Author: HBLyx
 ## OptionalDeps: LibSharedMedia-3.0, AceConfig-3.0
-## Version: 3.21.12
+## Version: 3.22.0
 ## SavedVariables: HBLyx_Encounter_Sound_DB
 ## IconTexture: Interface\AddOns\HBLyx_Encounter_Sound\Media\HBLyx.png
 ## Category: Boss Mods
@@ -20,8 +20,11 @@ configure.lua
 core.lua
 data.lua
 
+# GUI library
+GUI\gui.xml
+
 # modules
-Modules\AutoGossip.lua
+Modules\GossipHelper.lua
 Modules\EncounterSound.lua
 Modules\HighlightIcons.lua
 Modules\TimelineSkins.lua
@@ -33,7 +36,7 @@ Modules\EventRecorder.lua
 
 # handle configuration and options
 GUI.lua
-Configs\AutoGossip.lua
+Configs\GossipHelper.lua
 Configs\EncounterSound.lua
 Configs\HighlightIcons.lua
 Configs\TimelineSkins.lua
