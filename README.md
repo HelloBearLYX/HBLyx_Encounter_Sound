@@ -1,11 +1,10 @@
 # A World of Warcraft addon integreting multiple tools made by HBLyx
-## v3.21.12 is the final version of this addon
-## v3.21.12 是本插件最后一个版本
+## This addon is about to halt updating
+## 此插件即将停止更新
 
 ## **Downloads**: official releases are only published below, other release are not from the author
 - **CurseForge**:  https://www.curseforge.com/wow/addons/hblyx-encounter-sound
 - **新手盒子**: https://www.wclbox.com/games/1/PluginItem/17821?version=2
-- **网易DD**: https://url.cc.163.com/lgd5Uv
 
 ## **Modules**
 - **Encounter Sound**: set and play custom sound alert for encounter time line events
