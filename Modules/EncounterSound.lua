@@ -13,7 +13,7 @@ local LEGACY_AURA_ENCOUNTER_KEY = "aura"
 
 -- MARK: Data Migration
 
---- 3.22.0 data migration: each aura trigger now keeps its own independent sound instead of
+--- 4.0.0 data migration: each aura trigger now keeps its own independent sound instead of
 --- one sound shared by every selected trigger.
 --- convert [mapID][spellID] = {trigger = {t, ...}, sound = soundName} to [mapID][spellID] = {[t] = soundName, ...}
 local function DataMigrationHelper3220()
@@ -40,7 +40,7 @@ end
 
 --- used to apply the data migration if needed, and update the version after change the data migration
 local function DataMigration(force)
-    if force or not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "3.22.0") then
+    if force or not addon.db.EncounterSound.version or addon.Utilities:CheckVersion(addon.db.EncounterSound.version, "4.0.0") then
         if pcall(DataMigrationHelper3220) then
             addon.Utilities:print(L["DataMigration"] .. " |cffff0000succeeded|r: |cffffff00" .. addon.db.EncounterSound.version .. "|r")
         else
