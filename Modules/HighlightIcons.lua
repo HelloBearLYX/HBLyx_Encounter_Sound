@@ -273,10 +273,9 @@ function HighlightIcons:Test(on)
     end
 
     if on then
-        addon.Utilities:ShowDragRegion(self.head, L["HighlightIconsSettings"])
-        addon.Utilities:MakeFrameDragPosition(self.head, self.modName, "X", "Y")
+        addon.Utilities:ShowEditFrame(self.head, addon.db[self.modName], "X", "Y", nil, nil, L["HighlightIconsSettings"])
     else
-        addon.Utilities:HideDragRegion(self.head)
+        addon.Utilities:HideEditFrame(self.head)
     end
 end
 

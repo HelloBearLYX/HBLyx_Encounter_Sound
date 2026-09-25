@@ -162,25 +162,15 @@ end
 
 local function ToggleTestRegion(self, on)
     -- instead of create the test overlay according to the container, just use the DB data to create the test overlay, so that the test overlay can be shown even if the container is not created yet
-    local buildTestOverlay = function (name, label, x, y, width, height)
+    local buildTestOverlay = function (name, x, y, width, height)
         if not self.testOverlay[name] then
-            local overlay = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+            local overlay = CreateFrame("Frame", nil, UIParent)
             overlay:SetSize(width, height)
             -- handle anchor as same as the container
             local horizontalDirection = addon.db.PrivateAuraAnchor.Grow or "RIGHT"
             local anchorFrom = horizontalDirection == "RIGHT" and "LEFT" or "RIGHT"
             overlay:SetPoint(anchorFrom, UIParent, "CENTER", x, y)
-            overlay:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8x8",
-            })
-            overlay:SetBackdropColor(0, 0, 1, 0.5)
 
-            local text = overlay:CreateFontString(nil, "OVERLAY")
-            text:SetPoint("CENTER", overlay, "TOP", 0, 0)
-            text:SetFont(addon.DEFAULTS.font, 10, "OUTLINE")
-            text:SetText(label)
-
-            overlay.text = text
             self.testOverlay[name] = overlay
         end
     end
@@ -188,22 +178,24 @@ local function ToggleTestRegion(self, on)
     if not self.testOverlay["player"] then
         local width = (addon.db[self.modName]["IconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
         local height = addon.db[self.modName]["IconSize"] or 45
-        buildTestOverlay("player", L["PrivateAuraAnchorSettings"], addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0, width, height)
+        buildTestOverlay("player", addon.db[self.modName]["X"] or 0, addon.db[self.modName]["Y"] or 0, width, height)
     end
     if not self.testOverlay["coTank"] then
         local width = (addon.db[self.modName]["CoTankIconSize"] or 45) * (addon.db[self.modName]["MaxAuras"] or 3)
         local height = addon.db[self.modName]["CoTankIconSize"] or 45
-        buildTestOverlay("coTank", L["CoTankAuras"], addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0, width, height)
+        buildTestOverlay("coTank", addon.db[self.modName]["CoTankX"] or 0, addon.db[self.modName]["CoTankY"] or 0, width, height)
     end
 
     if on then
         -- player
         self.testOverlay["player"]:Show()
-        addon.Utilities:MakeFrameDragPosition(self.testOverlay["player"], self.modName, "X", "Y")
+        addon.Utilities:ShowEditFrame(self.testOverlay["player"], addon.db[self.modName], "X", "Y", nil, nil, L["PrivateAuraAnchorSettings"])
         -- coTank
         self.testOverlay["coTank"]:Show()
-        addon.Utilities:MakeFrameDragPosition(self.testOverlay["coTank"], self.modName, "CoTankX", "CoTankY")
+        addon.Utilities:ShowEditFrame(self.testOverlay["coTank"], addon.db[self.modName], "CoTankX", "CoTankY", nil, nil, L["CoTankAuras"])
     else
+        addon.Utilities:HideEditFrame(self.testOverlay["player"])
+        addon.Utilities:HideEditFrame(self.testOverlay["coTank"])
         -- since the test overlay may not change the position of created containers
         -- change the position of the container after the test overlay is hidden
 

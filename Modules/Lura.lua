@@ -623,12 +623,13 @@ function LuraHelper:Test(on)
         self.isTestMode = true
         self.ShowRLButton = true
         self:Activate(on)
-        addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
+        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, nil, L["LuraHelperSettings"])
     else
         if self.isTestMode then
             self:Activate(on)
             self.isTestMode = false
             self.ShowRLButton = IsInRaid() and UnitIsGroupAssistant("player")
+            addon.Utilities:HideEditFrame(self.frame)
         end
     end
 end

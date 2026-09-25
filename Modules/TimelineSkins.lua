@@ -459,7 +459,7 @@ function TimelineSkins:Test(on)
 
     if on then
         self.frame:Show()
-        addon.Utilities:MakeFrameDragPosition(self.frame, self.modName, "X", "Y")
+        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, nil, L["TimelineSkinsSettings"])
         
         if self.testTimer then
             self.testTimer:Cancel()
@@ -474,7 +474,8 @@ function TimelineSkins:Test(on)
             self.testTimer:Cancel()
             self.testTimer = nil
         end
-        self:UpdateFrameVisibility()
+        self:UpdateFrameVisibility() 
+        addon.Utilities:HideEditFrame(self.frame)
         C_EncounterTimeline.CancelEditModeEvents()
     end
 end
