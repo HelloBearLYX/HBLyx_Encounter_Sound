@@ -355,4 +355,4 @@ function EncounterSound:RegisterEvents()
 end
 
 -- MARK: Register Module
-addon.core:RegisterModule(EncounterSound.modName, function() return EncounterSound:Initialize() end)
+addon.core:RegisterModule(EncounterSound.modName, L["EncounterSoundEffects"], function() return EncounterSound:Initialize() end)

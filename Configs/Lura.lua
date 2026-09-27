@@ -20,8 +20,7 @@ local function update()
 end
 
 -- GUI
-GUI.TagPanels.LuraHelper = {}
-function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
+local function RenderPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
 
@@ -93,3 +92,5 @@ function GUI.TagPanels.LuraHelper:CreateTabPanel(parent)
 
 	return frame
 end
+
+GUI:RegisterModule(MOD_KEY, RenderPanel)

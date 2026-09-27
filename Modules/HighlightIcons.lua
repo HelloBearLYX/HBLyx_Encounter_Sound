@@ -273,7 +273,7 @@ function HighlightIcons:Test(on)
     end
 
     if on then
-        addon.Utilities:ShowEditFrame(self.head, addon.db[self.modName], "X", "Y", nil, nil, L["HighlightIconsSettings"])
+        addon.Utilities:ShowEditFrame(self.head, addon.db[self.modName], "X", "Y", nil, L["HighlightIconsSettings"], self.modName)
     else
         addon.Utilities:HideEditFrame(self.head)
     end
@@ -300,4 +300,4 @@ function HighlightIcons:RegisterEvents()
 end
 
 -- MARK: Register Module
-addon.core:RegisterModule(HighlightIcons.modName, function() return HighlightIcons:Initialize() end)
+addon.core:RegisterModule(HighlightIcons.modName, L["HighlightIconsSettings"], function() return HighlightIcons:Initialize() end)

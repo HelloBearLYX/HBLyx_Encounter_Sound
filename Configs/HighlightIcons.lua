@@ -27,8 +27,7 @@ local function update()
 end
 
 -- GUI
-GUI.TagPanels.HighlightIcons = {}
-function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
+local function RenderPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
 
@@ -120,3 +119,5 @@ function GUI.TagPanels.HighlightIcons:CreateTabPanel(parent)
 
 	return frame
 end
+
+GUI:RegisterModule(MOD_KEY, RenderPanel)

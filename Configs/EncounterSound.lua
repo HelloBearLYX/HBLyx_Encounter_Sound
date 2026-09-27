@@ -595,7 +595,7 @@ local function RefreshEncounterSelection(self)
 end
 
 -- MARK:  GUI
-GUI.TagPanels.EncounterSound = {
+local EncounterSoundPanel = {
 	frame = nil,
 	inputMap = nil,
 	inputEncounter = nil,
@@ -611,7 +611,7 @@ GUI.TagPanels.EncounterSound = {
 ---@param parent table parent GUI container
 ---@param isRaid boolean true for raid tab, false for dungeon tab
 ---@return table frame created scroll frame
-function GUI.TagPanels.EncounterSound:CreateTabPanel(parent, isRaid)
+function EncounterSoundPanel:CreateTabPanel(parent, isRaid)
 	self.inputMap = nil
 	self.inputEncounter = nil
 	self.inputEvent = nil
@@ -705,7 +705,7 @@ end
 ---Create the general sound settings panel.
 ---@param parent table parent GUI container
 ---@return table frame created scroll frame
-function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
+function EncounterSoundPanel:CreateGeneralPanel(parent)
 	local frame = GUI:CreateScrollFrame(parent)
 
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. " |cffffff00" .. L["VictorySound"] .. "|r", addon.db.EncounterSound.EnableVictorySound, function(value)
@@ -728,3 +728,7 @@ function GUI.TagPanels.EncounterSound:CreateGeneralPanel(parent)
 
 	return frame
 end
+
+GUI:RegisterModule(MOD_KEY, function(container) return EncounterSoundPanel:CreateGeneralPanel(container) end)
+GUI:RegisterModule(MOD_KEY .. "Raid", function(container) return EncounterSoundPanel:CreateTabPanel(container, true) end)
+GUI:RegisterModule(MOD_KEY .. "Dungeon", function(container) return EncounterSoundPanel:CreateTabPanel(container, false) end)

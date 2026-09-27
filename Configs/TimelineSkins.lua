@@ -32,8 +32,7 @@ local function update()
 end
 
 -- GUI
-GUI.TagPanels.TimelineSkins = {}
-function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
+local function RenderPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
 
@@ -135,3 +134,5 @@ function GUI.TagPanels.TimelineSkins:CreateTabPanel(parent)
 
 	return frame
 end
+
+GUI:RegisterModule(MOD_KEY, RenderPanel)

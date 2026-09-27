@@ -6,8 +6,7 @@ local Compress = LibStub:GetLibrary("LibDeflate")
 local prefix = "!HBLyx_Tools_EncounterSound_"
 
 
-GUI.TagPanels.Profile = {}
-function GUI.TagPanels.Profile:CreateTabPanel(parent)
+local function RenderPanel(parent)
     local frame = GUI:CreateScrollFrame(parent)
 
     -- MARK: General Profile
@@ -36,6 +35,8 @@ function GUI.TagPanels.Profile:CreateTabPanel(parent)
 
     return frame
 end
+
+GUI:RegisterModule("Profile", RenderPanel)
 
 -- MARK: Profile Export
 

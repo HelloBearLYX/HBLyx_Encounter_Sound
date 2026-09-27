@@ -189,10 +189,10 @@ local function ToggleTestRegion(self, on)
     if on then
         -- player
         self.testOverlay["player"]:Show()
-        addon.Utilities:ShowEditFrame(self.testOverlay["player"], addon.db[self.modName], "X", "Y", nil, nil, L["PrivateAuraAnchorSettings"])
+        addon.Utilities:ShowEditFrame(self.testOverlay["player"], addon.db[self.modName], "X", "Y", nil, L["PrivateAuraAnchorSettings"], self.modName)
         -- coTank
         self.testOverlay["coTank"]:Show()
-        addon.Utilities:ShowEditFrame(self.testOverlay["coTank"], addon.db[self.modName], "CoTankX", "CoTankY", nil, nil, L["CoTankAuras"])
+        addon.Utilities:ShowEditFrame(self.testOverlay["coTank"], addon.db[self.modName], "CoTankX", "CoTankY", nil, L["CoTankAuras"], self.modName)
     else
         addon.Utilities:HideEditFrame(self.testOverlay["player"])
         addon.Utilities:HideEditFrame(self.testOverlay["coTank"])
@@ -293,4 +293,4 @@ function PrivateAuraAnchor:RegisterEvents()
 end
 
 -- MARK: Register Module
-addon.core:RegisterModule(PrivateAuraAnchor.modName, function() return PrivateAuraAnchor:Initialize() end)
+addon.core:RegisterModule(PrivateAuraAnchor.modName, L["PrivateAuraAnchorSettings"], function() return PrivateAuraAnchor:Initialize() end)

@@ -623,7 +623,7 @@ function LuraHelper:Test(on)
         self.isTestMode = true
         self.ShowRLButton = true
         self:Activate(on)
-        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, nil, L["LuraHelperSettings"])
+        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, L["LuraHelperSettings"], self.modName)
     else
         if self.isTestMode then
             self:Activate(on)
@@ -672,4 +672,4 @@ function LuraHelper:RegisterEvents()
 end
 
 -- MARK: Register Module
-addon.core:RegisterModule(LuraHelper.modName, function() return LuraHelper:Initialize() end)
+addon.core:RegisterModule(LuraHelper.modName, L["LuraHelperSettings"], function() return LuraHelper:Initialize() end)

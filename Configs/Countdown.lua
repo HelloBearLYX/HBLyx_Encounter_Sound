@@ -27,8 +27,7 @@ local function update()
 end
 
 -- GUI
-GUI.TagPanels.Countdown = {}
-function GUI.TagPanels.Countdown:CreateTabPanel(parent)
+local function RenderPanel(parent)
 	-- MARK: General
 	local frame = GUI:CreateScrollFrame(parent)
 
@@ -113,3 +112,5 @@ function GUI.TagPanels.Countdown:CreateTabPanel(parent)
 
 	return frame
 end
+
+GUI:RegisterModule(MOD_KEY, RenderPanel)

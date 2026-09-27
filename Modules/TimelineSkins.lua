@@ -459,7 +459,7 @@ function TimelineSkins:Test(on)
 
     if on then
         self.frame:Show()
-        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, nil, L["TimelineSkinsSettings"])
+        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, L["TimelineSkinsSettings"], self.modName)
         
         if self.testTimer then
             self.testTimer:Cancel()
@@ -504,4 +504,4 @@ function TimelineSkins:RegisterEvents()
 end
 
 -- MARK: Register Module
-addon.core:RegisterModule(TimelineSkins.modName, function() return TimelineSkins:Initialize() end)
+addon.core:RegisterModule(TimelineSkins.modName, L["TimelineSkinsSettings"], function() return TimelineSkins:Initialize() end)

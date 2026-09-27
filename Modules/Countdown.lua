@@ -187,7 +187,7 @@ function Countdown:Test(on)
     end
 
     if on then
-        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, nil, L["Countdown"])
+        addon.Utilities:ShowEditFrame(self.frame, addon.db[self.modName], "X", "Y", nil, L["Countdown"], self.modName)
         self:countdown(10, "TEST") -- start a 10-second countdown for testing
     else
         addon.Utilities:HideEditFrame(self.frame)
@@ -216,4 +216,4 @@ function Countdown:RegisterEvents()
 end
 
 -- MARK: Register Module
-addon.core:RegisterModule(Countdown.modName, function() return Countdown:Initialize() end)
+addon.core:RegisterModule(Countdown.modName, L["Countdown"], function() return Countdown:Initialize() end)

@@ -8,6 +8,7 @@ local GUI = addon.GUI
 ---@field isOpened boolean is the GUI opened
 addon.GUI = {
     frame = nil,
+    tabPanels = {},
     tabGroup = nil,
     isOpened = false,
 }
@@ -67,6 +68,18 @@ local function CreateGeneralPanel(container)
         CreateLink(contactGroup, info)
     end
 
+    local modulesGroup = GUI:CreateInlineGroup(panel, L["ModulesOverview"])
+    local loadedModContent = "|cff8788ee" .. L["LoadedModules"] .. "|r"
+    local loadedModules, loadedModulesCount = addon.core:GetLoadedModulesList()
+    loadedModContent = loadedModContent .. "(" .. loadedModulesCount .. "): "
+    loadedModContent = loadedModContent .. table.concat(loadedModules, ", ")
+    GUI:CreateInformationTag(modulesGroup, loadedModContent, "LEFT")
+    local unloadedModContent = "|cff8788ee" .. L["UnloadedModules"] .. "|r"
+    local unloadedModules, unloadedModulesCount = addon.core:GetUnloadedModulesList()
+    unloadedModContent = unloadedModContent .. "(" .. unloadedModulesCount .. "): "
+    unloadedModContent = unloadedModContent .. table.concat(unloadedModules, ", ")
+    GUI:CreateInformationTag(modulesGroup, unloadedModContent, "LEFT")
+
     return panel
 end
 
@@ -102,23 +115,42 @@ end
 -- MARK: TABS
 local TABS = {
     {text = L["Universal"], type = "Text"},
-    {text = L["General"], type = "Button", panelFunction = function(container) return CreateGeneralPanel(container) end},
-    {text = L["UniversalSettings"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.EncounterSound:CreateGeneralPanel(container) end},
-    {text = L["LuraHelperSettings"], type = "Button", tooltip = L["LuraHelperSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.LuraHelper:CreateTabPanel(container) end},
-    {text = L["GossipHelperSettings"], type = "Button", tooltip = L["GossipHelperSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.GossipHelper:CreateTabPanel(container) end},
+    {text = L["General"], type = "Button", module = "General", panelFunction = function(container) return CreateGeneralPanel(container) end},
+    {text = addon.core:GetModuleName("EncounterSound"), type = "Button", module = "EncounterSound", panelFunction = function(container) return addon.GUI.tabPanels.EncounterSound(container) end},
+    {text = addon.core:GetModuleName("LuraHelper"), type = "Button", module = "LuraHelper", tooltip = L["LuraHelperSettingsDesc"], panelFunction = function(container) return addon.GUI.tabPanels.LuraHelper(container) end},
+    {text = addon.core:GetModuleName("GossipHelper"), type = "Button", module = "GossipHelper", tooltip = L["GossipHelperSettingsDesc"], panelFunction = function(container) return addon.GUI.tabPanels.GossipHelper(container) end},
     {text = L["EncounterSoundEffects"], type = "Text"},
-    {text = L["Raid"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, true) end},
-    {text = L["Dungeon"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.EncounterSound:CreateTabPanel(container, false) end},
+    {text = L["Raid"], type = "Button", panelFunction = function(container) return addon.GUI.tabPanels.EncounterSoundRaid(container) end},
+    {text = L["Dungeon"], type = "Button", panelFunction = function(container) return addon.GUI.tabPanels.EncounterSoundDungeon(container) end},
     {text = L["Skins"], type = "Text"},
-    {text = L["HighlightIconsSettings"], type = "Button", tooltip = L["HighlightIconsSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.HighlightIcons:CreateTabPanel(container) end},
-    {text = L["PrivateAuraAnchorSettings"], type = "Button", tooltip = L["PrivateAuraAnchorSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.PrivateAuraAnchor:CreateTabPanel(container) end},
-    {text = L["TimelineSkinsSettings"], type = "Button", tooltip = L["TimelineSkinsSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.TimelineSkins:CreateTabPanel(container) end},
-    {text = L["TextWarningSkinsSettings"], type = "Button", tooltip = L["TextWarningSkinsSettingsDesc"], panelFunction = function(container) return addon.GUI.TagPanels.TextWarningSkins:CreateTabPanel(container) end},
-    {text = L["Countdown"], type = "Button", tooltip = L["CountdownDesc"], panelFunction = function(container) return addon.GUI.TagPanels.Countdown:CreateTabPanel(container) end},
+    {text = addon.core:GetModuleName("HighlightIcons"), type = "Button", module = "HighlightIcons", tooltip = L["HighlightIconsSettingsDesc"], panelFunction = function(container) return addon.GUI.tabPanels.HighlightIcons(container) end},
+    {text = addon.core:GetModuleName("PrivateAuraAnchor"), type = "Button", module = "PrivateAuraAnchor", tooltip = L["PrivateAuraAnchorSettingsDesc"], panelFunction = function(container) return addon.GUI.tabPanels.PrivateAuraAnchor(container) end},
+    {text = addon.core:GetModuleName("TimelineSkins"), type = "Button", module = "TimelineSkins", tooltip = L["TimelineSkinsSettingsDesc"], panelFunction = function(container) return addon.GUI.tabPanels.TimelineSkins(container) end},
+    {text = addon.core:GetModuleName("TextWarningSkins"), type = "Button", module = "TextWarningSkins", tooltip = L["TextWarningSkinsSettingsDesc"], panelFunction = function(container) return addon.GUI.tabPanels.TextWarningSkins(container) end},
+    {text = addon.core:GetModuleName("Countdown"), type = "Button", module = "Countdown", tooltip = L["CountdownDesc"], panelFunction = function(container) return addon.GUI.tabPanels.Countdown(container) end},
     {text = L["Others"], type = "Text"},
-    {text = L["Profile"], type = "Button", panelFunction = function(container) return addon.GUI.TagPanels.Profile:CreateTabPanel(container) end},
-    {text = L["Contributors"], type = "Button", panelFunction = function(container) return CreateContributorPanel(container) end},
+    {text = L["Profile"], type = "Button", module = "Profile", panelFunction = function(container) return addon.GUI.tabPanels.Profile(container) end},
+    {text = L["Contributors"], type = "Button", module = "Contributors", panelFunction = function(container) return CreateContributorPanel(container) end},
 }
+
+-- auto assign index to each tabInfo for quick lookup
+local MOD_INDEX = {}
+for i, tabInfo in ipairs(TABS) do
+    if tabInfo.module then
+        MOD_INDEX[tabInfo.module] = i
+    end
+end
+
+-- MARK: Tabs
+
+---Show the panel of a tab in the content area
+---@param module string the module key of the tab to select
+function addon.GUI:SelectTab(module)
+    local index = MOD_INDEX[module]
+    if index then
+        self.tabGroup:SelectTab(index)
+    end
+end
 
 -- MARK: Initialize GUI
 
@@ -213,6 +245,26 @@ local function BuildGUI(self)
     addon.UICore:BuildHover(close)
     self.closeButton = close
 
+    -- placeholder texture, to be replaced later
+    local developerButton = CreateFrame("Button", nil, toolbar.frame, "BackdropTemplate")
+    developerButton:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8x8",
+        edgeFile = "Interface\\Buttons\\WHITE8x8",
+        tile = false, tileSize = 1, edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 }
+    })
+    addon.UICore:SetBackdropColor(developerButton)
+    addon.UICore:SetBorderColor(developerButton)
+    developerButton:SetSize(CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE)
+    developerButton:SetPoint("TOPRIGHT", close, "TOPLEFT", 0, 0)
+    developerButton:SetNormalTexture("Interface\\AddOns\\".. ADDON_NAME .. "\\Media\\Developer_Button.png")
+    developerButton:SetPushedTexture("Interface\\AddOns\\".. ADDON_NAME .. "\\Media\\Developer_Button_Pushed.png")
+    developerButton:SetHighlightTexture("Interface\\AddOns\\".. ADDON_NAME .. "\\Media\\Developer_Button_Highlight.png")
+    developerButton:GetHighlightTexture():SetAlpha(0.75)
+    developerButton:SetScript("OnClick", function() addon.Developer:DisplayAddonInfo() end)
+    addon.UICore:BuildHover(developerButton)
+    self.developerButton = developerButton
+
     -- the sidebar spans the full height, the content area sits below the toolbar
     local tabGroup = addon.UICore:Build("VerticalTabGroup")
     tabGroup:SetParent(root)
@@ -251,6 +303,15 @@ function addon.GUI:OpenGUI()
     addon.GUI:Render()
 end
 
+---Open GUI with a specific module tab selected
+---@param module string the module key of the tab to select
+function addon.GUI:OpenModuleGUI(module)
+    addon.GUI:Render()
+    if module then
+        addon.GUI:SelectTab(module)
+    end
+end
+
 ---Close GUI
 function addon.GUI:CloseGUI()
     if not self.frame then return end
@@ -258,6 +319,14 @@ function addon.GUI:CloseGUI()
     self.isOpened = false
     self.frame:Hide()
     addon.core:TestMode(false) -- turn off test mode when closing GUI
+end
+
+-- MARK: GUI Register Module
+function addon.GUI:RegisterModule(modKey, renderFunction)
+    if not self.tabPanels then
+        self.tabPanels = {}
+    end
+    self.tabPanels[modKey] = renderFunction
 end
 
 -- MARK: Widget factories
@@ -621,6 +690,3 @@ function addon.GUI:CreateSpecSelectDropdown(parent, label)
 
     return component
 end
-
--- Initialize Tag Panels
-addon.GUI.TagPanels = {}
