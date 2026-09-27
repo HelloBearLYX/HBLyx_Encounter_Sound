@@ -334,6 +334,17 @@ addon.data.MAP_ENCOUNTER_EVENTS = {
 			},
 		},
 	},
+	[1324] = {
+		name = select(1, EJ_GetInstanceInfo(1324)) or "The Unbinding of Kith'ix",
+		encounters = {
+			[3513] = {
+				order = 1,
+				events = {838, 858, 859, 860, 861, 862, 864, 903, 951, 1002, 1003},
+				journalID = 2896,
+				privateAuras = {1302319, 1302334, 1304526, 1304045, 1303406, 1305428, 1308875, 1308675, 1302728, 1304046, 1304948, 1308873, 1318467, 1303165, 1302334},
+			},
+		},
+	},
 }
 
 -- MARK: Instance Journal
@@ -348,6 +359,7 @@ addon.data.INSTANCE_JOURNAL = {
 	[2521] = 1202, -- Ruby Life Pools
 	[3004] = 1320, -- The Venomous Abyss
 	[2987] = 1317, -- The Tidebound Grotto
+	[3095] = 1324, -- The Unbinding of Kith'ix
 }
 
 -- MARK: Spell Data

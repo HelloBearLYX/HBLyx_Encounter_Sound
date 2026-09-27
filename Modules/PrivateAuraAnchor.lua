@@ -47,25 +47,25 @@ local function InitializeAuraButtonFrame(frame)
     frame:SetApplicationCount(stack)
 
     -- border
-    local border = frame:CreateTexture(nil, "OVERLAY")
-    border:SetTexture("Interface\\AddOns\\" .. ADDON_NAME .. "\\Media\\iconBorder.png")
-    border:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
-    border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 1, -1)
-    frame:SetAuraBorder(border, {
-        showIcon = true,
-        showWhenHarmful = true,
-        showWhenHelpful = true,
-        showWithoutDispelType = true,
-        style = 3,
-        customDispelColorMap = {
-            None = CreateColor(0, 0, 0, 1),
-            Magic = CreateColor(0.349, 0.475, 1.0),
-            Curse = CreateColor(0.635, 0.0, 0.639),
-            Disease = CreateColor(0.671, 0.384, 0.098),
-            Poison = CreateColor(0.0, 0.706, 0.286),
-            Bleed = CreateColor(0.749, 0.149, 0.149),
-        },
-    })
+    -- local border = frame:CreateTexture(nil, "OVERLAY")
+    -- border:SetTexture("Interface\\AddOns\\" .. ADDON_NAME .. "\\Media\\iconBorder.png")
+    -- border:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+    -- border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 1, -1)
+    -- frame:SetAuraBorder(border, {
+    --     showIcon = true,
+    --     showWhenHarmful = true,
+    --     showWhenHelpful = true,
+    --     showWithoutDispelType = true,
+    --     style = 3,
+    --     customDispelColorMap = {
+    --         None = CreateColor(0, 0, 0, 1),
+    --         Magic = CreateColor(0.349, 0.475, 1.0),
+    --         Curse = CreateColor(0.635, 0.0, 0.639),
+    --         Disease = CreateColor(0.671, 0.384, 0.098),
+    --         Poison = CreateColor(0.0, 0.706, 0.286),
+    --         Bleed = CreateColor(0.749, 0.149, 0.149),
+    --     },
+    -- })
 end
 
 -- MARK: Create Container
