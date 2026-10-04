@@ -51,7 +51,7 @@ local function InitializeAuraButtonFrame(frame)
     border:SetTexture("Interface\\AddOns\\" .. ADDON_NAME .. "\\Media\\iconBorder.png")
     border:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
     border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 1, -1)
-    frame:AddDispelTypeTexture(border, {
+    local borderOptions = {
         showIcon = true,
         showWhenHarmful = true,
         showWhenHelpful = true,
@@ -65,7 +65,13 @@ local function InitializeAuraButtonFrame(frame)
             Poison = CreateColor(0.0, 0.706, 0.286),
             Bleed = CreateColor(0.749, 0.149, 0.149),
         },
-    })
+    }
+    -- 12.15 API got renamed to "AddDispelTypeTexture"
+    if addon.states["interfaceNumber"] >= 120105 then
+        frame:AddDispelTypeTexture(border, borderOptions)
+    else
+        frame:SetAuraBorder(border, borderOptions)
+    end
 end
 
 -- MARK: Create Container

@@ -8,7 +8,6 @@ local ADDON_NAME, addon = ...
 ---@field totalMods number total number of registered modules, used to check if all modules are loaded
 ---@field loadedMods number total number of loaded modules, used to check if all modules are loaded
 ---@field testMode boolean if the addon is in test mode
----@field registeredStates table<string, boolean> set of every addon state name that has been registered, just record for developers
 ---@field statesUpdate table<string, table<string, function>> map of event to map of addon state to update function
 ---@field statesMonitor table<string, table<string, function>> map of addon state to map of module to monitor function
 local Core = {}
@@ -36,23 +35,6 @@ function Core:Initialize()
 end
 
 -- private methods
--- MARK: private event register
-
----Register event for the EventHandler on the EventHandler.eventFrame
----@param self Core self
----@param event string event to register
----@param unit nil|string|table<string>? if this is a unit event, the unit name or units list
-local function RegisterE(frame, event, unit)
-    if unit then
-        if type(unit) == "table" then
-            frame:RegisterUnitEvent(event, unpack(unit))
-        else
-            frame:RegisterUnitEvent(event, unit)
-        end
-    else
-        frame:RegisterEvent(event)
-    end
-end
 
 -- MARK: Event Handler
 
@@ -103,12 +85,14 @@ function Core:RegisterEvent(event, frame, mod, unit)
             for _, u in ipairs(unit) do
                 self.eventMap[event].units[u] = true
             end
+            frame:RegisterUnitEvent(event, unpack(unit))
         else
             self.eventMap[event].units[unit] = true
+            frame:RegisterUnitEvent(event, unit)
         end
+    else
+        frame:RegisterEvent(event)
     end
-
-    RegisterE(frame, event, unit)
 end
 
 -- MARK: Register State
@@ -125,7 +109,15 @@ function Core:RegisterState(event, unit, name, updateFunc)
 
     self.statesUpdate[event][name] = updateFunc
 
-    RegisterE(self.eventFrame, event, unit)
+    if unit then
+        if type(unit) == "table" then
+            self.eventFrame:RegisterUnitEvent(event, unpack(unit))
+        else
+            self.eventFrame:RegisterUnitEvent(event, unit)
+        end
+    else
+        self.eventFrame:RegisterEvent(event)
+    end
 
     if not self.registeredStates[name] then
         self.registeredStates[name] = true
@@ -175,7 +167,12 @@ function Core:LoadModule(mod)
     local loadedAlready = self:HasModuleLoaded(mod)
 
     if not loadedAlready and self.registeredMods[mod] and addon.db[mod]["Enabled"] then
-        self.modules[mod] = self.registeredMods[mod].initialize()
+        local success, result = pcall(self.registeredMods[mod].initialize)
+        self.modules[mod] = success and result or nil
+        if not success then -- otherwise the module silently stays unloaded
+            addon.Utilities:print(string.format("|cffff0000%s failed to load|r: %s", mod, tostring(result)))
+            return false
+        end
         if self.modules[mod] and self.modules[mod].RegisterEvents then
             self.modules[mod]:RegisterEvents()
             self.loadedMods = self.loadedMods + 1
@@ -286,6 +283,25 @@ function Core:GetStatesMonitorInfo()
     return output
 end
 
+---Get "event(count): state1, state2" for every registered state update event
+---@return table<string> output
+function Core:GetStateEventInfo()
+    local output = {}
+    for event, states in pairs(self.statesUpdate) do
+        local stateNames = {}
+        for state, _ in pairs(states) do
+            table.insert(stateNames, state)
+        end
+        table.sort(stateNames)
+
+        local entry = "|cff8788ee" .. event .. "|r(" .. #stateNames .. "): " .. table.concat(stateNames, ", ")
+        table.insert(output, entry)
+    end
+    table.sort(output)
+
+    return output
+end
+
 ---Get "event(unit1, unit2)(count): module1, module2" for every registered event, the unit part is omitted when the event has no unit
 ---@return table<string> output
 function Core:GetEventInfo()
@@ -334,7 +350,7 @@ function Core:TestMode(on)
 
     for _, module in pairs(self.modules) do -- for all loaded modules, call the Test function if it exists
         if module.Test then
-            module:Test(self.testMode)
+            pcall(module.Test, module, self.testMode)
         end
     end
 end

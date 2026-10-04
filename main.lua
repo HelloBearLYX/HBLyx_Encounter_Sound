@@ -134,6 +134,11 @@ end
 local function InitializeStates()
 	addon.states = {}
 
+	-- interface number
+	-- GetBuildInfo is available at ADDON_LOADED, before modules initialize.
+	addon.states["interfaceNumber"] = select(4, GetBuildInfo())
+	addon.core:RegisterState("ADDON_LOADED", nil, "interfaceNumber", function() end)
+
 	-- encounter info
 	addon.states["encounterInfo"] = {encounterID = 0, encounterName = "", success = 0} -- "ADDON_LOADED"
 	addon.core:RegisterState("ENCOUNTER_START", nil, "encounterInfo", function (...)
