@@ -21,16 +21,23 @@ local function RenderPanel(parent)
         local mod = addon.core:GetModule("EncounterSound")
         if mod then
             mod:DataMigration(true)
+            exportBox:SetText(addon:ExportProfile() or "")
         end
     end)
+    GUI:CreateLinebreaker(generalProfileGroup)
     generalProfileGroup:AddChild(exportBox)
     GUI:CreateMultiLineEditBox(generalProfileGroup, L["Import"], "", function(value)
-        addon:ImportProfile(value)
-        editBox:SetText(addon.db["EncounterSound"].ProfileName or "None")
+        if addon:ImportProfile(value) then
+            editBox:SetText(addon.db["EncounterSound"].ProfileName or "None")
+            exportBox:SetText(addon:ExportProfile() or "")
+        end
     end)
     GUI:CreateInformationTag(generalProfileGroup, L["MergeDesc"], "LEFT")
     GUI:CreateMultiLineEditBox(generalProfileGroup, nil, "", function(value)
-        addon:MergeProfile(value)
+        if addon:MergeProfile(value) then
+            editBox:SetText(addon.db["EncounterSound"].ProfileName or "None")
+            exportBox:SetText(addon:ExportProfile() or "")
+        end
     end)
 
     return frame
@@ -59,20 +66,162 @@ end
 
 -- MARK: Profile Import
 
+local function NormalizeTrigger(trigger)
+    local value = tonumber(trigger)
+    if value and value >= 0 and value <= 2 and value == math.floor(value) then
+        return value
+    end
+    return nil
+end
+
+---Normalize current and legacy private aura entries to {[trigger] = sound}.
+local function NormalizePAEntry(entry)
+    if type(entry) == "string" then
+        return { [0] = entry }
+    end
+    if type(entry) ~= "table" then
+        return nil
+    end
+
+    local normalized = {}
+    if entry.sound ~= nil or entry.trigger ~= nil then
+        if type(entry.sound) ~= "string"
+            or (entry.trigger ~= nil and type(entry.trigger) ~= "table") then
+            return nil
+        end
+        for _, trigger in ipairs(entry.trigger or {}) do
+            local value = NormalizeTrigger(trigger)
+            if value == nil then return nil end
+            normalized[value] = entry.sound
+        end
+        if not next(normalized) then normalized[0] = entry.sound end
+    else
+        for trigger, sound in pairs(entry) do
+            local value = NormalizeTrigger(trigger)
+            if value == nil or type(sound) ~= "string" then return nil end
+            normalized[value] = sound
+        end
+    end
+    return normalized
+end
+
+local function NormalizePrivateAuras(data)
+    if data == nil then return {} end
+    if type(data) ~= "table" then return nil end
+
+    local normalized = {}
+    for mapID, auras in pairs(data) do
+        if type(mapID) ~= "number" or type(auras) ~= "table" then return nil end
+        normalized[mapID] = {}
+        for spellID, entry in pairs(auras) do
+            if type(spellID) ~= "number" then return nil end
+            local aura = NormalizePAEntry(entry)
+            if not aura then return nil end
+            normalized[mapID][spellID] = aura
+        end
+    end
+    return normalized
+end
+
+local function ValidateEncounterProfile(profile)
+    if type(profile) ~= "table"
+        or (profile.ProfileName ~= nil and type(profile.ProfileName) ~= "string")
+        or (profile.version ~= nil and type(profile.version) ~= "string")
+        or (profile.data ~= nil and type(profile.data) ~= "table") then
+        return false
+    end
+
+    for _, events in pairs(profile.data or {}) do
+        if type(events) ~= "table" then return false end
+        for eventID, event in pairs(events) do
+            if type(eventID) ~= "number" or type(event) ~= "table" then return false end
+            for trigger, config in pairs(event) do
+                if trigger == "color" then
+                    if type(config) ~= "string" or #config ~= 8 or not config:match("^%x+$") then
+                        return false
+                    end
+                else
+                    if (trigger ~= "0" and trigger ~= "1" and trigger ~= "2")
+                        or type(config) ~= "table" or type(config.sound) ~= "string"
+                        or (config.role ~= nil and type(config.role) ~= "table") then
+                        return false
+                    end
+                    for role, enabled in pairs(config.role or {}) do
+                        if (role ~= "TANK" and role ~= "HEALER" and role ~= "DAMAGER")
+                            or type(enabled) ~= "boolean" then
+                            return false
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    local privateAuras = NormalizePrivateAuras(profile.dataPA)
+    if not privateAuras then return false end
+    profile.dataPA = privateAuras
+    return true
+end
+
+local function ReadProfile(data)
+    local function InvalidProfile()
+        addon.Utilities:print("Invalid profile data.")
+        return nil
+    end
+
+    if type(data) ~= "string" or data:sub(1, #prefix) ~= prefix then
+        return InvalidProfile()
+    end
+    local decodedData = Compress:DecodeForPrint(data:sub(#prefix + 1))
+    if not decodedData then return InvalidProfile() end
+    local decompressedData = Compress:DecompressDeflate(decodedData)
+    if not decompressedData then return InvalidProfile() end
+    local success, profileData = Serialize:Deserialize(decompressedData)
+    if not success or type(profileData) ~= "table" or type(profileData.profile) ~= "table"
+        or not ValidateEncounterProfile(profileData.profile.EncounterSound) then
+        return InvalidProfile()
+    end
+
+    for mod, defaults in pairs(addon.configurationList) do
+        local settings = profileData.profile[mod]
+        if settings ~= nil then
+            if type(settings) ~= "table" then return InvalidProfile() end
+            for key, default in pairs(defaults) do
+                if settings[key] ~= nil and type(settings[key]) ~= type(default) then
+                    return InvalidProfile()
+                end
+            end
+        end
+    end
+    return profileData.profile
+end
+
 ---Import all profiles
 ---@param data string profile string to import
 ---@return boolean success if the import was successful
 function addon:ImportProfile(data)
-    local decodedData = Compress:DecodeForPrint(data:sub(#prefix + 1))
-    local decompressedData = Compress:DecompressDeflate(decodedData)
-    local success, profileData = Serialize:Deserialize(decompressedData)
+    local profile = ReadProfile(data)
+    if not profile then return false end
 
-    if not success or type(profileData) ~= "table" or data:sub(1, #prefix) ~= prefix then
-        addon.Utilities:print("Invalid profile data.")
-        return false
+    for mod, defaults in pairs(addon.configurationList) do
+        profile[mod] = profile[mod] or {}
+        for key, default in pairs(defaults) do
+            if profile[mod][key] == nil then
+                if type(default) == "table" then
+                    profile[mod][key] = {}
+                    for field, value in pairs(default) do
+                        profile[mod][key][field] = value
+                    end
+                else
+                    profile[mod][key] = default
+                end
+            end
+        end
     end
+    profile.Version = addon.version
+    profile.EncounterSound.version = addon.version
 
-    HBLyx_Encounter_Sound_DB = profileData.profile
+    HBLyx_Encounter_Sound_DB = profile
     addon.db = HBLyx_Encounter_Sound_DB
     addon.Utilities:print(L["ImportSuccess"])
 
@@ -105,65 +254,22 @@ local function PrintMergeSummary(countEvents, newEventsCount, countPA, newPAcoun
     addon.Utilities:print(printMsg)
 end
 
----Normalize private aura trigger list to addon-supported trigger IDs.
----@param triggerData any
----@return table<number> normalizedTriggers
-local function NormalizePATriggers(triggerData)
-    local normalized = {}
-    local seen = {}
-
-    if type(triggerData) == "table" then
-        for _, trigger in ipairs(triggerData) do
-            local value = tonumber(trigger)
-            if value and value >= 0 and value <= 2 and not seen[value] then
-                seen[value] = true
-                table.insert(normalized, value)
-            end
-        end
-    end
-
-    if #normalized == 0 then
-        normalized = { 0 }
-    else
-        table.sort(normalized)
-    end
-
-    return normalized
-end
-
----Normalize one private aura entry to {trigger = {...}, sound = "..."} format.
----@param paEntry any
----@return table|nil
-local function NormalizePAEntry(paEntry)
-    if type(paEntry) == "string" then
-        return { trigger = { 0 }, sound = paEntry }
-    end
-
-    if type(paEntry) == "table" and type(paEntry.sound) == "string" then
-        return {
-            trigger = NormalizePATriggers(paEntry.trigger),
-            sound = paEntry.sound,
-        }
-    end
-
-    return nil
-end
-
----Merge a profile into the current profile
+---Merge a profile into the current profile, using the incoming profile name
 ---@param data string profile string to merge
 ---@return boolean success if the merge was successful
 function addon:MergeProfile(data)
-    local decodedData = Compress:DecodeForPrint(data:sub(#prefix + 1))
-    local decompressedData = Compress:DecompressDeflate(decodedData)
-    local success, profileData = Serialize:Deserialize(decompressedData)
-
-    if not success or type(profileData) ~= "table" or data:sub(1, #prefix) ~= prefix then
-        addon.Utilities:print("Invalid profile data.")
-        return false
-    end
+    local profile = ReadProfile(data)
+    if not profile then return false end
 
     local currentProfile = addon.db["EncounterSound"] or {}
-    local newProfile = profileData.profile["EncounterSound"] or {}
+    local newProfile = profile["EncounterSound"]
+    local currentProfileName = currentProfile.ProfileName
+    local currentPrivateAuras = NormalizePrivateAuras(currentProfile.dataPA)
+    if not currentPrivateAuras then
+        addon.Utilities:print("Invalid current private aura data. Please check your profile before merging.")
+        return false
+    end
+    currentProfile.dataPA = currentPrivateAuras
 
     -- Merge the new profile into the current profile
     local countEvents, countPA = 0, 0
@@ -184,34 +290,28 @@ function addon:MergeProfile(data)
         end
     end
 
-    -- handle private auras (new schema: [mapID][spellID] = {trigger = {...}, sound = "..."})
-    for mapID, paData in pairs(newProfile.dataPA or {}) do
-        if type(paData) == "table" then
-            if not currentProfile.dataPA then currentProfile.dataPA = {} end
-            if not currentProfile.dataPA[mapID] then currentProfile.dataPA[mapID] = {} end
-
-            for spellID, paEntry in pairs(paData) do
-                local normalizedPAEntry = NormalizePAEntry(paEntry)
-                if normalizedPAEntry then
-                    if not currentProfile.dataPA[mapID][spellID] then
-                        newPAcount = newPAcount + 1
-                    end
-
-                    currentProfile.dataPA[mapID][spellID] = normalizedPAEntry
-                    countPA = countPA + 1
-                end
+    -- Each incoming aura replaces the existing spell's trigger mappings.
+    for mapID, paData in pairs(newProfile.dataPA) do
+        if not currentProfile.dataPA[mapID] then currentProfile.dataPA[mapID] = {} end
+        for spellID, paEntry in pairs(paData) do
+            if not currentProfile.dataPA[mapID][spellID] then
+                newPAcount = newPAcount + 1
             end
+            currentProfile.dataPA[mapID][spellID] = paEntry
+            countPA = countPA + 1
         end
     end
 
     PrintMergeSummary(countEvents, newEventsCount, countPA, newPAcount)
 
+    currentProfile.ProfileName = newProfile.ProfileName
+    currentProfile.version = addon.version
     addon.db["EncounterSound"] = currentProfile
     addon.Utilities:print(L["MergeSuccess"])
 
     addon.Utilities:SetPopupDialog(
         "HB_Import_Success",
-        "|cffff0d01" .. (newProfile.ProfileName or "Default") .. "|r " .. L["MergedInto"] .. " |cffff0d01" .. (currentProfile.ProfileName or "nil") .. "|r",
+        "|cffff0d01" .. (newProfile.ProfileName or "Default") .. "|r " .. L["MergedInto"] .. " |cffff0d01" .. (currentProfileName or "nil") .. "|r",
         true
     )
 
