@@ -1,0 +1,856 @@
+local ADDON_NAME, addon = ...
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+
+---@class ChatChannels
+local AuraHelper = {
+    modName = "AuraHelper",
+    db = nil,
+    containers = {},
+    testOverlay = {},
+    soundRegistered = {},
+    cotankContainer = nil,
+    eventFrame = nil,
+    coTankToken = nil,
+    dispellColors = {},
+}
+
+-- MARK: container options
+--[[
+Below is the default options table for the AuraHelper module
+The values are arbitrary, only the structure and types are important
+
+container_options = {
+    Type = "Helpful", -- "Helpful" or "Harmful", it decides whether the container tracks buffs or debuffs
+    IconSize = 35,
+    MaxCount = 5,
+    IconSpacing = 0,
+    GrowDirection = "RIGHT",
+    X = 0,
+    Y = 0,
+    Filters = {"Player", "Raid", "Defensive", "External"},
+    ApplyDispellColor = true, -- whether to apply the dispel color to the border of the aura icons
+}]]
+
+-- MARK: Constants
+local DIRECTION = {
+    LEFT = AnchorUtil.FlowDirection.Left,
+    RIGHT = AnchorUtil.FlowDirection.Right,
+    UP = AnchorUtil.FlowDirection.Up,
+    DOWN = AnchorUtil.FlowDirection.Down,
+}
+local DEFAULT_BORDER_COLOR = CreateColor(0, 0, 0, 1)
+-- the type decides whether the container tracks buffs or debuffs, it is required and is not a filter
+local TYPES = {
+    Helpful = {value = "HELPFUL", category = "Buff", name = L["AuraFilter"]["Helpful"]},
+    Harmful = {value = "HARMFUL", category = "Debuff", name = L["AuraFilter"]["Harmful"]},
+}
+
+local FILTERS = {
+    -- token filters, the values are string
+    Player = {value = "PLAYER", category = "Both", name = L["AuraFilter"]["Player"]},
+    Raid = {value = "RAID", category = "Both", name = L["AuraFilter"]["Raid"]},
+    Defensive = {value = "BIG_DEFENSIVE", category = "Buff", name = L["AuraFilter"]["Defensive"]},
+    -- External = {value = "EXTERNAL_DEFENSIVE", category = "Buff", name = L["AuraFilter"]["External"]},
+    CrowdControl = {value = "CROWD_CONTROL", category = "Debuff", name = L["AuraFilter"]["CrowdControl"]},
+    Dispellable = {value = "DISPELLABLE", category = "Both", name = L["AuraFilter"]["Dispellable"]},
+    -- candidate filters, the values are table
+    PI = {value = {includeSpellIDs = {
+        [10060] = true, -- Power Infusion
+        [406732] = true, -- Spatial Paradox
+        [29166] = true, -- Innervate
+        -- movement
+        [192082] = true, -- Wind Rush Totem
+        [106898] = true, -- Stampeding Roar
+        [77761] = true, -- Stampeding Roar(Bear)
+        [77764] = true, -- Stampeding Roar(Cat)
+        [1044] = true, -- Bless of Freedom
+        [116841] = true, -- Tiger's Lust
+        -- external defensive
+        [33206] = true, -- Pain Suppression
+        [47788] = true, -- Guardian Spirit
+        [102342] = true, -- Ironbark
+        [116849] = true, -- Life Cocoon
+        [6940] = true, -- Bless of Sacrifice
+        [1022] = true, -- Bless of Protection
+        [204018] = true, -- Blessing of Spellwarding
+        [357170] = true, -- Time Dilation
+        [3411] = true, -- Intervene
+        -- team defensive
+        [31821] = true, -- Aura Mastery
+        [81782] = true, -- Power Word: Barrier
+        [325174] = true, -- Spirit Link Totem
+        [97463] = true, -- Rallying Cry
+        [145629] = true, -- Anti-Magic Zone
+        [209426] = true, -- Darkness
+        [374227] = true, -- Zephyr
+    }}, category = "Buff", name = L["AuraFilter"]["Power_Infusion"]},
+    LUST = {value = {includeSpellIDs = {
+        [2825] = true, -- Bloodlust
+        [32182] = true, -- Heroism
+        [80353] = true, -- Time Warp
+        [264689] = true, -- Primal Rage
+        [390386] = true, -- Fury of the Aspects
+        [466904] = true, -- Marksman Hunter's
+        [1243972] = true, -- Drums
+    }}, category = "Buff", name = L["AuraFilter"]["Bloodlust"]},
+    -- TRINKET = {value = {includeSpellIDs = {
+    -- }}, category = "Buff", name = L["AuraFilter"]["Trinkets"]},
+    POTION = {value = {includeSpellIDs = {
+        [1236616] = true, -- Light's Potential
+        [1236994] = true, -- Potion of Recklessness
+        [1236998] = true, -- Draught of Rampant Abandon
+        [1295147] = true, -- Liquid Luster
+        [1236551] = true, -- Void-Shrouded Tincture
+    }}, category = "Buff", name = L["AuraFilter"]["Potions"]},
+    NonPlayer = {value = {isFromPlayerOrPlayerPet = false}, category = "Both", name = L["AuraFilter"]["NonPlayer"]},
+    Role = {value = {isRoleAura = true}, category = "Both", name = L["AuraFilter"]["Role"]},
+    Priority = {value = {isPriorityAura = true}, category = "Both", name = L["AuraFilter"]["Priority"]},
+    Stealable = {value = {isStealableAura = true}, category = "Both", name = L["AuraFilter"]["Stealable"]},
+    Boss = {value = {isBossAura = true}, category = "Both", name = L["AuraFilter"]["Boss"]},
+}
+
+---Get the container type list for the config panel
+---@return table list map of type name to its localized name
+---@return table order the type names sorted alphabetically
+function AuraHelper:GetTypeList()
+    local list, order = {}, {}
+    for name, info in pairs(TYPES) do
+        list[name] = info.name
+        table.insert(order, name)
+    end
+    table.sort(order)
+
+    return list, order
+end
+
+---Get the filter list for the config panel
+---@param auraType string? the container type, only the filters of this type are returned
+---@return table list map of filter name to its localized name
+---@return table order the filter names sorted alphabetically
+function AuraHelper:GetFilterList(auraType)
+    local category = TYPES[auraType or ""] and TYPES[auraType].category
+    local list, order = {}, {}
+    for name, info in pairs(FILTERS) do
+        if not category or info.category == "Both" or info.category == category then
+            list[name] = info.name
+            table.insert(order, name)
+        end
+    end
+    table.sort(order)
+
+    return list, order
+end
+
+-- MARK: Create Container
+local function InitializeAuraButton(self, frame, options)
+    frame:SetSize(options.IconSize, options.IconSize)
+
+    local icon = frame:CreateTexture(nil, "BACKGROUND")
+    icon:SetAllPoints()
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    frame:SetIcon(icon)
+
+    local cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
+    cooldown:SetAllPoints()
+    cooldown:SetDrawEdge(false)
+    cooldown:SetReverse(true)
+    cooldown:SetScale(0.75)
+    frame:SetDurationCooldown(cooldown)
+
+    local stack = frame:CreateFontString(nil, "OVERLAY")
+    stack:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    stack:SetFont(addon.DEFAULTS.font, options.StackTextSize or 12, "OUTLINE")
+    stack:SetTextColor(1, 1, 1, 1)
+    frame:SetApplicationCount(stack)
+
+    -- border
+    local border = frame:CreateTexture(nil, "OVERLAY")
+    border:SetTexture("Interface\\AddOns\\" .. ADDON_NAME .. "\\Media\\iconBorder.png")
+    border:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+    border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 1, -1)
+    local borderOptions = {
+        showIcon = true,
+        showWhenHarmful = true,
+        showWhenHelpful = true,
+        showWithoutDispelType = true,
+        style = 3,
+        customDispelColorMap = {
+            None = (options.ApplyDispellColor and self.dispellColors.None) or DEFAULT_BORDER_COLOR,
+            Magic = (options.ApplyDispellColor and self.dispellColors.Magic) or DEFAULT_BORDER_COLOR,
+            Curse = (options.ApplyDispellColor and self.dispellColors.Curse) or DEFAULT_BORDER_COLOR,
+            Disease = (options.ApplyDispellColor and self.dispellColors.Disease) or DEFAULT_BORDER_COLOR,
+            Poison = (options.ApplyDispellColor and self.dispellColors.Poison) or DEFAULT_BORDER_COLOR,
+            Bleed = (options.ApplyDispellColor and self.dispellColors.Bleed) or DEFAULT_BORDER_COLOR,
+        },
+    }
+    -- 12.15 API got renamed to "AddDispelTypeTexture"
+    if addon.states["interfaceNumber"] >= 120105 then
+        frame:AddDispelTypeTexture(border, borderOptions)
+    else
+        frame:SetAuraBorder(border, borderOptions)
+    end
+end
+
+-- MARK: Filter handlers
+
+local function GenerateFiltersFromOptions(options)
+    local tokenFilters = {}
+    local candidateFilters = {}
+    local includeSpellIDs = {}
+    local excludeSpellIDs = {}
+
+    local auraType = TYPES[options.Type or ""] or TYPES.Helpful -- the type token always comes first
+    table.insert(tokenFilters, auraType.value)
+
+    for _, name in pairs(options.Filters or {}) do
+        if FILTERS[name] then -- if the filter is valid
+            local filterContent = FILTERS[name].value
+            if type(filterContent) == "string" then -- token filter
+                table.insert(tokenFilters, filterContent)
+            else -- candidate filters is a concatenated table
+                -- includeSpells and excludeSpells are both tables, we need to merge them into candidateFilters
+                if filterContent.includeSpellIDs then
+                    for spellID, _ in pairs(filterContent.includeSpellIDs) do
+                        includeSpellIDs[spellID] = true
+                    end
+                elseif filterContent.excludeSpellIDs then
+                    for spellID, _ in pairs(filterContent.excludeSpellIDs) do
+                        excludeSpellIDs[spellID] = true
+                    end
+                else
+                    for key, value in pairs(filterContent) do
+                        candidateFilters[key] = value
+                    end
+                end
+            end
+        end
+    end
+
+    -- merge the includeSpellIDs and excludeSpellIDs into candidateFilters if there are any
+    if next(includeSpellIDs) then
+        candidateFilters.includeSpellIDs = includeSpellIDs
+    end
+    if next(excludeSpellIDs) then
+        candidateFilters.excludeSpellIDs = excludeSpellIDs
+    end
+
+    -- make tokenFilters
+    local tokenFiltersString = table.concat(tokenFilters, "|")
+
+    return tokenFiltersString, candidateFilters
+end
+
+local function CreateAuraContainer(self, name, options)
+    local width = options.IconSize * options.MaxCount
+    local height = options.IconSize
+
+    local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
+    container:SetFlowLayoutGrowthDirection(DIRECTION[options.GrowDirection or "RIGHT"], DIRECTION.UP)
+    local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+    container:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    container:SetSize(width, height)
+    container:SetUnit("player") -- the unit is always player, the auras are filtered by the filters
+
+    local filterString, candidateFilters = GenerateFiltersFromOptions(options)
+    container:AddAuraGroup(name, filterString, {
+        maxFrameCount = options.MaxCount,
+        initializeFrame = function(frame)
+            InitializeAuraButton(self, frame, options)
+        end,
+        layout = {
+            elementSpacing = options.IconSpacing or 0,
+            lineSpacing = 0,
+            groupSpacing = 0,
+            groupLineSpacing = 0,
+            forceNewLine = false,
+            elementWidth = options.IconSize,
+            elementHeight = options.IconSize,
+        },
+        candidateFilters = candidateFilters,
+    })
+
+    container:Show()
+    return container
+end
+
+-- MARK: Search Co-Tank
+
+---Get an array of all raid member unit tokens
+---@return table|nil output an array of raid unit tokens, or nil if not in raid
+local function GetRaidIterator()
+    if IsInRaid() then -- only search co-tank in raid
+        local numMembers = GetNumGroupMembers()
+        local output = {}
+        if numMembers > 0 then
+            for i = 1, numMembers do
+                table.insert(output, "raid" .. tostring(i))
+            end
+        end
+
+        return #output > 0 and output or nil
+    else
+        return nil
+    end
+end
+
+---Search for a co-tank in the current raid group
+---@return string|nil unit the unit token of the co-tank, or nil if not found
+local function SearchCoTank()
+    local raidIterator = GetRaidIterator()
+    if raidIterator then
+        for _, unit in ipairs(raidIterator) do
+            if not UnitIsUnit(unit, "player") and UnitGroupRolesAssigned(unit) == "TANK" then
+                return unit
+            end
+        end
+    end
+
+    return nil
+end
+
+local function SetCotankContainerUnit(self, unitToken)
+    if self.cotankContainer and unitToken then
+        self.cotankContainer:SetUnit(unitToken)
+    end
+end
+
+local function SetCoTankEvent(self)
+    if not self.eventFrame then
+        self.eventFrame = CreateFrame("Frame", nil, UIParent)
+    end
+
+    addon.core:RegisterEvent("GROUP_ROSTER_UPDATE", self.eventFrame, self.modName)
+    self.eventFrame:SetScript("OnEvent", function(_, event)
+        if event == "GROUP_ROSTER_UPDATE" then
+            if not self.cotankContainer or UnitGroupRolesAssigned("player") ~= "TANK" then return end
+
+            self.coTankToken = SearchCoTank()
+            if self.coTankToken then -- found a co-tank
+                self.cotankContainer:SetEnabled(true)
+                self.cotankContainer:SetUnit(self.coTankToken)
+                self.cotankContainer:Show()
+            else
+                self.cotankContainer:Hide()
+                self.cotankContainer:SetEnabled(false)
+            end
+        end
+    end)
+end
+
+-- MARK: Create Co-Tank
+
+--- Create a Co-Tank container for the given options, which is a container not in db
+--- Specifically, since co-tank container may need to set unitToken later in the game with team chances
+--- Create a container withou "nil" UnitToken, and set it later with container:SetUnit(unitToken)
+--- The container's name is always "CoTank"
+---@param options table the options for the container, same as the db data
+local function CreateCoTankContainer(self, options)
+    local name = "CoTank"
+    local width = options.IconSize * options.MaxCount
+    local height = options.IconSize
+
+    local container = CreateFrame("AuraContainer", ADDON_NAME .. "_" .. name, UIParent, "CustomAuraContainerTemplate")
+    container:SetFlowLayoutGrowthDirection(DIRECTION[options.GrowDirection or "RIGHT"], DIRECTION.UP)
+    local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+    container:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    container:SetSize(width, height)
+    -- unitToken is not set initially, will be set later with container:SetUnit(unitToken)
+
+    local filterString, candidateFilters = GenerateFiltersFromOptions(options)
+    container:AddAuraGroup(name, filterString, {
+        maxFrameCount = options.MaxCount,
+        initializeFrame = function(frame)
+            InitializeAuraButton(self, frame, options)
+        end,
+        layout = {
+            elementSpacing = options.IconSpacing or 0,
+            lineSpacing = 0,
+            groupSpacing = 0,
+            groupLineSpacing = 0,
+            forceNewLine = false,
+            elementWidth = options.IconSize,
+            elementHeight = options.IconSize,
+        },
+        candidateFilters = candidateFilters,
+    })
+
+    container:Hide() -- hide, show once a co-tank is found
+    container:SetEnabled(false) -- disable, enable once a co-tank is found
+    self.cotankContainer = container
+    self.containers[name] = container
+
+    -- also initialzie the eventFrame, since co-tank container is the only frame which need to register to events
+    SetCoTankEvent(self)
+end
+
+-- MARK: Aura Sound Handlers
+
+local function RegisterAuraSound(self, spellId, trigger, soundFileLSM)
+    if not spellId or not trigger or not soundFileLSM then
+        return
+    end
+
+    trigger = tonumber(trigger)
+    local sound = addon.LSM:Fetch("sound", soundFileLSM)
+    if sound then
+        local soundInfo = {
+            spellID = tonumber(spellId),
+            unitToken = "player",
+            soundFileName = sound,
+            outputChannel = "Master",
+        }
+        local auraSoundID = C_UnitAuras.AddAuraSound(trigger, soundInfo)
+
+        if not self.soundRegistered[spellId] then
+            self.soundRegistered[spellId] = {}
+        end
+
+        self.soundRegistered[spellId][trigger] = auraSoundID
+    end
+end
+
+local function UnregisterAuraSound(self, spellId, trigger)
+    trigger = tonumber(trigger)
+    if self.soundRegistered[spellId] and self.soundRegistered[spellId][trigger] then
+        local auraSoundID = self.soundRegistered[spellId][trigger]
+        C_UnitAuras.RemoveAuraSound(auraSoundID)
+        self.soundRegistered[spellId][trigger] = nil
+
+        -- check whether the spellId has any other triggers registered, if not, remove the spellId entry
+        if not next(self.soundRegistered[spellId]) then
+            self.soundRegistered[spellId] = nil
+        end
+    end
+end
+
+-- MARK: Test Mode Handler
+
+---Resolve the options table for a container key, "CoTank" uses its own db field
+---@param self ChatChannels
+---@param key string
+---@return table|nil options
+local function GetContainerOptions(self, key)
+    if key == "CoTank" then
+        return self.db.coTankOptions
+    end
+    return self.db.data[key]
+end
+
+--- Build a test overlay for the given container
+---@param self ChatChannels
+---@param key string the key of the container in the db
+---@return Frame|nil the test overlay frame, or nil if the container does not exist
+local function BuildTestOverlay(self, key)
+    -- instead of create the test overlay according to the container
+    -- just use the DB data to create the test overlay
+    -- so that the test overlay can be shown even if the container is not created yet
+    local options = GetContainerOptions(self, key)
+
+    if options then
+        local overlay = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+        local width = options.IconSize * options.MaxCount
+        local height = options.IconSize
+        overlay:SetSize(width, height)
+
+        local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+        overlay:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+        overlay:SetBackdrop({
+			bgFile = "Interface\\Buttons\\WHITE8x8",
+			edgeFile = "Interface\\Buttons\\WHITE8x8",
+			tile = false, tileSize = 1, edgeSize = 1,
+			insets = { left = 0, right = 0, top = 0, bottom = 0 }
+		})
+		overlay:SetBackdropColor(1, 1, 1, 0.5)
+		overlay:SetBackdropBorderColor(1, 1, 1, 1)
+
+        local text = overlay:CreateFontString(nil, "OVERLAY")
+        text:SetPoint("CENTER", overlay, "CENTER", 0, 0)
+        text:SetFont(addon.DEFAULTS.font, 10, "OUTLINE")
+        text:SetText(L["AuraHelperSettings"] .. "-" .. key)
+        overlay.text = text
+
+        -- make the test overlay draggable and interact with db's position
+        local function updatePosition(testOverlay)
+            local x, y = GetCursorPosition()
+            x, y = addon.Utilities:ScreenPositionToUIPosition(x, y)
+            x, y = math.floor(x + 0.5), math.floor(y + 0.5) -- round the position to integers
+
+            testOverlay:ClearAllPoints()
+            testOverlay:SetPoint(anchorFrom, UIParent, "CENTER", x, y)
+
+            return x, y
+        end
+
+        local module = self
+
+        ---Keep the container on the overlay, the container does not follow it on its own
+        local function saveAndApplyPosition(overlayFrame)
+            local x, y = updatePosition(overlayFrame)
+            options.X = x
+            options.Y = y
+            module:UpdatePosition(key)
+        end
+
+        overlay:SetScript("OnMouseDown", function(overlayFrame, button)
+            if button == "LeftButton" then
+                overlayFrame.isDragging = true
+                saveAndApplyPosition(overlayFrame)
+            end
+        end)
+
+        overlay:SetScript("OnMouseUp", function(overlayFrame, button)
+            if button == "LeftButton" and overlayFrame.isDragging then
+                overlayFrame.isDragging = nil
+                saveAndApplyPosition(overlayFrame)
+            elseif button == "RightButton" then
+                addon.GUI:OpenModuleGUI("AuraHelper")
+            end
+        end)
+
+        overlay:SetScript("OnUpdate", function(overlayFrame)
+            if overlayFrame.isDragging then
+                saveAndApplyPosition(overlayFrame)
+            end
+        end)
+
+        overlay:Hide()
+        return overlay
+    end
+
+    return nil
+end
+
+local function ToggleTestRegion(self, on)
+    for key, options in pairs(self.db.data) do
+        if not self.testOverlay[key] then
+            self.testOverlay[key] = BuildTestOverlay(self, key)
+        end
+
+        if on then
+            if self.testOverlay[key] then
+                self.testOverlay[key]:Show()
+            end
+        else
+            if self.testOverlay[key] then
+                self.testOverlay[key]:Hide()
+            end
+        end
+    end
+
+    if self.db.EnabledCoTank then
+        if not self.testOverlay["CoTank"] then
+            self.testOverlay["CoTank"] = BuildTestOverlay(self, "CoTank")
+        end
+
+        if on then
+            if self.testOverlay["CoTank"] then
+                self.testOverlay["CoTank"]:Show()
+            end
+        elseif self.testOverlay["CoTank"] then
+            self.testOverlay["CoTank"]:Hide()
+        end
+    end
+end
+
+-- MARK: Load DB
+local function LoadDBAura(self)
+    for key, options in pairs(self.db.data) do
+        if not self.containers[key] then
+            self.containers[key] = CreateAuraContainer(self, key, options)
+        end
+    end
+end
+
+local function LoadDBSound(self)
+    for spellId, soundOptions in pairs(self.db.dataSound) do
+        if type(soundOptions) == "table" then
+            for trigger, soundFileLSM in pairs(soundOptions) do
+                RegisterAuraSound(self, spellId, trigger, soundFileLSM)
+            end
+        end
+    end
+end
+
+-- MARK: Load Dispell Colors
+local function LoadDispellColors(self)
+    for dispellType, colorHex in pairs(self.db.dispellColors) do
+        local r, g, b = addon.Utilities:HexToRGB(colorHex)
+        self.dispellColors[dispellType] = CreateColor(r, g, b, 1)
+    end
+end
+
+-- MARK: Initialize
+
+---Initialize (Constructor)
+---@return ChatChannels TemplateModule a TemplateModule object
+function AuraHelper:Initialize()
+    self.db = addon.db[self.modName]
+    LoadDispellColors(self)
+    -- create containers for each key in the db
+    self.containers = {}
+    LoadDBAura(self)
+    self.testOverlay = {}
+
+    self.soundRegistered = {}
+
+    if self.db.EnabledCoTank then
+        CreateCoTankContainer(self, self.db.coTankOptions)
+    end
+
+    return self
+end
+
+-- MARK: Update Style
+function AuraHelper:UpdateStyle()
+    -- UpdateStyle runs when player enter the world
+    -- since LSM is not fully loaded by other addons
+    -- we need to register sound after the player enter the world
+    LoadDBSound(self)
+end
+
+-- MARK: Add/Remove Aura Container
+
+---Create the container of a newly added key
+---@param key string the key of the container in the db
+function AuraHelper:AddContainer(key)
+    local options = self.db.data[key]
+    if not options or self.containers[key] then
+        return
+    end
+
+    self.containers[key] = CreateAuraContainer(self, key, options)
+end
+
+---Hide and drop the container of a removed key
+---@param key string the key of the container in the db
+function AuraHelper:RemoveContainer(key)
+    if self.containers[key] then
+        self.containers[key]:Hide()
+        self.containers[key] = nil
+    end
+
+    if self.testOverlay[key] then
+        self.testOverlay[key]:Hide()
+        self.testOverlay[key] = nil
+    end
+end
+
+-- MARK: Enable/Disable Co-Tank
+
+---Create and show the Co-Tank container, called when the user enables it from the config panel
+function AuraHelper:EnableCoTank()
+    if self.containers["CoTank"] then
+        return
+    end
+
+    CreateCoTankContainer(self, self.db.coTankOptions)
+end
+
+---Hide and drop the Co-Tank container, called when the user disables it from the config panel
+function AuraHelper:DisableCoTank()
+    if self.eventFrame then
+        self.eventFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+    end
+
+    if self.cotankContainer then
+        self.cotankContainer:Hide()
+        self.cotankContainer = nil
+    end
+    self.containers["CoTank"] = nil
+    self.coTankToken = nil
+
+    if self.testOverlay["CoTank"] then
+        self.testOverlay["CoTank"]:Hide()
+        self.testOverlay["CoTank"] = nil
+    end
+end
+
+-- MARK: Update Conatiner
+
+function AuraHelper:UpdateFilter(key)
+    local options = GetContainerOptions(self, key)
+    local filterString, candidateFilters = GenerateFiltersFromOptions(options)
+    local container = self.containers[key]
+    if container then
+        container:SetAuraGroupFilterString(key, filterString)
+        container:SetAuraGroupCandidateFilters(key, candidateFilters)
+    end
+end
+
+function AuraHelper:UpdateGrowDirection(key)
+    local options = GetContainerOptions(self, key)
+    local container = self.containers[key]
+    if container then
+        local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+        container:SetFlowLayoutGrowthDirection(DIRECTION[options.GrowDirection or "RIGHT"], DIRECTION.UP)
+        container:ClearAllPoints()
+        container:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    end
+
+    -- also change the grow direction/position of the test overlay if it exists
+    if self.testOverlay[key] then
+        local overlay = self.testOverlay[key]
+        local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+        overlay:ClearAllPoints()
+        overlay:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    end
+end
+
+function AuraHelper:UpdateMaxCount(key)
+    local options = GetContainerOptions(self, key)
+    local container = self.containers[key]
+    if container then
+        container:SetAuraGroupMaxFrameCount(key, options.MaxCount)
+        container:SetSize(options.IconSize * options.MaxCount, options.IconSize)
+    end
+    -- also change the grow direction/position of the test overlay if it exists
+    if self.testOverlay[key] then
+        local overlay = self.testOverlay[key]
+        local width = options.IconSize * options.MaxCount
+        local height = options.IconSize
+        overlay:SetSize(width, height)
+
+        local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+        overlay:ClearAllPoints()
+        overlay:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    end
+end
+
+function AuraHelper:UpdatePosition(key)
+    local options = GetContainerOptions(self, key)
+    local container = self.containers[key]
+    if container then
+        local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+        container:ClearAllPoints()
+        container:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    end
+    -- also change the position of the test overlay if it exists
+    if self.testOverlay[key] then
+        local overlay = self.testOverlay[key]
+        local anchorFrom = options.GrowDirection == "RIGHT" and "LEFT" or "RIGHT"
+        overlay:ClearAllPoints()
+        overlay:SetPoint(anchorFrom, UIParent, "CENTER", options.X or 0, options.Y or 0)
+    end
+end
+
+function AuraHelper:UpdateLayout(key)
+    local options = GetContainerOptions(self, key)
+    local container = self.containers[key]
+    if container then
+        container:SetAuraGroupLayout(key, {
+            elementSpacing = options.IconSpacing or 0,
+            lineSpacing = 0,
+            groupSpacing = 0,
+            groupLineSpacing = 0,
+            forceNewLine = false,
+            elementWidth = options.IconSize,
+            elementHeight = options.IconSize,
+        })
+        container:SetSize(options.IconSize * options.MaxCount, options.IconSize)
+    end
+    -- also change the size of the test overlay if it exists
+    if self.testOverlay[key] then
+        local overlay = self.testOverlay[key]
+        local width = options.IconSize * options.MaxCount
+        local height = options.IconSize
+        overlay:SetSize(width, height)
+    end
+end
+
+function AuraHelper:UpdateDispellColor(colorKey, colorHex)
+    -- just convert and set the color in the module, the initializeFrame will access the color from the module when creating the border
+    local r, g, b = addon.Utilities:HexToRGB(colorHex)
+    self.dispellColors[colorKey] = CreateColor(r, g, b, 1)
+end
+
+-- MARK: Update Sound
+function AuraHelper:AddSound(spellID, trigger, soundFileLSM)
+    if not self.db or not self.db.dataSound then
+        return
+    end
+
+    local spellNum = tonumber(spellID)
+    local spellStr = tostring(spellID)
+    local spellKey = spellID
+    if spellNum and self.db.dataSound[spellNum] ~= nil then
+        spellKey = spellNum
+    elseif self.db.dataSound[spellStr] ~= nil then
+        spellKey = spellStr
+    elseif spellNum then
+        spellKey = spellNum
+    else
+        spellKey = spellStr
+    end
+
+    if not self.db.dataSound[spellKey] then
+        self.db.dataSound[spellKey] = {}
+    end
+
+    self.db.dataSound[spellKey][trigger] = soundFileLSM
+    RegisterAuraSound(self, spellKey, trigger, soundFileLSM)
+end
+
+function AuraHelper:RemoveSound(spellId, trigger)
+    if not self.db or not self.db.dataSound then
+        return
+    end
+
+    local spellNum = tonumber(spellId)
+    local spellStr = tostring(spellId)
+    local dbKey
+    if spellNum and self.db.dataSound[spellNum] ~= nil then
+        dbKey = spellNum
+    elseif self.db.dataSound[spellStr] ~= nil then
+        dbKey = spellStr
+    else
+        dbKey = spellNum or spellStr
+    end
+
+    local regKey
+    if spellNum and self.soundRegistered[spellNum] ~= nil then
+        regKey = spellNum
+    elseif self.soundRegistered[spellStr] ~= nil then
+        regKey = spellStr
+    else
+        regKey = dbKey
+    end
+
+    if trigger then
+        trigger = tonumber(trigger)
+        if self.db.dataSound[dbKey] then
+            self.db.dataSound[dbKey][trigger] = nil
+            if not next(self.db.dataSound[dbKey]) then
+                self.db.dataSound[dbKey] = nil
+            end
+        end
+
+        UnregisterAuraSound(self, regKey, trigger)
+        return
+    end
+
+    if self.db.dataSound[dbKey] then
+        for registeredTrigger in pairs(self.db.dataSound[dbKey]) do
+            UnregisterAuraSound(self, regKey, registeredTrigger)
+        end
+        self.db.dataSound[dbKey] = nil
+    end
+end
+
+-- MARK: Test
+
+---Test Mode
+---@param on boolean turn the Test mode on or off
+function AuraHelper:Test(on)
+    if not addon.db[self.modName]["Enabled"] then -- if the module is not enabled, do not allow test mode
+        return
+    end
+
+    if on then
+        ToggleTestRegion(self, true)
+    else
+        ToggleTestRegion(self, false)
+    end
+end
+
+-- MARK: Register Module
+addon.core:RegisterModule(AuraHelper.modName, L["AuraHelperSettings"], function() return AuraHelper:Initialize() end)

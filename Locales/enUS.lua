@@ -137,6 +137,7 @@ L["Undo"] = "Undo"
 L["ShowSpellText"] = "Show Spell Text"
 L["EncounterTrash"] = "Trash"
 L["StackTextSize"] = "Stack Size"
+L["MaxCount"] = "Max Count"
 
 -- MARK: Style
 L["Color"] = "Color"
@@ -246,6 +247,67 @@ L["LuraHelperInstruction"] = "The communication between users is highly delenden
 "This module will be loaded automatically when the boss encounter starts or can be enabled manually in the configuration panel.\n" ..
 "The rune buttons and undo button are only show for raid leader or raid assisstants\n" ..
 "In order to prevent incorrect messages, please keep clear and no any other message on all following chat channel: |cffFF7F00raid|r/|cffFF4800raid warning|r\n\n"
+
+-- MARK: Aura Helper
+L["AuraHelperSettings"] = "Aura Helper"
+L["AuraHelperSettingsDesc"] = "Create cutomizable aura containers to track buffs/debuffs on player/co-tank"
+L["DispellColorDesc"] = "Set the border color used for each dispel type on aura icons.\nOnce you changed any color, please reload to apply the changes"
+L["ApplyDispellColor"] = "Apply Dispel Colors"
+L["DispellType"] = {
+	None = "No Dispel Type",
+	Magic = "Magic",
+	Curse = "Curse",
+	Disease = "Disease",
+	Poison = "Poison",
+	Bleed = "Bleed",
+}
+L["AuraFilter"] = {
+	Helpful = "Helpful",
+	Harmful = "Harmful",
+	Player = "Player",
+	NonPlayer = "Non-Player",
+	Raid = "Raid",
+	Defensive = "Defensive",
+	External = "External Defensive",
+	CrowdControl = "Crowd Control",
+	Dispellable = "Dispellable",
+	Power_Infusion = "Exteral_Team",
+	Role = "Role",
+	Priority = "Priority",
+	Stealable = "Stealable",
+	Boss = "Boss",
+	Bloodlust = "Bloodlust",
+	Trinkets = "Trinkets",
+	Potions = "Potions",
+}
+L["AuraSoundTrigger"] = {
+	Add = "Aura Applied",
+	Apply = "Aura Stacked",
+	Remove = "Aura Removed",
+}
+L["AuraContainerDesc"] = "Each aura container is an independent group of aura icons.\n\nSelect an existing container to edit it, or type a name(letters, digits and underscore only) and add a new one."
+L["AuraContainerSettings"] = "Container Settings"
+L["SelectAuraContainer"] = "Select Container"
+L["AuraContainerName"] = "Container Name"
+L["InvalidAuraContainerName"] = "Invalid container name, only letters, digits and underscore are allowed, and it cannot be empty."
+L["AuraFilters"] = "Filters"
+L["AuraType"] = "Buff / Debuff"
+L["AuraTypeRequired"] = "Select whether the container tracks buffs or debuffs first, the other options depend on it."
+L["AuraFilterDesc"] = "Select which auras the container tracks. Filters are combined, so a container with no filter shows nothing."
+L["IconSpacing"] = "Icon Spacing"
+L["AuraSoundSettings"] = "Aura Sound Settings"
+L["AuraSoundDesc"] = "Register sound alerts for aura applied/stacked/removed events. You can select different sounds for each trigger."
+L["SelectAuraSound"] = "Select Aura"
+L["AuraSoundMedia"] = "Aura Sound"
+L["SoundTriggers"] = "Sound Triggers"
+L["AuraSpellID"] = "Aura Spell ID"
+L["InvalidAuraSpellID"] = "Invalid aura spell ID"
+L["AuraSoundTriggerRequired"] = "Select a sound trigger, it is required."
+L["AuraSoundMediaRequired"] = "Select a sound, it is required."
+L["EnableCoTank"] = "Enable Co-Tank Container"
+L["CoTankLabel"] = "Co-Tank"
+L["CoTankDesc"] = "Tracks auras on the co-tank in your raid. This container only appears and works once a co-tank is found(and player is assigned as a Tank) in your group, so it may stay hidden outside of raids or when you are the only tank.\nThe recommended filters for this container is \"Harmful\" + \"Non-Player\"\nThe name \"CoTank\" is reserved for this feature"
+L["ReservedAuraContainerName"] = "\"CoTank\" is reserved by the addon, please choose another name."
 
 -- MARK: Contributors
 L["Contributors"] = "Contributors"

@@ -139,6 +139,7 @@ L["Undo"] = "撤销"
 L["ShowSpellText"] = "显示技能文本"
 L["EncounterTrash"] = "小怪"
 L["StackTextSize"] = "层数大小"
+L["MaxCount"] = "最大数量"
 
 -- MARK: Style
 L["Color"] = "颜色"
@@ -248,6 +249,67 @@ L["LuraHelperInstruction"] = "用户之间的通信高度依赖于聊天频道(/
 "本模块会在boss战开启自动加载/手动在配置面板开启\n" ..
 "符文按钮和撤销按钮仅对团队领袖和助理显示\n" ..
 "为了防止错误消息, 请保持以下所有聊天频道清晰, 并且不要发送任何其他消息: |cffFF7F00团队|r/|cffFF4800团队通知|r\n\n"
+
+-- MARK: Aura Helper
+L["AuraHelperSettings"] = "光环助手"
+L["AuraHelperSettingsDesc"] = "创建可自定义的光环容器以跟踪玩家/副坦克的增益/减益效果"
+L["DispellColorDesc"] = "设置光环图标上各驱散类型使用的边框颜色\n一旦你更改了任何颜色,请重新加载(Reload)以应用更改"
+L["ApplyDispellColor"] = "应用驱散颜色"
+L["DispellType"] = {
+	None = "无驱散类型",
+	Magic = "魔法",
+	Curse = "诅咒",
+	Disease = "疾病",
+	Poison = "中毒",
+	Bleed = "流血",
+}
+L["AuraFilter"] = {
+	Helpful = "有益",
+	Harmful = "有害",
+	Player = "玩家",
+	NonPlayer = "非玩家",
+	Raid = "团队",
+	Defensive = "防御",
+	External = "外部防御",
+	CrowdControl = "控制",
+	Dispellable = "可驱散",
+	Power_Infusion = "外部团队",
+	Role = "职责",
+	Priority = "优先级",
+	Stealable = "可偷取",
+	Boss = "首领",
+	Bloodlust = "嗜血",
+	Trinkets = "饰品",
+	Potions = "药水",
+}
+L["AuraSoundTrigger"] = {
+	Add = "光环施加",
+	Apply = "光环叠层",
+	Remove = "光环移除",
+}
+L["AuraContainerDesc"] = "每个光环容器都是一组独立的光环图标\n\n选择一个已有的容器进行编辑, 或者输入名称(仅限字母, 数字和下划线)来添加一个新的容器"
+L["AuraContainerSettings"] = "容器设置"
+L["SelectAuraContainer"] = "选择容器"
+L["AuraContainerName"] = "容器名称"
+L["InvalidAuraContainerName"] = "无效的容器名称, 名称不能为空, 且只能包含字母, 数字和下划线"
+L["AuraFilters"] = "过滤器"
+L["AuraType"] = "增益 / 减益"
+L["AuraTypeRequired"] = "请先选择容器追踪增益还是减益效果, 其他选项取决于它"
+L["AuraFilterDesc"] = "选择容器要追踪的光环, 过滤条件会叠加生效, 因此没有选择任何过滤器的容器不会显示任何光环"
+L["IconSpacing"] = "图标间距"
+L["AuraSoundSettings"] = "光环声音设置"
+L["AuraSoundDesc"] = "为光环的施加/叠层/移除事件注册音效提醒。你可以为每个触发器选择不同的音效"
+L["SelectAuraSound"] = "选择光环"
+L["AuraSoundMedia"] = "光环音效"
+L["SoundTriggers"] = "音效触发"
+L["AuraSpellID"] = "光环法术ID"
+L["InvalidAuraSpellID"] = "无效的光环法术ID"
+L["AuraSoundTriggerRequired"] = "请选择音效触发器, 这是必填项"
+L["AuraSoundMediaRequired"] = "请选择音效, 这是必填项"
+L["EnableCoTank"] = "启用副坦光环容器"
+L["CoTankLabel"] = "副坦克"
+L["CoTankDesc"] = "追踪团队中副坦的光环。只有在团队中找到副坦时(且玩家为坦克), 这个容器才会显示并生效, 因此在非团队或你是唯一坦克时它会保持隐藏\n推荐为此容器使用的过滤器为 \"有害\" + \"非玩家\"\n\"CoTank\" 这个名称已被此功能保留"
+L["ReservedAuraContainerName"] = "\"CoTank\" 名称已被插件占用, 请选择其他名称"
 
 -- MARK: Contributors
 L["Contributors"] = "贡献者"
