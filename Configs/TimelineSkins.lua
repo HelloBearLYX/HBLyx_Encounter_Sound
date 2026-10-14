@@ -38,7 +38,7 @@ local function RenderPanel(parent)
 
 	GUI:CreateToggleCheckBox(frame, L["Enable"] .. "|cff0070DD" .. L["TimelineSkinsSettings"] .. "|r", addon.db.TimelineSkins.Enabled, function(value)
 		addon.db.TimelineSkins.Enabled = value
-		addon:ShowDialog(ADDON_NAME.."RLNeeded")
+		addon.core:ToggleModule(MOD_KEY, value)
 	end)
     GUI:CreateToggleCheckBox(frame, L["ShowOnlyActive"], addon.db.TimelineSkins.ShowOnlyActive, function(value)
 		addon.db.TimelineSkins.ShowOnlyActive = value
